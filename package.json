@@ -1,0 +1,8 @@
+﻿{
+  "name": "nexus-web-lab",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Nexus AI web lab - hosted frontend + API proxy to local Nexus Bridge via Cloudflare Tunnel",
+  "engines": { "node": "24.x" },
+  "scripts": { "dev": "vercel dev" }
+}
