@@ -1,24 +1,22 @@
-﻿// Nexus Web Lab — API proxy
+// Nexus Web Lab — API proxy (v2, no-bracket filename)
 // Forwards /api/* requests to the local Nexus Bridge via Cloudflare Tunnel.
 // Target base comes from Vercel env NEXUS_TUNNEL_URL (e.g. https://xxx.trycloudflare.com)
-const { Buffer } = require('node:buffer');
+// Rewritten from /api/:path* by vercel.json -> /api/proxy?path=<original path>
 
 module.exports = async function handler(req, res) {
   try {
-    const tunnel = process.env.NEXUS_TUNNEL_URL;
+    const tunnel = (process.env.NEXUS_TUNNEL_URL || '').trim();
     if (!tunnel) {
       res.status(500).json({ ok: false, error: 'NEXUS_TUNNEL_URL is not configured' });
       return;
     }
-    const parts = req.query.path || [];
-    const path = Array.isArray(parts) ? parts.join('/') : String(parts);
+    const url = new URL(req.url, 'http://localhost');
+    const path = url.searchParams.get('path') || '';
+    url.searchParams.delete('path');
+
     const target = new URL(tunnel.replace(/\/+$/, '') + '/api/' + path);
+    url.searchParams.forEach((value, key) => target.searchParams.append(key, value));
 
-    // forward query string
-    const qs = new URL(req.url, 'http://localhost').searchParams;
-    qs.forEach((value, key) => target.searchParams.append(key, value));
-
-    // forward relevant headers
     const headers = {};
     ['content-type', 'authorization', 'accept', 'x-nexus-token', 'x-api-key'].forEach((h) => {
       const v = req.headers[h];
