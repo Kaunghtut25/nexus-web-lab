@@ -225,19 +225,9 @@ export default function ChatWidget() {
     };
   }, [messages]);
 
-  // PROACTIVE WELCOME: auto-open the chat once per session (6s delay, once ever)
-  useEffect(() => {
-    try {
-      if (localStorage.getItem("nwl_chat_autoopened")) return;
-      const t = setTimeout(() => {
-        localStorage.setItem("nwl_chat_autoopened", "1");
-        setOpen(true);
-      }, 6000);
-      return () => clearTimeout(t);
-    } catch {
-      return;
-    }
-  }, []);
+  // NOTE: auto-open removed (2026-08-10) — it made the chat "pop up" on its
+  // own, especially during zoom/resize. The chat now only opens on button click.
+  // The button still pulses subtly to draw attention to the assistant.
 
   // AUTO-GREET: when the chat opens with no messages yet, send "Hi" once so the
   // bot shows its bilingual welcome (greetedRef guards against duplicates)
@@ -379,21 +369,25 @@ export default function ChatWidget() {
       {/* Floating Button */}
       <button
         onClick={() => setOpen(!open)}
-        className={`fixed bottom-5 right-5 z-[9999] w-12 h-12 rounded-full shadow-xl flex items-center justify-center transition-all duration-300 ${
+        className={`fixed right-4 z-[9999] w-12 h-12 rounded-full shadow-xl flex items-center justify-center transition-all duration-300 ${
           open
             ? "bg-white text-slate-600 rotate-90 scale-90 hover:scale-95"
             : "bg-gradient-to-br from-blue to-cyan text-white hover:scale-110 hover:shadow-blue/30"
         }`}
+        style={{ bottom: "calc(env(safe-area-inset-bottom, 0px) + 1rem)" }}
         aria-label={open ? "Close chat" : "Open chat"}
       >
         {open ? <X size={22} /> : <MessageCircle size={22} />}
       </button>
 
-      {/* Chat Panel */}
+      {/* Chat Panel — responsive: never wider than viewport, never taller than
+          viewport (works at any zoom level, on any device). Height shrinks to
+          fit small screens; on desktop it caps at 460px. */}
       <div
-        className={`fixed bottom-[4.5rem] right-4 z-[9999] w-[calc(100vw-2rem)] sm:w-[380px] max-w-[380px] bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden transition-all duration-300 origin-bottom-right ${
+        className={`fixed right-3 sm:right-4 z-[9999] w-[min(380px,calc(100vw-1.5rem))] h-[min(460px,calc(100dvh-5.5rem))] flex flex-col bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden transition-all duration-300 origin-bottom-right ${
           open ? "scale-100 opacity-100" : "scale-95 opacity-0 pointer-events-none"
         }`}
+        style={{ bottom: "calc(env(safe-area-inset-bottom, 0px) + 4.5rem)" }}
         role="dialog"
         aria-label="Nexus AI chat"
       >
@@ -420,10 +414,10 @@ export default function ChatWidget() {
           </div>
         )}
 
-        {/* Messages */}
-        <div className="h-[350px] overflow-y-auto p-4 space-y-3 bg-slate-50">
+        {/* Messages — flex-1 so it fills whatever height the panel settled on */}
+        <div className="flex-1 min-h-0 overflow-y-auto p-4 space-y-3 bg-slate-50">
           {messages.length === 0 && (
-            <div className="text-center py-8">
+            <div className="text-center py-6">
               <Sparkles size={40} className="text-blue/30 mx-auto mb-3" />
               {ctx === "course" ? (
                 <>
@@ -532,7 +526,7 @@ export default function ChatWidget() {
 
         {/* Quick replies — one-tap questions, localized to the visitor's language */}
         {!loading && (
-          <div className="px-3 pt-2 bg-white flex flex-wrap gap-1.5">
+          <div className="px-3 pt-2 pb-1 bg-white flex flex-wrap gap-1.5">
             {(lang === "mm"
               ? ctx === "course"
                 ? ["သင်တန်းကြေး 💰", "Module တွေ 📚", "စာရင်းသွင်းနည်း 🚀", "လူနဲ့ စကားပြောချင်တယ် 👤"]
