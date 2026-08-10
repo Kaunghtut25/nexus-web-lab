@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import Image from "next/image";
@@ -8,27 +9,24 @@ import { Send, ArrowRight, CheckCircle, Clock, Shield, Sparkles } from "lucide-r
 export default function GetQuote() {
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [prefill, setPrefill] = useState("");
+  const searchParams = useSearchParams();
 
   // Read CTA context (?svc=...&msg=...) to prefill message box + service select.
+  const prefill = searchParams.get("msg") || "";
+  const svcParam = searchParams.get("svc") || "";
+
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const msg = params.get("msg");
-    const svc = params.get("svc");
-    if (msg) setPrefill(msg);
-    if (svc) {
-      const el = document.querySelector<HTMLSelectElement>('select[name="service"]');
-      if (el) {
-        const norm = (s: string) => s.toLowerCase().replace(/[&\/]/g, ' ').replace(/\s+/g, ' ').trim();
-        const nval = norm(svc);
-        const match = [...el.options].find((o) => {
-          const no = norm(o.value), nt = norm(o.text);
-          return no && (no.includes(nval) || nval.includes(no) || nt.includes(nval) || nval.includes(nt));
-        });
-        if (match) el.value = match.value;
-      }
-    }
-  }, []);
+    if (!svcParam) return;
+    const el = document.querySelector<HTMLSelectElement>('select[name="service"]');
+    if (!el) return;
+    const norm = (s: string) => s.toLowerCase().replace(/[&\/]/g, ' ').replace(/\s+/g, ' ').trim();
+    const nval = norm(svcParam);
+    const match = [...el.options].find((o) => {
+      const no = norm(o.value), nt = norm(o.text);
+      return no && (no.includes(nval) || nval.includes(no) || nt.includes(nval) || nval.includes(nt));
+    });
+    if (match) el.value = match.value;
+  }, [svcParam]);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault(); setLoading(true);

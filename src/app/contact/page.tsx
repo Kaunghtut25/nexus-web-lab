@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import Image from "next/image";
@@ -10,35 +11,31 @@ export default function Contact() {
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
   const [settings, setSettings] = useState<Record<string,string>>({});
+  const searchParams = useSearchParams();
 
   // Read context passed from chatbot (/contact?chat=...) or CTA buttons
   // (/contact?svc=...&msg=...) — prefill the message box + service select.
-  const [chatContext, setChatContext] = useState("");
+  const chatContext = searchParams.get("msg") || searchParams.get("chat") || "";
+  const svcParam = searchParams.get("svc") || "";
+
+  // Apply service select once params are available (client-side only).
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const msg = params.get("msg") || params.get("chat");
-    const svc = params.get("svc");
-    if (msg) setChatContext(msg);
-    const setService = (val: string) => {
-      const el = document.querySelector<HTMLSelectElement>('select[name="service"]');
-      if (!el) return;
-      const norm = (s: string) => s.toLowerCase().replace(/[&\/]/g, ' ').replace(/\s+/g, ' ').trim();
-      const nval = norm(val);
-      const match = [...el.options].find((o) => {
-        const no = norm(o.value), nt = norm(o.text);
-        return no && (no.includes(nval) || nval.includes(no) || nt.includes(nval) || nval.includes(nt));
-      });
-      if (match) el.value = match.value;
-    };
-    if (svc) setService(svc);
-    else if (msg) {
-      // Auto-detect the service from the conversation/message text
-      const lower = msg.toLowerCase();
+    const val = svcParam || (chatContext ? (() => {
+      const lower = chatContext.toLowerCase();
       const services = ["web development", "e-commerce", "ui/ux", "seo", "hosting", "maintenance", "chatbot"];
-      const found = services.find((s) => lower.includes(s));
-      if (found) setService(found);
-    }
-  }, []);
+      return services.find((s) => lower.includes(s)) || "";
+    })() : "");
+    if (!val) return;
+    const el = document.querySelector<HTMLSelectElement>('select[name="service"]');
+    if (!el) return;
+    const norm = (s: string) => s.toLowerCase().replace(/[&\/]/g, ' ').replace(/\s+/g, ' ').trim();
+    const nval = norm(val);
+    const match = [...el.options].find((o) => {
+      const no = norm(o.value), nt = norm(o.text);
+      return no && (no.includes(nval) || nval.includes(no) || nt.includes(nval) || nval.includes(nt));
+    });
+    if (match) el.value = match.value;
+  }, [svcParam, chatContext]);
 
   useEffect(() => {
     fetch('/api/settings').then(r=>r.json()).then(d=>setSettings(d.settings||{}));
