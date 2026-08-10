@@ -216,6 +216,8 @@ function detectLang(text: string): "mm" | "en" {
 const QUOTE_RE =
   /(get|need|want|request|ask for|have|like).{0,18}(quote|quotation|estimate)|hire (you|your team|nexus)|start (a|my|our) project|build (me|us|a) (website|web\s?sit|ecommerce|e-commerce|store|shop)|i want to order|order a website|start working with|quote လိုချင်|ဘတ်ဂျက် ရှိ|ဈေးနှုန်း လိုချင်|project စချင်|website ဆောက်ချင်/i;
 const quoteAlerted = new Map<string, number>();
+// Dedupe lead alerts — 1 Telegram lead ping per visitor per 10 min.
+const leadAlerted = new Map<string, number>();
 
 async function handleQuoteIntent(
   visitorId: string,
@@ -365,16 +367,34 @@ export async function POST(req: NextRequest) {
     // ── AUTOMATION (v1): language detect + nurture capture + quote intent ──
     const lang = detectLang(lastUserContent);
     const leadInfo = extractLeadInfo(normalized);
-    if (leadInfo?.email && visitorId) {
+    if (leadInfo && visitorId) {
       try {
-        const existing = await dbAll("SELECT id FROM lead_nurture WHERE visitor_id = ? AND email = ? LIMIT 1", [
-          visitorId,
-          leadInfo.email,
-        ]);
-        if (!existing.length) {
-          await dbRun("INSERT INTO lead_nurture (id, visitor_id, email, phone, name) VALUES (?, ?, ?, ?, ?)", [
-            randomUUID(), visitorId, leadInfo.email, leadInfo.phone || "", leadInfo.name || "",
+        // Save to nurture table (keyed by email when available)
+        if (leadInfo.email) {
+          const existing = await dbAll("SELECT id FROM lead_nurture WHERE visitor_id = ? AND email = ? LIMIT 1", [
+            visitorId,
+            leadInfo.email,
           ]);
+          if (!existing.length) {
+            await dbRun("INSERT INTO lead_nurture (id, visitor_id, email, phone, name) VALUES (?, ?, ?, ?, ?)", [
+              randomUUID(), visitorId, leadInfo.email, leadInfo.phone || "", leadInfo.name || "",
+            ]);
+          }
+        }
+        // 📢 Telegram alert — one per visitor per 10 min. Covers the Messenger
+        // path, where the widget's /api/lead debounce never fires.
+        const now = Date.now();
+        if ((leadAlerted.get(visitorId) || 0) < now - 10 * 60 * 1000) {
+          leadAlerted.set(visitorId, now);
+          const isMessenger = visitorId.startsWith("fb:");
+          void notifyTelegram(
+            `🆕 *NEW LEAD — contact info captured*${isMessenger ? " (📱 Messenger)" : " (💬 Website Chat)"}\n\n` +
+            `${leadInfo.name ? `👤 Name: ${leadInfo.name}\n` : ""}` +
+            `${leadInfo.email ? `📧 Email: ${leadInfo.email}\n` : ""}` +
+            `${leadInfo.phone ? `📱 Phone: ${leadInfo.phone}\n` : ""}` +
+            `🔎 Visitor: \`${visitorId.slice(0, 20)}…\`\n\n` +
+            `➡️ https://nexusweblab.com/admin/leads`
+          );
         }
       } catch (e) {
         console.error("[chat] nurture capture failed:", String(e).slice(0, 200));
