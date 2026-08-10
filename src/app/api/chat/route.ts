@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { randomUUID } from "crypto";
 import { dbRun, dbAll } from "@/lib/db";
+import { notifyTelegram } from "@/lib/notify";
 import { coursePromptSection, courseFallbackReply } from "@/lib/course-knowledge";
+import { extractLeadInfo } from "@/lib/lead";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -145,6 +147,82 @@ export async function OPTIONS() {
   return new NextResponse(null, { status: 204, headers: corsHeaders() });
 }
 
+// ── HUMAN HANDOFF (v1, 2026-08-10) ──
+// Visitor asks to talk to a real person → open a handoff request, notify the
+// owner on Telegram, and surface staff replies (from /admin/chats) back to the
+// visitor through the widget poll endpoint.
+const HANDOFF_RE =
+  /(talk|speak|chat|connect|contact|need|want|request).{0,24}(human|real person|staff|representative|agent|support team|customer support|customer service)|talk to human|real person|human agent|human support|လူနဲ့|လူ တစ်ယောက်|လူတစ်ယောက်|ဆရာနဲ့|staff နဲ့|human နဲ့|customer service/i;
+
+async function ensureHandoff(visitorId: string, context: "website" | "course"): Promise<boolean> {
+  try {
+    const rows = await dbAll(
+      "SELECT id FROM chat_handoffs WHERE visitor_id = ? AND context = ? AND status = 'open' LIMIT 1",
+      [visitorId, context]
+    );
+    if (rows.length) return true; // already open — keep it
+    await dbRun("INSERT INTO chat_handoffs (id, visitor_id, context, status) VALUES (?, ?, ?, 'open')", [
+      randomUUID(),
+      visitorId,
+      context,
+    ]);
+    return true;
+  } catch (e) {
+    console.error("[chat] handoff create failed:", String(e).slice(0, 200));
+    return false;
+  }
+}
+
+async function loadStaffMessages(visitorId: string, context: string) {
+  try {
+    return await dbAll(
+      "SELECT id, content FROM chat_staff_messages WHERE visitor_id = ? AND context = ? ORDER BY created_at ASC, rowid ASC",
+      [visitorId, context]
+    );
+  } catch (e) {
+    console.error("[chat] staff load failed:", String(e).slice(0, 200));
+    return [];
+  }
+}
+
+// ── AUTOMATION HELPERS (v1, 2026-08-10) ──
+// 1) Language detection — returned to the widget so quick-replies + banners
+//    localize to the visitor's language (Burmese ↔ English).
+function detectLang(text: string): "mm" | "en" {
+  return /[\u1000-\u109F]/.test(text) ? "mm" : "en";
+}
+
+// 2) Quote intent — "hire us / start a project / get a quote" → auto-create a
+//    quote draft in /admin/quotes + Telegram alert (deduped 10 min per visitor).
+const QUOTE_RE =
+  /(get|need|want|request|ask for|have|like).{0,18}(quote|quotation|estimate)|hire (you|your team|nexus)|start (a|my|our) project|build (me|us|a) (website|web\s?sit|ecommerce|e-commerce|store|shop)|i want to order|order a website|start working with|quote လိုချင်|ဘတ်ဂျက် ရှိ|ဈေးနှုန်း လိုချင်|project စချင်|website ဆောက်ချင်/i;
+const quoteAlerted = new Map<string, number>();
+
+async function handleQuoteIntent(
+  visitorId: string,
+  context: "website" | "course",
+  info: { name?: string; email?: string; phone?: string; service?: string } | null,
+  lastMsg: string
+) {
+  try {
+    const now = Date.now();
+    if ((quoteAlerted.get(visitorId) || 0) > now - 10 * 60 * 1000) return; // dedupe 10 min
+    quoteAlerted.set(visitorId, now);
+    await dbRun("INSERT INTO quotes (id, name, email, phone, service, budget, timeline, message) VALUES (?,?,?,?,?,?,?,?)", [
+      randomUUID(), info?.name || "", info?.email || "", info?.phone || "", info?.service || "Not specified", "", "", String(lastMsg).slice(0, 500),
+    ]);
+    void notifyTelegram(
+      `📋 *NEW QUOTE REQUEST* (${context})\n\nVisitor: \`${visitorId.slice(0, 12)}…\`${info?.name ? `\n👤 Name: ${info.name}` : ""}${info?.email ? `\n📧 Email: ${info.email}` : ""}${info?.phone ? `\n📱 Phone: ${info.phone}` : ""}\n🌐 Service: ${info?.service || "?"}\n\n“${String(lastMsg).slice(0, 200)}”\n\n➡️ https://nexusweblab.com/admin/quotes`
+    );
+  } catch (e) {
+    console.error("[chat] quote intent failed:", String(e).slice(0, 200));
+  }
+}
+
+// 3) Handoff alert throttle — 1 alert per 10 min per visitor. A second ping while
+//    waiting escalates to "STILL WAITING" instead of spamming.
+const handoffAlerted = new Map<string, number>();
+
 function websiteFallbackReply(text: string, isFirst: boolean): string {
   if (text.includes("price") || text.includes("cost") || text.includes("how much") || text.includes("budget") || text.includes("ဈေး")) {
     return "Our international pricing (USD):\n• Web Development — from $500\n• E-Commerce — from $800\n• UI/UX Design — from $300\n• SEO — from $200\n• Hosting — from $50/mo\n• Maintenance — from $30/mo\n\nWe also accept MMK (1 USD ≈ 4,500 MMK). Want a custom quote? Visit our contact page or email info@nexusweblab.com 😊";
@@ -187,9 +265,76 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // The last user message (to persist + fallback on)
     const lastUserContent = [...normalized].reverse().find((m) => m.role === "user")?.content || "";
     const text = String(lastUserContent).toLowerCase();
+
+    // ── AUTOMATION (v1): language detect + nurture capture + quote intent ──
+    const lang = detectLang(lastUserContent);
+    const leadInfo = extractLeadInfo(normalized);
+    if (leadInfo?.email && visitorId) {
+      try {
+        const existing = await dbAll("SELECT id FROM lead_nurture WHERE visitor_id = ? AND email = ? LIMIT 1", [
+          visitorId,
+          leadInfo.email,
+        ]);
+        if (!existing.length) {
+          await dbRun("INSERT INTO lead_nurture (id, visitor_id, email, phone, name) VALUES (?, ?, ?, ?, ?)", [
+            randomUUID(), visitorId, leadInfo.email, leadInfo.phone || "", leadInfo.name || "",
+          ]);
+        }
+      } catch (e) {
+        console.error("[chat] nurture capture failed:", String(e).slice(0, 200));
+      }
+    }
+    if (visitorId && QUOTE_RE.test(text)) {
+      await handleQuoteIntent(visitorId, ctx, leadInfo, lastUserContent);
+    }
+
+    // ── HUMAN HANDOFF: detect request, open handoff, inject staff replies ──
+    const wantsHandoff = HANDOFF_RE.test(text);
+    const staffMsgs = visitorId ? await loadStaffMessages(visitorId, ctx) : [];
+    const lastStaff = staffMsgs.length ? String(staffMsgs[staffMsgs.length - 1].content) : null;
+    const handoffWasOpen = visitorId
+      ? !!((await dbAll("SELECT id FROM chat_handoffs WHERE visitor_id = ? AND context = ? AND status = 'open' LIMIT 1", [visitorId, ctx]).catch(() => [])) as any[]).length
+      : false;
+    let handoffActive = false;
+    if (wantsHandoff && visitorId) {
+      handoffActive = await ensureHandoff(visitorId, ctx);
+      if (handoffActive) {
+        // Let the LLM know staff already replied (if any) so it never contradicts them
+        if (staffMsgs.length) {
+          memory = [
+            ...memory,
+            ...staffMsgs.slice(-6).map((m: any) => ({
+              role: "assistant",
+              content: `[STAFF NOTE] ${String(m.content).slice(0, 1000)}`,
+            })),
+          ];
+        }
+        // Fire-and-forget Telegram alert with the recent transcript (throttled:
+        // 1 per 10 min; a re-ping while waiting escalates to STILL WAITING)
+        try {
+          const nowTs = Date.now();
+          const lastAlert = handoffAlerted.get(visitorId) || 0;
+          if (nowTs - lastAlert >= 10 * 60 * 1000) {
+            handoffAlerted.set(visitorId, nowTs);
+            const rows = await dbAll(
+              "SELECT role, content FROM chat_messages WHERE visitor_id = ? AND context = ? ORDER BY created_at DESC, rowid DESC LIMIT 10",
+              [visitorId, ctx]
+            );
+            const transcript = rows
+              .reverse()
+              .map((r: any) => `${r.role === "user" ? "Customer" : "Bot"}: ${String(r.content).slice(0, 200)}`)
+              .join("\n");
+            const isMessenger = visitorId.startsWith("fb:");
+            void notifyTelegram(
+              `${handoffWasOpen ? "⚠️ *STILL WAITING — customer pinged again*" : "🤝 *HUMAN HANDOFF REQUESTED*"} (${ctx})\n\nVisitor: \`${visitorId.slice(0, 12)}…\`${isMessenger ? `\n📱 Messenger — PSID \`${visitorId.slice(3, 18)}…\`` : ""}\n\n${transcript}\n\n➡️ ${ctx === "course" ? "https://nexusweblab.com/course" : "https://nexusweblab.com"}/admin/chats${isMessenger ? "\n💬 Reply there → auto-pushes to Messenger" : ""}`
+            );
+          }
+        } catch {}
+      }
+    }
+    const extraFields = { handoff: handoffActive, staffReply: lastStaff, lang };
 
     // ── FOUNDER DIRECT-ANSWER OVERRIDE (deterministic — never wrong, never greets) ──
     // If the user asks about the founder/owner/teacher, answer immediately with the
@@ -202,7 +347,7 @@ export async function POST(req: NextRequest) {
           ? "The course teacher is **U Kaung Htut (ဆရာ ဦးကောင်းထွဋ်)** — the founder of Nexus Web Lab. He is a web developer who builds websites (Next.js, React, AI chatbots) and creates AI content. He wrote this course to teach Myanmar freelancers how to earn with AI. 😊"
           : "The founder & lead developer of Nexus Web Lab is **U Kaung Htut (ဦးကောင်းထွဋ်)**. He builds websites himself and creates content/videos using AI tools. Contact him directly: info@nexusweblab.com or Viber 09945598825. 😊";
       if (visitorId) await saveExchange(visitorId, ctx, normalized, founderReply);
-      return NextResponse.json({ reply: founderReply }, { headers: corsHeaders() });
+      return NextResponse.json({ reply: founderReply, ...extraFields }, { headers: corsHeaders() });
     }
 
     // ── Local keyword fallback (context-aware) when no API key ──
@@ -214,7 +359,7 @@ export async function POST(req: NextRequest) {
         reply = websiteFallbackReply(text, normalized.length <= 1);
       }
       if (visitorId) await saveExchange(visitorId, ctx, normalized, reply);
-      return NextResponse.json({ reply }, { headers: corsHeaders() });
+      return NextResponse.json({ reply, ...extraFields }, { headers: corsHeaders() });
     }
 
     // ── DeepSeek call with timeout + retry ──
@@ -272,12 +417,12 @@ export async function POST(req: NextRequest) {
         ? (courseFallbackReply(text) || websiteFallbackReply(text, normalized.length <= 1))
         : websiteFallbackReply(text, normalized.length <= 1);
       if (visitorId) await saveExchange(visitorId, ctx, normalized, fallback);
-      return NextResponse.json({ reply: fallback }, { headers: corsHeaders() });
+      return NextResponse.json({ reply: fallback, ...extraFields }, { headers: corsHeaders() });
     }
 
     // Persist the exchange so the bot remembers this student next time
     if (visitorId) await saveExchange(visitorId, ctx, normalized, reply);
-    return NextResponse.json({ reply }, { headers: corsHeaders() });
+    return NextResponse.json({ reply, ...extraFields }, { headers: corsHeaders() });
   } catch (e: any) {
     return NextResponse.json(
       { reply: "Sorry, I'm having a temporary connection issue. Please try again or email info@nexusweblab.com 😊", error: String(e?.message || e).slice(0, 200) },

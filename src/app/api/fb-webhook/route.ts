@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { after } from "next/server";
+import { sendMessenger, sendMessengerAction } from "@/lib/messenger";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -20,8 +21,6 @@ export const dynamic = "force-dynamic";
 // ─────────────────────────────────────────────────────────────
 
 const VERIFY_TOKEN = process.env.FB_VERIFY_TOKEN || "";
-const PAGE_ACCESS_TOKEN = process.env.FB_PAGE_ACCESS_TOKEN || "";
-const GRAPH_API = "https://graph.facebook.com/v21.0/me/messages";
 
 // ── GET: Facebook webhook verification handshake ──
 export async function GET(req: NextRequest) {
@@ -62,6 +61,8 @@ export async function POST(req: NextRequest) {
     for (const event of entry.messaging || []) {
       const senderId = event.sender?.id;
       const messageText = event.message?.text;
+      // Skip echoes (our own outgoing messages) and delivery/read/typing events
+      if (event.message?.is_echo) continue;
       if (senderId && messageText) {
         jobs.push({ senderId, text: messageText });
       }
@@ -92,6 +93,10 @@ export async function POST(req: NextRequest) {
 
 // ── Process one incoming message ──
 async function handleMessage(senderId: string, text: string) {
+  // Typing indicator so the user knows the bot is working
+  await sendMessengerAction(senderId, "mark_seen");
+  await sendMessengerAction(senderId, "typing_on");
+
   // 1. Reuse the same Nexus AI chatbot logic (website context, own memory per FB user)
   const origin = "https://nexusweblab.com";
   const chatRes = await fetch(`${origin}/api/chat`, {
@@ -110,24 +115,8 @@ async function handleMessage(senderId: string, text: string) {
     if (data.reply) reply = data.reply;
   }
 
-  // 2. Send the reply back through Messenger
-  if (!PAGE_ACCESS_TOKEN) {
-    console.error("[fb-webhook] FB_PAGE_ACCESS_TOKEN not set — cannot send reply");
-    return;
-  }
-
-  const sendRes = await fetch(`${GRAPH_API}?access_token=${PAGE_ACCESS_TOKEN}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      recipient: { id: senderId },
-      messaging_type: "RESPONSE",
-      message: { text: reply },
-    }),
-  });
-
-  if (!sendRes.ok) {
-    const errText = await sendRes.text();
-    console.error(`[fb-webhook] Send API failed (${sendRes.status}):`, errText.slice(0, 500));
-  }
+  // 2. Send the reply back through Messenger (markdown stripped → clean text)
+  const ok = await sendMessenger(senderId, reply);
+  await sendMessengerAction(senderId, "typing_off");
+  if (!ok) console.error("[fb-webhook] could not deliver reply to", senderId);
 }
