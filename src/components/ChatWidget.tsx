@@ -277,22 +277,74 @@ export default function ChatWidget() {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: history, visitorId: visitorIdRef.current, context: ctx }),
+        body: JSON.stringify({ messages: history, visitorId: visitorIdRef.current, context: ctx, stream: true }),
         signal: controller.signal,
       });
-      const data = await res.json();
-      const reply = (data?.reply || "").trim();
-      if (data?.handoff) setHandoffActive(true);
-      if (data?.lang) setLang(data.lang);
-      // Typing feel: keep the indicator at least ~700ms so replies feel human
-      const wait = Math.max(0, 700 - (Date.now() - started));
-      await new Promise((r) => setTimeout(r, wait));
-      if (!stoppedRef.current) {
-        setMessages((prev) => [...prev, { role: "bot", text: reply || getReply(text) }]);
+      const ctype = res.headers.get("content-type") || "";
+      if (ctype.includes("text/event-stream") && res.body) {
+        // Streaming: show tokens as they arrive
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let reply = "";
+        let placeholderAdded = false;
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          const chunk = decoder.decode(value, { stream: true });
+          for (const line of chunk.split("\n")) {
+            const t = line.trim();
+            if (!t.startsWith("data:")) continue;
+            const payload = t.slice(5).trim();
+            if (!payload) continue;
+            let evt: any;
+            try { evt = JSON.parse(payload); } catch { continue; }
+            if (typeof evt.delta === "string" && evt.delta) {
+              if (!placeholderAdded) {
+                placeholderAdded = true;
+                setLoading(false);
+                setMessages((prev) => [...prev, { role: "bot", text: "" }]);
+              }
+              reply += evt.delta;
+              setMessages((prev) => prev.map((m, i) => (i === prev.length - 1 ? { ...m, text: reply } : m)));
+            } else if (evt.done) {
+              if (evt.handoff) setHandoffActive(true);
+              if (evt.lang) setLang(evt.lang);
+              const finalText = (reply || evt.reply || getReply(text)).trim();
+              if (!placeholderAdded) {
+                setLoading(false);
+                setMessages((prev) => [...prev, { role: "bot", text: finalText }]);
+              } else {
+                setMessages((prev) => prev.map((m, i) => (i === prev.length - 1 ? { ...m, text: finalText } : m)));
+              }
+              reply = finalText;
+            }
+          }
+        }
+        if (placeholderAdded && reply) {
+          setMessages((prev) => prev.map((m, i) => (i === prev.length - 1 ? { ...m, text: reply } : m)));
+        }
+      } else {
+        const data = await res.json();
+        const reply = (data?.reply || "").trim();
+        if (data?.handoff) setHandoffActive(true);
+        if (data?.lang) setLang(data.lang);
+        // Typing feel: keep the indicator at least ~700ms so replies feel human
+        const wait = Math.max(0, 700 - (Date.now() - started));
+        await new Promise((r) => setTimeout(r, wait));
+        if (!stoppedRef.current) {
+          setMessages((prev) => [...prev, { role: "bot", text: reply || getReply(text) }]);
+        }
       }
     } catch {
       if (!stoppedRef.current) {
-        setMessages((prev) => [...prev, { role: "bot", text: getReply(text) }]);
+        const fb = getReply(text);
+        setMessages((prev) => {
+          const last = prev[prev.length - 1];
+          if (last?.role === "bot" && !last.text.trim()) {
+            return prev.map((m, i) => (i === prev.length - 1 ? { ...m, text: fb } : m));
+          }
+          return [...prev, { role: "bot", text: fb }];
+        });
       }
     } finally {
       setLoading(false);

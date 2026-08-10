@@ -7,6 +7,7 @@ import { extractLeadInfo } from "@/lib/lead";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+export const maxDuration = 60; // streaming chat needs headroom
 
 // ─────────────────────────────────────────────────────────────
 // NEXUS WEB LAB — CHATBOT (v5, 2026-08-07)
@@ -288,7 +289,7 @@ function websiteFallbackReply(text: string, isFirst: boolean): string {
 
 export async function POST(req: NextRequest) {
   try {
-    const { messages = [], visitorId = "", context = "website" } = await req.json();
+    const { messages = [], visitorId = "", context = "website", stream: bodyStream = false } = await req.json();
     const ctx: "website" | "course" = context === "course" ? "course" : "website";
     const guideline = ctx === "course" ? COURSE_GUIDELINE : WEBSITE_GUIDELINE;
 
@@ -388,6 +389,25 @@ export async function POST(req: NextRequest) {
       }
     }
     const extraFields = { handoff: handoffActive, staffReply: lastStaff, lang };
+    const wantsStream =
+      bodyStream === true || (req.headers.get("accept") || "").includes("text/event-stream");
+
+    const sendReply = (replyText: string) => {
+      if (!wantsStream) return NextResponse.json({ reply: replyText, ...extraFields }, { headers: corsHeaders() });
+      const encoder = new TextEncoder();
+      const st = new ReadableStream({
+        start(controller) {
+          try {
+            controller.enqueue(encoder.encode(`data: ${JSON.stringify({ delta: replyText })}\n\n`));
+            controller.enqueue(encoder.encode(`data: ${JSON.stringify({ done: true, reply: replyText, ...extraFields })}\n\n`));
+          } catch {}
+          try { controller.close(); } catch {}
+        },
+      });
+      return new Response(st, {
+        headers: { "Content-Type": "text/event-stream", "Cache-Control": "no-cache, no-transform", Connection: "keep-alive", ...corsHeaders() },
+      });
+    };
 
     // ── FOUNDER DIRECT-ANSWER OVERRIDE (deterministic — never wrong, never greets) ──
     // If the user asks about the founder/owner/teacher, answer immediately with the
@@ -413,7 +433,81 @@ export async function POST(req: NextRequest) {
       }
       void logUnanswered(visitorId, lastUserContent, reply);
       if (visitorId) await saveExchange(visitorId, ctx, normalized, reply);
-      return NextResponse.json({ reply, ...extraFields }, { headers: corsHeaders() });
+      return sendReply(reply);
+    }
+
+    // ── Streaming branch (SSE): tokens flow to the client as they're generated ──
+    if (wantsStream) {
+      const encoder = new TextEncoder();
+      const stream = new ReadableStream({
+        async start(controller) {
+          try {
+            const isFirst = normalized.length <= 1 && memory.length === 0;
+            const greetingHint = isFirst
+              ? ""
+              : "\n\nIMPORTANT: This is a FOLLOW-UP message — the customer has already been greeted. Do NOT greet again, do NOT say welcome/မင်္ဂလာပါ, do NOT re-list everything. Just answer their question directly.";
+            const response = await fetch(`${API_URL}/chat/completions`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${API_KEY}`,
+              },
+              body: JSON.stringify({
+                model: MODEL,
+                stream: true,
+                max_tokens: 800,
+                messages: [
+                  { role: "system", content: guideline + knowledge + greetingHint },
+                  ...memory.slice(-12),
+                  ...normalized.slice(-12),
+                ],
+              }),
+              signal: AbortSignal.timeout(45000),
+            });
+            if (!response.ok || !response.body) throw new Error(`DeepSeek ${response.status}`);
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            let reply = "";
+            while (true) {
+              const { done, value } = await reader.read();
+              if (done) break;
+              const chunk = decoder.decode(value, { stream: true });
+              for (const line of chunk.split("\n")) {
+                const t = line.trim();
+                if (!t.startsWith("data:")) continue;
+                const payload = t.slice(5).trim();
+                if (!payload || payload === "[DONE]") continue;
+                try {
+                  const obj = JSON.parse(payload);
+                  const delta = obj.choices?.[0]?.delta?.content || "";
+                  if (delta) {
+                    reply += delta;
+                    controller.enqueue(encoder.encode(`data: ${JSON.stringify({ delta })}\n\n`));
+                  }
+                } catch {}
+              }
+            }
+            reply = reply.trim();
+            if (!reply) throw new Error("empty reply");
+            if (visitorId) await saveExchange(visitorId, ctx, normalized, reply);
+            controller.enqueue(encoder.encode(`data: ${JSON.stringify({ done: true, reply, ...extraFields })}\n\n`));
+            controller.close();
+          } catch (err: any) {
+            console.error("[chat] stream failed:", String(err?.message || err).slice(0, 200));
+            const fb = ctx === "course" ? (courseFallbackReply(text) || websiteFallbackReply(text, normalized.length <= 1)) : websiteFallbackReply(text, normalized.length <= 1);
+            void logUnanswered(visitorId, lastUserContent, fb);
+            if (visitorId) await saveExchange(visitorId, ctx, normalized, fb);
+            try {
+              controller.enqueue(encoder.encode(`data: ${JSON.stringify({ delta: fb })}\n\n`));
+              controller.enqueue(encoder.encode(`data: ${JSON.stringify({ done: true, reply: fb, ...extraFields })}\n\n`));
+            } catch {}
+            try { controller.close(); } catch {}
+          }
+        },
+      });
+      return new Response(stream, {
+        headers: { "Content-Type": "text/event-stream", "Cache-Control": "no-cache, no-transform", Connection: "keep-alive", ...corsHeaders() },
+      });
     }
 
     // ── DeepSeek call with timeout + retry ──
@@ -472,12 +566,12 @@ export async function POST(req: NextRequest) {
         : websiteFallbackReply(text, normalized.length <= 1);
       void logUnanswered(visitorId, lastUserContent, fallback);
       if (visitorId) await saveExchange(visitorId, ctx, normalized, fallback);
-      return NextResponse.json({ reply: fallback, ...extraFields }, { headers: corsHeaders() });
+      return sendReply(fallback);
     }
 
     // Persist the exchange so the bot remembers this student next time
     if (visitorId) await saveExchange(visitorId, ctx, normalized, reply);
-    return NextResponse.json({ reply, ...extraFields }, { headers: corsHeaders() });
+    return sendReply(reply);
   } catch (e: any) {
     return NextResponse.json(
       { reply: "Sorry, I'm having a temporary connection issue. Please try again or email info@nexusweblab.com 😊", error: String(e?.message || e).slice(0, 200) },
