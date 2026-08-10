@@ -30,7 +30,8 @@ const WEBSITE_GUIDELINE = `You are Nexus AI, the official virtual assistant for 
 - If asked "who are you" / "ဘယ်သူလဲ", answer: you are Nexus AI, the online assistant of Nexus Web Lab.
 ## FEMALE VOICE (ABSOLUTE — YOU MUST FOLLOW)
 - You ALWAYS speak as a young Burmese woman. Your gender is FEMALE, never male, in every reply, every language.
-- REQUIRED feminine Burmese: use "ကျွန်မ" (I, female), "ကျွန်မတို့" (we, female), and polite endings "ပါ"/"ရှင့်". NEVER use "ကျွန်တော်", "ကျုပ်တို့", "ငါ", or any male pronoun — even if the customer uses male speech or the earlier conversation used male speech, you must stay female.
+- REQUIRED feminine Burmese: use "ကျွန်မ" (I, female), "ကျွန်မတို့" (we, female — the ONLY allowed "we" pronoun), and polite endings "ပါ"/"ရှင့်".
+- 🚫 FORBIDDEN pronouns (never use ANY of these, in any situation): "ကျွန်တော်", "ကျွန်တော်တို့", "ကျုပ်တို့", "ကျုပ်", "ငါ", "ငါတို့" — even if the customer uses male speech or the earlier conversation used male speech, you must stay female.
 - Example of your voice: "မင်္ဂလာပါရှင့်… ရှင့်ကို ဘယ်လိုကူညီပေးရမလဲရှင့်။ ကျွန်မတို့ရဲ့ ဝန်ဆောင်မှုတွေကို မေးမြန်းနိုင်ပါတယ်ရှင့်။"
 - In English replies you may write naturally, but any Burmese you write must be feminine. Never switch to a male persona.
 
@@ -120,7 +121,8 @@ const COURSE_GUIDELINE = `You are Nexus AI, the official virtual assistant for t
 - NEVER claim to be the teacher (ဆရာ) or the course owner. If a student asks who the teacher is, give the teacher's name from the COURSE KNOWLEDGE section below (U Kaung Htut / ဆရာ ဦးကောင်းထွဋ်) — never invent a different name.
 ## FEMALE VOICE (ABSOLUTE — YOU MUST FOLLOW)
 - You ALWAYS speak as a young Burmese woman. Your gender is FEMALE, never male, in every reply, every language.
-- REQUIRED feminine Burmese: use "ကျွန်မ" (I, female), "ကျွန်မတို့" (we, female), and polite endings "ပါ"/"ရှင့်". NEVER use "ကျွန်တော်", "ကျုပ်တို့", "ငါ", or any male pronoun — even if the customer uses male speech or the earlier conversation used male speech, you must stay female.
+- REQUIRED feminine Burmese: use "ကျွန်မ" (I, female), "ကျွန်မတို့" (we, female — the ONLY allowed "we" pronoun), and polite endings "ပါ"/"ရှင့်".
+- 🚫 FORBIDDEN pronouns (never use ANY of these, in any situation): "ကျွန်တော်", "ကျွန်တော်တို့", "ကျုပ်တို့", "ကျုပ်", "ငါ", "ငါတို့" — even if the customer uses male speech or the earlier conversation used male speech, you must stay female.
 - Example of your voice: "မင်္ဂလာပါရှင့်… ရှင့်ကို ဘယ်လိုကူညီပေးရမလဲရှင့်။ ကျွန်မတို့ရဲ့ ဝန်ဆောင်မှုတွေကို မေးမြန်းနိုင်ပါတယ်ရှင့်။"
 - In English replies you may write naturally, but any Burmese you write must be feminine. Never switch to a male persona.
 
@@ -470,8 +472,8 @@ export async function POST(req: NextRequest) {
         reply = websiteFallbackReply(text, normalized.length <= 1);
       }
       void logUnanswered(visitorId, lastUserContent, reply);
-      if (visitorId) await saveExchange(visitorId, ctx, normalized, reply);
-      return sendReply(reply);
+      if (visitorId) await saveExchange(visitorId, ctx, normalized, feminize(reply));
+      return sendReply(feminize(reply));
     }
 
     // ── Streaming branch (SSE): tokens flow to the client as they're generated ──
@@ -517,15 +519,16 @@ export async function POST(req: NextRequest) {
                 if (!payload || payload === "[DONE]") continue;
                 try {
                   const obj = JSON.parse(payload);
-                  const delta = obj.choices?.[0]?.delta?.content || "";
-                  if (delta) {
+                  const deltaRaw = obj.choices?.[0]?.delta?.content || "";
+                  if (deltaRaw) {
+                    const delta = feminize(deltaRaw);
                     reply += delta;
                     controller.enqueue(encoder.encode(`data: ${JSON.stringify({ delta })}\n\n`));
                   }
                 } catch {}
               }
             }
-            reply = reply.trim();
+            reply = feminize(reply.trim());
             if (!reply) throw new Error("empty reply");
             if (visitorId) await saveExchange(visitorId, ctx, normalized, reply);
             controller.enqueue(encoder.encode(`data: ${JSON.stringify({ done: true, reply, ...extraFields })}\n\n`));
@@ -588,7 +591,7 @@ export async function POST(req: NextRequest) {
         }
 
         const data = await response.json();
-        reply = data.choices?.[0]?.message?.content?.trim() || "";
+        reply = feminize(data.choices?.[0]?.message?.content?.trim() || "");
         if (reply) break;
       } catch (err: any) {
         lastErr = err;
@@ -604,7 +607,7 @@ export async function POST(req: NextRequest) {
         : websiteFallbackReply(text, normalized.length <= 1);
       void logUnanswered(visitorId, lastUserContent, fallback);
       if (visitorId) await saveExchange(visitorId, ctx, normalized, fallback);
-      return sendReply(fallback);
+      return sendReply(feminize(fallback));
     }
 
     // Persist the exchange so the bot remembers this student next time
