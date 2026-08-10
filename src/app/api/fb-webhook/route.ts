@@ -174,6 +174,21 @@ async function handleMessage(senderId: string, text: string) {
     return;
   }
 
+  // 2a. Show the "typing…" indicator first so the customer sees the bot is
+  //     writing (sender_action: typing_on → brief pause → typing_off)
+  const typingOn = await fetch(`${GRAPH_API}?access_token=${PAGE_ACCESS_TOKEN}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      recipient: { id: senderId },
+      sender_action: "typing_on",
+    }),
+  }).catch(() => null);
+  if (!typingOn?.ok) console.error("[fb-webhook] typing_on failed:", typingOn?.status);
+
+  // Give the typing indicator a moment to appear before the text arrives
+  await new Promise((r) => setTimeout(r, 700));
+
   const sendRes = await fetch(`${GRAPH_API}?access_token=${PAGE_ACCESS_TOKEN}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -183,6 +198,16 @@ async function handleMessage(senderId: string, text: string) {
       message: { text: reply },
     }),
   });
+
+  // 2b. Clear the typing indicator after the message is sent
+  await fetch(`${GRAPH_API}?access_token=${PAGE_ACCESS_TOKEN}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      recipient: { id: senderId },
+      sender_action: "typing_off",
+    }),
+  }).catch(() => null);
 
   if (!sendRes.ok) {
     const errText = await sendRes.text();
