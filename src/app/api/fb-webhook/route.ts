@@ -22,6 +22,53 @@ export const dynamic = "force-dynamic";
 const VERIFY_TOKEN = process.env.FB_VERIFY_TOKEN || "";
 const PAGE_ACCESS_TOKEN = process.env.FB_PAGE_ACCESS_TOKEN || "";
 const GRAPH_API = "https://graph.facebook.com/v21.0/me/messages";
+const GRAPH_PROFILE_API = "https://graph.facebook.com/v21.0";
+
+// Cache sender first names (PSID → first name) for 30 min to avoid hammering the
+// Graph API on every message. Facebook names rarely change mid-conversation.
+const nameCache = new Map<string, { name: string; at: number }>();
+const NAME_CACHE_MS = 30 * 60 * 1000;
+
+// ── Get the sender's first name from the Graph API (PSID → profile) ──
+// "Kaung Htut" → "Kaung", "Myo Aung" → "Myo", "Maung Maung Oo" → "Maung"
+async function getFirstName(senderId: string): Promise<string> {
+  const cached = nameCache.get(senderId);
+  if (cached && Date.now() - cached.at < NAME_CACHE_MS) return cached.name;
+  let name = "";
+  try {
+    if (PAGE_ACCESS_TOKEN) {
+      const res = await fetch(`${GRAPH_PROFILE_API}/${senderId}?fields=first_name&access_token=${PAGE_ACCESS_TOKEN}`, { cache: "no-store" });
+      if (res.ok) {
+        const d = await res.json();
+        name = (d?.first_name || "").trim();
+      }
+    }
+  } catch (e: any) {
+    console.error("[fb-webhook] getFirstName error:", e?.message || e);
+  }
+  nameCache.set(senderId, { name, at: Date.now() });
+  return name;
+}
+
+// ── Build the Burmese greeting: "မင်္ဂလာပါ Kaung!" ──
+// First name falls back to a friendly generic greeting if the API didn't return one.
+function buildGreeting(firstName: string): string {
+  if (firstName) return `မင်္ဂလာပါ ${firstName}!`;
+  return `မင်္ဂလာပါ!`;
+}
+
+// Is this message a greeting? (English + Burmese)
+const GREETING_RE = /^(hi|hello|hey|mingalaba|mingalar par|မင်္ဂလာပါ|မင်္ဂလာ)\b/i;
+
+// Prepend/swap in the Burmese greeting with the sender's first name, avoiding a
+// duplicate "မင်္ဂလာပါ" when the bot reply already starts with one.
+function applyGreeting(reply: string, firstName: string): string {
+  const g = buildGreeting(firstName);
+  // strip any existing leading Burmese greeting (incl. ရှင့် / ပါ / punctuation)
+  const stripped = reply.replace(/^မင်္ဂလာပါ(ရှင့်|ပါ)?[\s,.!။]*/u, "");
+  const rest = stripped.trim();
+  return rest ? `${g} ${rest}` : g;
+}
 
 // ── GET: Facebook webhook verification handshake ──
 export async function GET(req: NextRequest) {
@@ -62,8 +109,10 @@ export async function POST(req: NextRequest) {
     for (const event of entry.messaging || []) {
       const senderId = event.sender?.id;
       const messageText = event.message?.text;
-      if (senderId && messageText) {
-        jobs.push({ senderId, text: messageText });
+      // Also handle postback payloads (e.g. Get Started button) as a greeting
+      const postbackText = event.postback?.payload === "GET_STARTED" ? "Hi" : "";
+      if (senderId && (messageText || postbackText)) {
+        jobs.push({ senderId, text: messageText || postbackText });
       }
     }
   }
@@ -92,6 +141,10 @@ export async function POST(req: NextRequest) {
 
 // ── Process one incoming message ──
 async function handleMessage(senderId: string, text: string) {
+  // 0. Fetch the sender's first name for the Burmese greeting
+  const firstName = await getFirstName(senderId);
+  const isGreeting = GREETING_RE.test(text.trim());
+
   // 1. Reuse the same Nexus AI chatbot logic (website context, own memory per FB user)
   const origin = "https://nexusweblab.com";
   const chatRes = await fetch(`${origin}/api/chat`, {
@@ -108,6 +161,11 @@ async function handleMessage(senderId: string, text: string) {
   if (chatRes.ok) {
     const data = await chatRes.json();
     if (data.reply) reply = data.reply;
+  }
+
+  // Greeting messages (hi/hello/မင်္ဂလာပါ) start with the Burmese greeting + first name
+  if (isGreeting) {
+    reply = applyGreeting(reply, firstName);
   }
 
   // 2. Send the reply back through Messenger
