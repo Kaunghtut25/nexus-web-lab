@@ -135,6 +135,15 @@ export default function ChatWidget() {
   const endRef = useRef<HTMLDivElement>(null);
   const finalizeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const leadSent = useRef(false);
+  // Human handoff: staff replies from /admin/chats + active state
+  const [handoffActive, setHandoffActive] = useState(false);
+  const [staffMsgs, setStaffMsgs] = useState<{ id: string; text: string }[]>([]);
+  const seenStaffRef = useRef<Set<string>>(new Set());
+  // Automation v1: language detection, stop/abort, proactive welcome
+  const [lang, setLang] = useState<"en" | "mm">("en");
+  const stoppedRef = useRef(false);
+  const abortRef = useRef<AbortController | null>(null);
+  const greetedRef = useRef(false);
 
   // Stable visitor id in localStorage → server stores chat memory per visitor,
   // so the bot remembers this student's previous questions on every visit.
@@ -157,6 +166,31 @@ export default function ChatWidget() {
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  // HUMAN HANDOFF: while the chat is open, poll for staff replies written in
+  // /admin/chats. When staff messages arrive, they render as team bubbles and
+  // the handoff banner shows. afterId = last seen staff message id.
+  useEffect(() => {
+    if (!open) return;
+    let stopped = false;
+    const tick = async () => {
+      if (stopped || !visitorIdRef.current) return;
+      try {
+        const afterId = Array.from(seenStaffRef.current).pop() || "";
+        const r = await fetch(`/api/handoffs/poll?visitorId=${encodeURIComponent(visitorIdRef.current)}&context=${ctx}&afterId=${encodeURIComponent(afterId)}`);
+        const d = await r.json();
+        const fresh = (d?.messages || []).filter((m: any) => !seenStaffRef.current.has(m.id));
+        fresh.forEach((m: any) => seenStaffRef.current.add(m.id));
+        if (fresh.length) {
+          setStaffMsgs((s) => [...s, ...fresh.map((m: any) => ({ id: m.id, text: m.content }))]);
+          setHandoffActive(true);
+        }
+      } catch {}
+    };
+    tick();
+    const t = setInterval(tick, 10000);
+    return () => { stopped = true; clearInterval(t); };
+  }, [open, ctx]);
 
   // Once per conversation: after the client stops typing for ~8s, send the FULL
   // transcript to /api/lead so the owner gets ONE consolidated Telegram message
@@ -187,20 +221,49 @@ export default function ChatWidget() {
     };
   }, [messages]);
 
+  // PROACTIVE WELCOME: auto-open the chat once per session (6s delay, once ever)
+  useEffect(() => {
+    try {
+      if (localStorage.getItem("nwl_chat_autoopened")) return;
+      const t = setTimeout(() => {
+        localStorage.setItem("nwl_chat_autoopened", "1");
+        setOpen(true);
+      }, 6000);
+      return () => clearTimeout(t);
+    } catch {
+      return;
+    }
+  }, []);
+
+  // AUTO-GREET: when the chat opens with no messages yet, send "Hi" once so the
+  // bot shows its bilingual welcome (greetedRef guards against duplicates)
+  useEffect(() => {
+    if (!open || messages.length > 0 || greetedRef.current) return;
+    greetedRef.current = true;
+    const t = setTimeout(() => sendText("Hi"), 400);
+    return () => clearTimeout(t);
+  }, [open]);
+
   async function send() {
     const text = input.trim();
     if (!text || loading) return;
     setInput("");
+    sendText(text);
+  }
+
+  async function sendText(raw: string) {
+    const text = raw.trim();
+    if (!text || loading) return;
     const userMsg = { role: "user" as const, text };
     setMessages((prev) => [...prev, userMsg]);
     setLoading(true);
-
+    stoppedRef.current = false;
+    const controller = new AbortController();
+    abortRef.current = controller;
+    const started = Date.now();
     try {
-      // Try the real AI backend first (server-side DeepSeek + knowledge guideline)
-      // Send OpenAI-style messages ({role, content}) — DeepSeek rejects {text}.
       // Send FULL history (user + bot) so the model knows it already greeted
       // and never repeats the greeting on follow-up messages.
-      // Map bot → assistant: DeepSeek/OpenAI only accept system/user/assistant.
       const history = [...messages, userMsg]
         .slice(-12)
         .map((m) => ({
@@ -211,16 +274,31 @@ export default function ChatWidget() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ messages: history, visitorId: visitorIdRef.current, context: ctx }),
+        signal: controller.signal,
       });
       const data = await res.json();
       const reply = (data?.reply || "").trim();
-      setMessages((prev) => [...prev, { role: "bot", text: reply || getReply(text) }]);
+      if (data?.handoff) setHandoffActive(true);
+      if (data?.lang) setLang(data.lang);
+      // Typing feel: keep the indicator at least ~700ms so replies feel human
+      const wait = Math.max(0, 700 - (Date.now() - started));
+      await new Promise((r) => setTimeout(r, wait));
+      if (!stoppedRef.current) {
+        setMessages((prev) => [...prev, { role: "bot", text: reply || getReply(text) }]);
+      }
     } catch {
-      // Offline fallback — keyword replies with updated info
-      setMessages((prev) => [...prev, { role: "bot", text: getReply(text) }]);
+      if (!stoppedRef.current) {
+        setMessages((prev) => [...prev, { role: "bot", text: getReply(text) }]);
+      }
     } finally {
       setLoading(false);
     }
+  }
+
+  function stop() {
+    stoppedRef.current = true;
+    try { abortRef.current?.abort(); } catch {}
+    setLoading(false);
   }
 
   // Don't render anything in the PRIVATE course area (students study there, no chat needed).
@@ -258,13 +336,21 @@ export default function ChatWidget() {
           </div>
           <div>
             <h3 className="text-white font-bold text-sm">Nexus AI Assistant</h3>
-            <p className="text-white/70 text-xs">Ask me anything!</p>
+            <p className="text-white/70 text-xs">{lang === "mm" ? "ဘာမဆို မေးမြန်းနိုင်ပါတယ်" : "Ask me anything!"}</p>
           </div>
           <div className="ml-auto flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-emerald-300 animate-pulse" />
             <span className="text-white/80 text-xs">Online</span>
           </div>
         </div>
+
+        {/* Handoff banner — a team member will join */}
+        {handoffActive && (
+          <div className="px-4 py-2 bg-amber-50 border-b border-amber-100 text-xs text-amber-800 flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+            {lang === "mm" ? "ကျွန်တော်တို့အဖွဲ့ကို အကြောင်းကြားပြီးပါပြီ — မကြာခင်မှာ ဒီမှာပဲ ပြန်ဖြေပါမယ်။ 👤" : "Our team has been notified — they&apos;ll reply here shortly. 👤"}
+          </div>
+        )}
 
         {/* Messages */}
         <div className="h-[350px] overflow-y-auto p-4 space-y-3 bg-slate-50">
@@ -278,7 +364,7 @@ export default function ChatWidget() {
                     {["သင်တန်းကြေး? 💰", "Module ၁၃ ခု? 📚", "ဘယ်လိုစာရင်းသွင်းရမလဲ? 🚀", "ငွေပေးချေနည်း 💳"].map((q) => (
                       <button
                         key={q}
-                        onClick={() => { setInput(q); }}
+                        onClick={() => sendText(q)}
                         className="text-xs px-3 py-1.5 rounded-full bg-white border border-slate-200 text-slate-600 hover:border-blue hover:text-blue transition"
                       >
                         {q}
@@ -293,7 +379,7 @@ export default function ChatWidget() {
                     {["Services 💼", "Pricing 💰", "Timeline ⏱️", "Contact 📞"].map((q) => (
                       <button
                         key={q}
-                        onClick={() => { setInput(q); }}
+                        onClick={() => sendText(q)}
                         className="text-xs px-3 py-3 min-h-[48px] rounded-full bg-white border border-slate-200 text-slate-600 hover:border-blue hover:text-blue transition"
                       >
                         {q}
@@ -312,8 +398,7 @@ export default function ChatWidget() {
                 </div>
               )}
               <div
-                className={`max-w-[80%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed whitespace-pre-line ${
-                  m.role === "user"
+                className={`max-w-[80%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed whitespace-pre-line ${m.role === "user"
                     ? "bg-gradient-to-r from-blue to-cyan text-white rounded-br-md"
                     : "bg-white border border-slate-200 text-slate-700 rounded-bl-md shadow-sm"
                 }`}
@@ -327,22 +412,64 @@ export default function ChatWidget() {
               )}
             </div>
           ))}
+          {/* Staff (team) messages from /admin/chats */}
+          {staffMsgs.map((m) => (
+            <div key={m.id} className="flex gap-2 justify-start">
+              <div className="w-7 h-7 rounded-lg bg-emerald-500 flex items-center justify-center flex-shrink-0 mt-1">
+                <User size={13} className="text-white" />
+              </div>
+              <div className="max-w-[80%] px-4 py-2.5 rounded-2xl rounded-bl-md text-sm leading-relaxed whitespace-pre-line bg-emerald-50 border border-emerald-200 text-emerald-900 shadow-sm">
+                <div className="text-[10px] font-bold uppercase tracking-wide text-emerald-600 mb-1">👤 Team</div>
+                <BotText text={m.text} chatContext={buildChatContext(messages)} />
+              </div>
+            </div>
+          ))}
           {loading && (
-            <div className="flex gap-2">
+            <div className="flex gap-2 items-end">
               <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue to-cyan flex items-center justify-center">
                 <Sparkles size={13} className="text-white" />
               </div>
-              <div className="bg-white border border-slate-200 px-4 py-3 rounded-2xl rounded-bl-md shadow-sm">
+              <div className="bg-white border border-slate-200 px-4 py-3 rounded-2xl rounded-bl-md shadow-sm flex items-center gap-3">
                 <div className="flex gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-slate-300 animate-bounce" style={{ animationDelay: "0ms" }} />
                   <span className="w-2 h-2 rounded-full bg-slate-300 animate-bounce" style={{ animationDelay: "150ms" }} />
                   <span className="w-2 h-2 rounded-full bg-slate-300 animate-bounce" style={{ animationDelay: "300ms" }} />
                 </div>
+                <span className="text-[10px] text-slate-400">{lang === "mm" ? "Nexus AI စာရိုက်နေသည်…" : "Nexus AI is typing…"}</span>
+                <button
+                  onClick={stop}
+                  className="text-[10px] font-semibold text-red-500 hover:text-red-600 transition ml-1"
+                  aria-label="Stop reply"
+                >
+                  ⏹ {lang === "mm" ? "ရပ်ပါ" : "Stop"}
+                </button>
               </div>
             </div>
           )}
           <div ref={endRef} />
         </div>
+
+        {/* Quick replies — one-tap questions, localized to the visitor's language */}
+        {!loading && (
+          <div className="px-3 pt-2 bg-white flex flex-wrap gap-1.5">
+            {(lang === "mm"
+              ? ctx === "course"
+                ? ["သင်တန်းကြေး 💰", "Module တွေ 📚", "စာရင်းသွင်းနည်း 🚀", "လူနဲ့ စကားပြောချင်တယ် 👤"]
+                : ["ဝန်ဆောင်မှုများ 💼", "ဈေးနှုန်း 💰", "AI Chatbot 🤖", "လူနဲ့ စကားပြောချင်တယ် 👤"]
+              : ctx === "course"
+                ? ["Course fee 💰", "Modules 📚", "How to enroll 🚀", "Talk to human 👤"]
+                : ["Services 💼", "Pricing 💰", "AI Chatbot 🤖", "Talk to human 👤"]
+            ).map((q) => (
+              <button
+                key={q}
+                onClick={() => sendText(q)}
+                className="text-[11px] px-3 py-1.5 min-h-[32px] rounded-full bg-slate-100 border border-slate-200 text-slate-600 hover:border-blue hover:text-blue hover:bg-blue/5 transition"
+              >
+                {q}
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* Input */}
         <form
