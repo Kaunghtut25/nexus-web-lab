@@ -2,7 +2,7 @@
 import { useState, useEffect, createContext, useContext } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
-import { LayoutDashboard, Settings, MessageSquare, Briefcase, FolderOpen, Upload, LogOut, ChevronLeft, Menu, X, Bot, Star, FileText, Image, Sparkles, Crown, Newspaper, Share2, GraduationCap } from "lucide-react";
+import { LayoutDashboard, Settings, MessageSquare, Briefcase, FolderOpen, Upload, LogOut, ChevronLeft, Menu, X, Bot, Star, FileText, Image, Sparkles, Crown, Newspaper, Share2, GraduationCap, MessagesSquare, Brain } from "lucide-react";
 
 interface AuthContextType { isLoggedIn: boolean; token: string; logout: () => void; }
 const AuthContext = createContext<AuthContextType>({ isLoggedIn: false, token: '', logout: () => {} });
@@ -57,6 +57,8 @@ const NAV = [
   { label: "Social Links", href: "/admin/social", icon: Share2 },
   { label: "Messages", href: "/admin/contacts", icon: MessageSquare },
   { label: "Chatbot Leads", href: "/admin/leads", icon: Bot },
+  { label: "Chats & Handoffs", href: "/admin/chats", icon: MessagesSquare },
+  { label: "Learning", href: "/admin/learning", icon: Brain },
   { label: "Quote Requests", href: "/admin/quotes", icon: FileText },
   { label: "Services", href: "/admin/services", icon: Briefcase },
   { label: "Projects", href: "/admin/projects", icon: FolderOpen },
