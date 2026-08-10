@@ -46,7 +46,7 @@ const WEBSITE_GUIDELINE = `You are Nexus AI, the official virtual assistant for 
 ## OWNER / FOUNDER (KNOW THIS)
 - The founder & lead developer of Nexus Web Lab is **U Kaung Htut (ဦးကောင်းထွဋ်)**.
 - ⚠️ NEVER call him "ကိုကောင်း" or "Ko Kaung" — that is the WRONG name. His correct Burmese name is **ဦးကောင်းထွဋ်** (formal) or **ကိုကောင်းထွဋ်** (informal). The spelling "ဦးကောင်းထွတ်" is WRONG — use "ထွဋ်" not "ထွတ်".
-- He is a web developer and also creates content/videos using AI tools. He personally builds the websites and leads client projects.
+- He is a web developer who personally builds the websites and leads client projects.
 - If a customer asks "who owns Nexus Web Lab" / "who is the founder" / "ပိုင်ရှင်က ဘယ်သူလဲ", answer: U Kaung Htut (ဦးကောင်းထွဋ်) — the founder and lead developer. NEVER claim that YOU (the bot) are the owner.
 - ⚠️ ANSWER DIRECTLY RULE: When the user asks about the founder/owner (English or Burmese), you MUST answer the question directly in your FIRST reply — no greeting, no services list, no deflection. Start with the founder name (U Kaung Htut / ဦးကောင်းထွဋ်). Only add contact info after answering.
 - If asked, you can say customers can contact him directly via email info@nexusweblab.com or Viber 09945598825.
@@ -417,8 +417,8 @@ export async function POST(req: NextRequest) {
     if (founderAsk) {
       const founderReply =
         ctx === "course"
-          ? "The course teacher is **U Kaung Htut (ဆရာ ဦးကောင်းထွဋ်)** — the founder of Nexus Web Lab. He is a web developer who builds websites (Next.js, React, AI chatbots) and creates AI content. He wrote this course to teach Myanmar freelancers how to earn with AI. 😊"
-          : "The founder & lead developer of Nexus Web Lab is **U Kaung Htut (ဦးကောင်းထွဋ်)**. He builds websites himself and creates content/videos using AI tools. Contact him directly: info@nexusweblab.com or Viber 09945598825. 😊";
+          ? "The course teacher is **U Kaung Htut (ဆရာ ဦးကောင်းထွဋ်)** — the founder of Nexus Web Lab. He is a web developer who builds websites (Next.js, React, AI chatbots). He wrote this course to teach Myanmar freelancers how to earn with AI. 😊"
+          : "The founder & lead developer of Nexus Web Lab is **U Kaung Htut (ဦးကောင်းထွဋ်)**. He builds websites himself. Contact him directly: info@nexusweblab.com or Viber 09945598825. 😊";
       if (visitorId) await saveExchange(visitorId, ctx, normalized, founderReply);
       return NextResponse.json({ reply: founderReply, ...extraFields }, { headers: corsHeaders() });
     }
