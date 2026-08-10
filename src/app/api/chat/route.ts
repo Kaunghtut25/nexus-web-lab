@@ -28,6 +28,12 @@ const WEBSITE_GUIDELINE = `You are Nexus AI, the official virtual assistant for 
 - NEVER introduce yourself as a person with a name (never say "ကျွန်တော် [name]" / "I am [name]"). You are simply the assistant.
 - NEVER claim to be the company owner, founder, or any human staff member.
 - If asked "who are you" / "ဘယ်သူလဲ", answer: you are Nexus AI, the online assistant of Nexus Web Lab.
+## FEMALE VOICE (ABSOLUTE — YOU MUST FOLLOW)
+- You ALWAYS speak as a young Burmese woman. Your gender is FEMALE, never male, in every reply, every language.
+- REQUIRED feminine Burmese: use "ကျွန်မ" (I, female), "ကျွန်မတို့" (we, female), and polite endings "ပါ"/"ရှင့်". NEVER use "ကျွန်တော်", "ကျုပ်တို့", "ငါ", or any male pronoun — even if the customer uses male speech or the earlier conversation used male speech, you must stay female.
+- Example of your voice: "မင်္ဂလာပါရှင့်… ရှင့်ကို ဘယ်လိုကူညီပေးရမလဲရှင့်။ ကျွန်မတို့ရဲ့ ဝန်ဆောင်မှုတွေကို မေးမြန်းနိုင်ပါတယ်ရှင့်။"
+- In English replies you may write naturally, but any Burmese you write must be feminine. Never switch to a male persona.
+
 
 ## CONVERSATION RULES (VERY IMPORTANT)
 1. FIRST GREETING ONLY: Greet the customer warmly ONLY on the very first message of the conversation (when they say hello / hi / start the chat). After you have already greeted them once, NEVER greet again — never repeat "မင်္ဂလာပါ", "Welcome", or any hello message in later replies. In follow-up messages just answer their question directly. List the available services by NAME ONLY in the first greeting — do NOT mention prices, dollar amounts, or MMK amounts.
@@ -112,6 +118,12 @@ const COURSE_GUIDELINE = `You are Nexus AI, the official virtual assistant for t
 - Tone: warm, cheerful, polite, respectful to students.
 - NEVER introduce yourself as a person with a name (never say "ကျွန်တော် [name]" / "I am [name]").
 - NEVER claim to be the teacher (ဆရာ) or the course owner. If a student asks who the teacher is, give the teacher's name from the COURSE KNOWLEDGE section below (U Kaung Htut / ဆရာ ဦးကောင်းထွဋ်) — never invent a different name.
+## FEMALE VOICE (ABSOLUTE — YOU MUST FOLLOW)
+- You ALWAYS speak as a young Burmese woman. Your gender is FEMALE, never male, in every reply, every language.
+- REQUIRED feminine Burmese: use "ကျွန်မ" (I, female), "ကျွန်မတို့" (we, female), and polite endings "ပါ"/"ရှင့်". NEVER use "ကျွန်တော်", "ကျုပ်တို့", "ငါ", or any male pronoun — even if the customer uses male speech or the earlier conversation used male speech, you must stay female.
+- Example of your voice: "မင်္ဂလာပါရှင့်… ရှင့်ကို ဘယ်လိုကူညီပေးရမလဲရှင့်။ ကျွန်မတို့ရဲ့ ဝန်ဆောင်မှုတွေကို မေးမြန်းနိုင်ပါတယ်ရှင့်။"
+- In English replies you may write naturally, but any Burmese you write must be feminine. Never switch to a male persona.
+
 
 ## ABOUT THE TEACHER (KNOW THIS)
 - The course teacher is **U Kaung Htut (ဆရာ ဦးကောင်းထွဋ်)** — the founder of Nexus Web Lab.
@@ -291,6 +303,25 @@ function websiteFallbackReply(text: string, isFirst: boolean): string {
   return "Sure — how can I help you today? I can answer questions about our services, pricing, timeline, or contact details.";
 }
 
+
+// ── FEMALE VOICE SAFEGUARD ──
+// Old conversations may contain male-voiced bot replies (before the female-voice
+// rule). Rewrite loaded history so the model never sees male examples and keeps
+// replying as a woman.
+const MALE_TO_FEMALE: [RegExp, string][] = [
+  [/ကျွန်တော်တို့/g, "ကျွန်မတို့"],
+  [/ကျွန်တော်/g, "ကျွန်မ"],
+  [/ကျုပ်တို့/g, "ကျွန်မတို့"],
+  [/ကျုပ်/g, "ကျွန်မ"],
+  [/(?<![ကျွန်မ])ငါတို့/g, "ကျွန်မတို့"],
+  [/(?<![ကျွန်မ])ငါ/g, "ကျွန်မ"],
+];
+function feminize(s: string): string {
+  let out = s;
+  for (const [re, to] of MALE_TO_FEMALE) out = out.replace(re, to);
+  return out;
+}
+
 export async function POST(req: NextRequest) {
   try {
     const { messages = [], visitorId = "", context = "website", stream: bodyStream = false } = await req.json();
@@ -314,7 +345,10 @@ export async function POST(req: NextRequest) {
         );
         memory = rows
           .reverse()
-          .map((r: any) => ({ role: r.role, content: String(r.content).slice(0, 2000) }));
+          .map((r: any) => ({
+        role: r.role,
+        content: r.role === "assistant" ? feminize(String(r.content).slice(0, 2000)) : String(r.content).slice(0, 2000),
+      }));
       } catch (e) {
         console.error("[chat] memory load failed:", String(e).slice(0, 200));
       }
