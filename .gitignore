@@ -45,4 +45,4 @@ next-env.d.ts
 
 # paid course materials (not for public repo)
 /course-content/
-/logo-backup/
+.logo-backup/
