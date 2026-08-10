@@ -366,25 +366,31 @@ export async function POST(req: NextRequest) {
 
     // ── AUTOMATION (v1): language detect + nurture capture + quote intent ──
     const lang = detectLang(lastUserContent);
-    const leadInfo = extractLeadInfo(normalized);
+    // Scan the FULL conversation (loaded history + current messages) so a
+    // customer who gives name → phone → email in separate messages still gets
+    // captured as ONE lead. (Messenger sends only the current message here.)
+    const leadInfo = extractLeadInfo([...memory, ...normalized]);
     if (leadInfo && visitorId) {
       try {
-        // Save to nurture table (keyed by email when available)
+        // Save to nurture table + detect whether this is a NEW lead (email unseen)
+        let isNewLead = true;
         if (leadInfo.email) {
           const existing = await dbAll("SELECT id FROM lead_nurture WHERE visitor_id = ? AND email = ? LIMIT 1", [
             visitorId,
             leadInfo.email,
           ]);
-          if (!existing.length) {
+          if (existing.length) {
+            isNewLead = false; // already captured this email — don't spam
+          } else {
             await dbRun("INSERT INTO lead_nurture (id, visitor_id, email, phone, name) VALUES (?, ?, ?, ?, ?)", [
               randomUUID(), visitorId, leadInfo.email, leadInfo.phone || "", leadInfo.name || "",
             ]);
           }
         }
-        // 📢 Telegram alert — one per visitor per 10 min. Covers the Messenger
-        // path, where the widget's /api/lead debounce never fires.
+        // 📢 Telegram alert for NEW leads — covers the Messenger path, where the
+        // widget's /api/lead debounce never fires. 10-min dedupe as a safety net.
         const now = Date.now();
-        if ((leadAlerted.get(visitorId) || 0) < now - 10 * 60 * 1000) {
+        if (isNewLead && (leadAlerted.get(visitorId) || 0) < now - 10 * 60 * 1000) {
           leadAlerted.set(visitorId, now);
           const isMessenger = visitorId.startsWith("fb:");
           void notifyTelegram(
