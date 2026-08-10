@@ -147,6 +147,7 @@ export default function ChatWidget() {
   // Learning: 👍/👎 feedback on bot answers
   const [rated, setRated] = useState<Set<number>>(new Set());
   const lastUserQuestionRef = useRef("");
+  const inputRef = useRef<HTMLTextAreaElement>(null);
 
   // Stable visitor id in localStorage → server stores chat memory per visitor,
   // so the bot remembers this student's previous questions on every visit.
@@ -251,6 +252,7 @@ export default function ChatWidget() {
     const text = input.trim();
     if (!text || loading) return;
     setInput("");
+    if (inputRef.current) inputRef.current.style.height = "auto";
     sendText(text);
   }
 
@@ -555,11 +557,26 @@ export default function ChatWidget() {
           onSubmit={(e) => { e.preventDefault(); send(); }}
           className="p-3 border-t border-slate-100 bg-white flex gap-2"
         >
-          <input
+          <textarea
+            ref={inputRef}
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Type your message..."
-            className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none focus:border-blue focus:ring-2 focus:ring-blue/10"
+            onInput={(e) => {
+              // auto-grow up to ~112px, then scroll
+              const el = e.currentTarget;
+              el.style.height = "auto";
+              el.style.height = Math.min(el.scrollHeight, 112) + "px";
+            }}
+            onKeyDown={(e) => {
+              // Enter = new line. Send with Ctrl+Enter / Cmd+Enter or the Send button.
+              if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
+                e.preventDefault();
+                send();
+              }
+            }}
+            placeholder="Type your message... (Enter = new line)"
+            rows={1}
+            className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none focus:border-blue focus:ring-2 focus:ring-blue/10 resize-none overflow-y-auto max-h-[112px]"
             aria-label="Chat message"
           />
           <button
