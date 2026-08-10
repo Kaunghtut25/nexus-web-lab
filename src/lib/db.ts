@@ -23,6 +23,10 @@ async function init() {
 
   await client.execute(`CREATE INDEX IF NOT EXISTS idx_chat_visitor ON chat_messages (visitor_id, created_at)`);
   await client.execute(`CREATE INDEX IF NOT EXISTS idx_chat_visitor_context ON chat_messages (visitor_id, context, created_at)`);
+// Human handoff: open handoff requests per visitor + staff replies the visitor polls
+await client.execute(`CREATE TABLE IF NOT EXISTS chat_handoffs (id TEXT PRIMARY KEY, visitor_id TEXT NOT NULL, context TEXT DEFAULT 'website', status TEXT DEFAULT 'open', requested_at TEXT DEFAULT (datetime('now')), resolved_at TEXT)`);
+await client.execute(`CREATE TABLE IF NOT EXISTS chat_staff_messages (id TEXT PRIMARY KEY, visitor_id TEXT NOT NULL, context TEXT DEFAULT 'website', content TEXT NOT NULL, created_at TEXT DEFAULT (datetime('now')))`);
+await client.execute(`CREATE INDEX IF NOT EXISTS idx_handoffs_open ON chat_handoffs (visitor_id, context, status)`);
   await client.execute(`CREATE TABLE IF NOT EXISTS services (id TEXT PRIMARY KEY, title TEXT NOT NULL, price TEXT, description TEXT, features TEXT DEFAULT '[]', icon TEXT, image TEXT, sort_order INTEGER DEFAULT 0)`);
   await client.execute(`CREATE TABLE IF NOT EXISTS projects (id TEXT PRIMARY KEY, title TEXT NOT NULL, url TEXT, client TEXT, description TEXT, tags TEXT DEFAULT '[]', image TEXT, featured INTEGER DEFAULT 0, sort_order INTEGER DEFAULT 0)`);
   await client.execute(`CREATE TABLE IF NOT EXISTS leads (id TEXT PRIMARY KEY, name TEXT, email TEXT, phone TEXT, service TEXT, message TEXT, source TEXT, created_at TEXT DEFAULT (datetime('now')))`);

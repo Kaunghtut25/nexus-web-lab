@@ -135,6 +135,10 @@ export default function ChatWidget() {
   const endRef = useRef<HTMLDivElement>(null);
   const finalizeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const leadSent = useRef(false);
+  // Human handoff: staff replies from /admin/chats + active state
+  const [handoffActive, setHandoffActive] = useState(false);
+  const [staffMsgs, setStaffMsgs] = useState<{ id: string; text: string }[]>([]);
+  const seenStaffRef = useRef<Set<string>>(new Set());
 
   // Stable visitor id in localStorage → server stores chat memory per visitor,
   // so the bot remembers this student's previous questions on every visit.
@@ -157,6 +161,31 @@ export default function ChatWidget() {
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  // HUMAN HANDOFF: while the chat is open, poll for staff replies written in
+  // /admin/chats. When staff messages arrive, they render as team bubbles and
+  // the handoff banner shows. afterId = last seen staff message id.
+  useEffect(() => {
+    if (!open) return;
+    let stopped = false;
+    const tick = async () => {
+      if (stopped || !visitorIdRef.current) return;
+      try {
+        const afterId = Array.from(seenStaffRef.current).pop() || "";
+        const r = await fetch(`/api/handoffs/poll?visitorId=${encodeURIComponent(visitorIdRef.current)}&context=${ctx}&afterId=${encodeURIComponent(afterId)}`);
+        const d = await r.json();
+        const fresh = (d?.messages || []).filter((m: any) => !seenStaffRef.current.has(m.id));
+        fresh.forEach((m: any) => seenStaffRef.current.add(m.id));
+        if (fresh.length) {
+          setStaffMsgs((s) => [...s, ...fresh.map((m: any) => ({ id: m.id, text: m.content }))]);
+          setHandoffActive(true);
+        }
+      } catch {}
+    };
+    tick();
+    const t = setInterval(tick, 10000);
+    return () => { stopped = true; clearInterval(t); };
+  }, [open, ctx]);
 
   // Once per conversation: after the client stops typing for ~8s, send the FULL
   // transcript to /api/lead so the owner gets ONE consolidated Telegram message
@@ -214,6 +243,7 @@ export default function ChatWidget() {
       });
       const data = await res.json();
       const reply = (data?.reply || "").trim();
+      if (data?.handoff) setHandoffActive(true);
       setMessages((prev) => [...prev, { role: "bot", text: reply || getReply(text) }]);
     } catch {
       // Offline fallback — keyword replies with updated info
@@ -266,6 +296,14 @@ export default function ChatWidget() {
           </div>
         </div>
 
+        {/* Handoff banner — a team member will join */}
+        {handoffActive && (
+          <div className="px-4 py-2 bg-amber-50 border-b border-amber-100 text-xs text-amber-800 flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+            Our team has been notified — they&apos;ll reply here shortly. 👤
+          </div>
+        )}
+
         {/* Messages */}
         <div className="h-[350px] overflow-y-auto p-4 space-y-3 bg-slate-50">
           {messages.length === 0 && (
@@ -312,8 +350,7 @@ export default function ChatWidget() {
                 </div>
               )}
               <div
-                className={`max-w-[80%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed whitespace-pre-line ${
-                  m.role === "user"
+                className={`max-w-[80%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed whitespace-pre-line ${m.role === "user"
                     ? "bg-gradient-to-r from-blue to-cyan text-white rounded-br-md"
                     : "bg-white border border-slate-200 text-slate-700 rounded-bl-md shadow-sm"
                 }`}
@@ -325,6 +362,18 @@ export default function ChatWidget() {
                   <User size={13} className="text-slate-500" />
                 </div>
               )}
+            </div>
+          ))}
+          {/* Staff (team) messages from /admin/chats */}
+          {staffMsgs.map((m) => (
+            <div key={m.id} className="flex gap-2 justify-start">
+              <div className="w-7 h-7 rounded-lg bg-emerald-500 flex items-center justify-center flex-shrink-0 mt-1">
+                <User size={13} className="text-white" />
+              </div>
+              <div className="max-w-[80%] px-4 py-2.5 rounded-2xl rounded-bl-md text-sm leading-relaxed whitespace-pre-line bg-emerald-50 border border-emerald-200 text-emerald-900 shadow-sm">
+                <div className="text-[10px] font-bold uppercase tracking-wide text-emerald-600 mb-1">👤 Team</div>
+                <BotText text={m.text} chatContext={buildChatContext(messages)} />
+              </div>
             </div>
           ))}
           {loading && (
