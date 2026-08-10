@@ -11,24 +11,32 @@ export default function Contact() {
   const [loading, setLoading] = useState(false);
   const [settings, setSettings] = useState<Record<string,string>>({});
 
-  // Read chat context passed from the chatbot (e.g. /contact?chat=...)
+  // Read context passed from chatbot (/contact?chat=...) or CTA buttons
+  // (/contact?svc=...&msg=...) — prefill the message box + service select.
   const [chatContext, setChatContext] = useState("");
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const chat = params.get("chat");
-    if (chat) {
-      setChatContext(chat);
-      // Auto-detect the service from the conversation
-      const lower = chat.toLowerCase();
+    const msg = params.get("msg") || params.get("chat");
+    const svc = params.get("svc");
+    if (msg) setChatContext(msg);
+    const setService = (val: string) => {
+      const el = document.querySelector<HTMLSelectElement>('select[name="service"]');
+      if (!el) return;
+      const norm = (s: string) => s.toLowerCase().replace(/[&\/]/g, ' ').replace(/\s+/g, ' ').trim();
+      const nval = norm(val);
+      const match = [...el.options].find((o) => {
+        const no = norm(o.value), nt = norm(o.text);
+        return no && (no.includes(nval) || nval.includes(no) || nt.includes(nval) || nval.includes(nt));
+      });
+      if (match) el.value = match.value;
+    };
+    if (svc) setService(svc);
+    else if (msg) {
+      // Auto-detect the service from the conversation/message text
+      const lower = msg.toLowerCase();
       const services = ["web development", "e-commerce", "ui/ux", "seo", "hosting", "maintenance", "chatbot"];
       const found = services.find((s) => lower.includes(s));
-      if (found) {
-        const el = document.querySelector<HTMLSelectElement>('select[name="service"]');
-        if (el) {
-          const match = [...el.options].find((o) => o.value.toLowerCase().includes(found) || o.text.toLowerCase().includes(found));
-          if (match) el.value = match.value;
-        }
-      }
+      if (found) setService(found);
     }
   }, []);
 
@@ -117,9 +125,12 @@ export default function Contact() {
                         <option>Web Development</option><option>E-Commerce</option>
                         <option>UI/UX Design</option><option>SEO</option>
                         <option>Hosting & Deploy</option><option>Maintenance</option>
+                        <option>AI Chatbot / Automation</option><option>Website Redesign</option>
+                        <option>Social Media Management</option><option>Content Writing</option>
+                        <option>Logo & Brand Identity</option><option>Business Email Setup</option>
                         <option>Other</option>
                       </select>
-                      <textarea name="message" placeholder="Tell us about your project... *" required rows={5} defaultValue={chatContext ? `[From chatbot conversation]\n${chatContext}` : ""} className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-base focus:outline-none focus:border-blue focus:ring-2 focus:ring-blue/10 transition resize-none" />
+                      <textarea name="message" placeholder="Tell us about your project... *" required rows={5} defaultValue={chatContext ? (chatContext.startsWith('Service:') || chatContext.startsWith('Source:') ? chatContext : `[From chatbot conversation]\n${chatContext}`) : ""} className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-base focus:outline-none focus:border-blue focus:ring-2 focus:ring-blue/10 transition resize-none" />
                       <button type="submit" disabled={loading} className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-blue to-cyan text-white font-semibold py-3.5 rounded-xl hover:shadow-lg hover:shadow-blue/25 transition-all disabled:opacity-70">
                         {loading ? "Sending..." : <>{'Send Message'} <ArrowRight size={18} /></>}
                       </button>

@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import Image from "next/image";
@@ -8,6 +8,27 @@ import { Send, ArrowRight, CheckCircle, Clock, Shield, Sparkles } from "lucide-r
 export default function GetQuote() {
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [prefill, setPrefill] = useState("");
+
+  // Read CTA context (?svc=...&msg=...) to prefill message box + service select.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const msg = params.get("msg");
+    const svc = params.get("svc");
+    if (msg) setPrefill(msg);
+    if (svc) {
+      const el = document.querySelector<HTMLSelectElement>('select[name="service"]');
+      if (el) {
+        const norm = (s: string) => s.toLowerCase().replace(/[&\/]/g, ' ').replace(/\s+/g, ' ').trim();
+        const nval = norm(svc);
+        const match = [...el.options].find((o) => {
+          const no = norm(o.value), nt = norm(o.text);
+          return no && (no.includes(nval) || nval.includes(no) || nt.includes(nval) || nval.includes(nt));
+        });
+        if (match) el.value = match.value;
+      }
+    }
+  }, []);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault(); setLoading(true);
@@ -70,7 +91,10 @@ export default function GetQuote() {
                             <option>Web Development</option><option>E-Commerce</option>
                             <option>UI/UX Design</option><option>SEO</option>
                             <option>Hosting & Deploy</option><option>Maintenance</option>
-                            <option>AI Chatbot / Integration</option><option>Other</option>
+                            <option>AI Chatbot / Automation</option><option>Website Redesign</option>
+                            <option>Social Media Management</option><option>Content Writing</option>
+                            <option>Logo & Brand Identity</option><option>Business Email Setup</option>
+                            <option>Other</option>
                           </select>
                           <select name="budget" className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-base text-slate-600 focus:outline-none focus:border-blue focus:ring-2 focus:ring-blue/10 transition">
                             <option value="">Budget range</option>
@@ -94,7 +118,7 @@ export default function GetQuote() {
                             <option>Referral</option><option>Portfolio</option><option>Other</option>
                           </select>
                         </div>
-                        <textarea name="message" placeholder="Describe your project in detail — goals, features, any special requirements... *" required rows={5} className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-base focus:outline-none focus:border-blue focus:ring-2 focus:ring-blue/10 transition resize-none" />
+                        <textarea name="message" placeholder="Describe your project in detail — goals, features, any special requirements... *" required rows={5} defaultValue={prefill} className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-base focus:outline-none focus:border-blue focus:ring-2 focus:ring-blue/10 transition resize-none" />
                         <button type="submit" disabled={loading} className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-blue to-cyan text-white font-semibold py-3.5 rounded-xl hover:shadow-lg hover:shadow-blue/25 transition-all disabled:opacity-70">
                           {loading ? "Submitting..." : <>{'Submit Request'} <ArrowRight size={18} /></>}
                         </button>

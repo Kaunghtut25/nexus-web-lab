@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import { prefillHref } from "@/lib/lead-prefill";
 
 interface Post {
   id: string;
@@ -106,7 +107,7 @@ export default function BlogPostPage() {
           </div>
           <div className="mt-12 pt-8 border-t border-slate-200 flex justify-between items-center">
             <Link href="/blog" className="text-blue font-semibold hover:underline">← All Articles</Link>
-            <Link href="/get-quote" className="inline-flex px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-blue-600 text-white text-sm font-semibold hover:opacity-90 transition">Start a Project</Link>
+            <Link href={prefillHref('/get-quote', { source: post ? `${post.title} — nexusweblab.com/blog/${post.id}` : 'Blog article — nexusweblab.com/blog' })} className="inline-flex px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-blue-600 text-white text-sm font-semibold hover:opacity-90 transition">Start a Project</Link>
           </div>
         </article>
       </main>

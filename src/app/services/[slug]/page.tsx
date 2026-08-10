@@ -6,6 +6,7 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { Globe, Palette, TrendingUp, ShoppingCart, Cloud, Wrench, ArrowRight, Check, Clock, Shield, Zap, MessageCircle, Sparkles, Layers, Rocket, FileText, Target, Mail } from "lucide-react";
 import { useCurrency } from "@/lib/currency";
+import { prefillHref } from "@/lib/lead-prefill";
 
 // Map clean URL slug → DB service id
 const SLUG_TO_ID: Record<string, string> = {
@@ -329,7 +330,7 @@ export default function ServiceDetail() {
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white mb-5 drop-shadow-lg">{title}</h1>
             <p className="text-slate-200 text-lg sm:text-xl max-w-2xl mb-8">{detail.tagline}</p>
             <div className="flex flex-wrap gap-4">
-              <Link href="/contact" className="inline-flex items-center gap-2 bg-gradient-to-r from-blue to-cyan text-white font-semibold px-7 py-3.5 rounded-xl hover:shadow-lg hover:shadow-blue/30 hover:-translate-y-0.5 transition-all">
+              <Link href={prefillHref('/get-quote', { service: title, price: service?.price, features: detail.deliverables, source: `${title} page — nexusweblab.com/services/${slug}` })} className="inline-flex items-center gap-2 bg-gradient-to-r from-blue to-cyan text-white font-semibold px-7 py-3.5 rounded-xl hover:shadow-lg hover:shadow-blue/30 hover:-translate-y-0.5 transition-all">
                 Get a Free Quote <ArrowRight size={18} />
               </Link>
               <Link href="/portfolio" className="inline-flex items-center gap-2 bg-white/10 backdrop-blur border border-white/25 text-white font-semibold px-7 py-3.5 rounded-xl hover:bg-white/20 transition-all">
@@ -385,7 +386,7 @@ export default function ServiceDetail() {
                     <li className="flex items-center gap-2.5 text-slate-200"><Zap size={15} className="text-cyan-300" /> Modern, fast, SEO-ready build</li>
                     <li className="flex items-center gap-2.5 text-slate-200"><MessageCircle size={15} className="text-cyan-300" /> Direct support within 24 hours</li>
                   </ul>
-                  <Link href="/contact" className="flex items-center justify-center gap-2 w-full bg-gradient-to-r from-blue to-cyan text-white font-semibold py-3.5 rounded-xl hover:shadow-lg hover:shadow-blue/30 transition-all">
+                  <Link href={prefillHref('/contact', { service: title, price: service?.price, features: detail.deliverables, source: `${title} page — nexusweblab.com/services/${slug}` })} className="flex items-center justify-center gap-2 w-full bg-gradient-to-r from-blue to-cyan text-white font-semibold py-3.5 rounded-xl hover:shadow-lg hover:shadow-blue/30 transition-all">
                     Get Started <ArrowRight size={16} />
                   </Link>
                   <p className="text-center text-xs text-slate-400 mt-4">Free consultation — no obligation</p>
@@ -443,7 +444,7 @@ export default function ServiceDetail() {
               <h3 className="text-2xl sm:text-3xl font-extrabold mb-3 relative">Ready to get started?</h3>
               <p className="text-white/85 mb-7 relative">Tell us about your project — we will reply within 24 hours with a free quote.</p>
               <div className="flex flex-wrap gap-4 justify-center relative">
-                <Link href="/contact" className="inline-flex items-center gap-2 bg-white text-blue font-bold px-7 py-3.5 rounded-xl hover:shadow-xl hover:-translate-y-0.5 transition-all">
+                <Link href={prefillHref('/get-quote', { service: title, price: service?.price, features: detail.deliverables, source: `${title} page — nexusweblab.com/services/${slug}` })} className="inline-flex items-center gap-2 bg-white text-blue font-bold px-7 py-3.5 rounded-xl hover:shadow-xl hover:-translate-y-0.5 transition-all">
                   Get Your Free Quote <ArrowRight size={18} />
                 </Link>
                 <Link href="/services" className="inline-flex items-center gap-2 bg-white/15 border border-white/30 text-white font-semibold px-7 py-3.5 rounded-xl hover:bg-white/25 transition-all">

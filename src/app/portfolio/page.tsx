@@ -5,6 +5,7 @@ import Footer from "@/components/layout/Footer";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, ExternalLink, FolderOpen, Layers } from "lucide-react";
+import { prefillHref } from "@/lib/lead-prefill";
 
 export default function PortfolioPage() {
   const [projects, setProjects] = useState<any[]>([]);
@@ -105,7 +106,7 @@ export default function PortfolioPage() {
           <div className="relative z-10 max-w-3xl mx-auto px-4">
             <h2 className="text-3xl font-extrabold text-navy mb-4">Want to be our next project?</h2>
             <p className="text-slate-600 mb-8">Let&apos;s build something amazing together.</p>
-            <Link href="/contact" className="inline-flex items-center gap-2 bg-gradient-to-r from-blue to-cyan text-white font-semibold px-8 py-4 rounded-xl hover:shadow-xl hover:shadow-blue/25 transition">
+            <Link href={prefillHref('/contact', { source: 'Portfolio page — nexusweblab.com/portfolio' })} className="inline-flex items-center gap-2 bg-gradient-to-r from-blue to-cyan text-white font-semibold px-8 py-4 rounded-xl hover:shadow-xl hover:shadow-blue/25 transition">
               Start Your Project <ArrowRight size={18} />
             </Link>
           </div>

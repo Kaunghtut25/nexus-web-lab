@@ -6,6 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Globe, Palette, TrendingUp, ShoppingCart, Cloud, Wrench, ArrowRight, Check, Layers } from "lucide-react";
 import { useCurrency } from "@/lib/currency";
+import { prefillHref } from "@/lib/lead-prefill";
 import CurrencySwitcher from "@/components/CurrencySwitcher";
 
 const ICON_MAP: Record<string, any> = { '🌐': Globe, '🛒': ShoppingCart, '🎨': Palette, '📈': TrendingUp, '☁️': Cloud, '🔧': Wrench };
@@ -132,7 +133,7 @@ export default function Services() {
                           View Details <ArrowRight size={16} />
                         </Link>
                         <Link
-                          href="/contact"
+                          href={prefillHref('/contact', { service: sv.title, price: sv.price, features, source: 'Services page — nexusweblab.com/services' })}
                           onClick={(e) => e.stopPropagation()}
                           className={`flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold text-sm transition-all ${
                             isSelected
@@ -177,7 +178,7 @@ export default function Services() {
                     </li>
                   ))}
                 </ul>
-                <Link href="/contact" className="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold text-sm bg-slate-50 text-navy hover:bg-gradient-to-r hover:from-blue hover:to-cyan hover:text-white transition-all">
+                <Link href={prefillHref('/contact', { service: 'Web Development', pkg: 'Starter / Basic — Single Landing Page', price: '$350', features: ['Single Landing Page','Fully Responsive Design','SEO Optimized','Fast Loading','1 Round of Revisions'], source: 'Services page — nexusweblab.com/services' })} className="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold text-sm bg-slate-50 text-navy hover:bg-gradient-to-r hover:from-blue hover:to-cyan hover:text-white transition-all">
                   Get Started <ArrowRight size={16} />
                 </Link>
               </div>
@@ -200,7 +201,7 @@ export default function Services() {
                     </li>
                   ))}
                 </ul>
-                <Link href="/contact" className="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold text-sm bg-gradient-to-r from-blue to-cyan text-white shadow-md hover:shadow-lg transition-all">
+                <Link href={prefillHref('/contact', { service: 'Web Development', pkg: 'Standard — Full Business Website', price: '$600', features: ['Full Business Website (5–10 pages)','CMS / Admin Panel','Responsive Design','SEO Optimization','Contact Form Integration','3 Rounds of Revisions'], source: 'Services page — nexusweblab.com/services' })} className="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold text-sm bg-gradient-to-r from-blue to-cyan text-white shadow-md hover:shadow-lg transition-all">
                   Get Started <ArrowRight size={16} />
                 </Link>
               </div>
@@ -222,7 +223,7 @@ export default function Services() {
                     </li>
                   ))}
                 </ul>
-                <Link href="/contact" className="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold text-sm bg-slate-50 text-navy hover:bg-gradient-to-r hover:from-blue hover:to-cyan hover:text-white transition-all">
+                <Link href={prefillHref('/contact', { service: 'Web Development', pkg: 'Premium — Custom E-Commerce / AI Web App', price: '$1,200–$2,500+', features: ['Custom E-Commerce or AI Web App','Full Admin Dashboard','Payment Gateway Integration','AI Chatbot / Smart Features','Priority Support','Unlimited Revisions'], source: 'Services page — nexusweblab.com/services' })} className="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold text-sm bg-slate-50 text-navy hover:bg-gradient-to-r hover:from-blue hover:to-cyan hover:text-white transition-all">
                   Get Started <ArrowRight size={16} />
                 </Link>
               </div>
@@ -250,7 +251,7 @@ export default function Services() {
           <div className="relative z-10 max-w-3xl mx-auto px-4">
             <h2 className="text-3xl font-extrabold text-white mb-4 [text-shadow:0_2px_8px_rgba(5,8,22,0.9),0_4px_16px_rgba(5,8,22,0.8),0_0_32px_rgba(5,8,22,0.6)]">Not sure what you need?</h2>
             <p className="text-slate-200 mb-8 text-lg">Let&apos;s talk. Free consultation, no obligation.</p>
-            <Link href="/contact" className="inline-flex items-center gap-2 bg-gradient-to-r from-blue to-cyan text-white font-semibold px-10 py-4 rounded-xl hover:shadow-2xl transition-all">Get Free Consultation <ArrowRight size={20} /></Link>
+            <Link href={prefillHref('/contact', { source: 'Services page — nexusweblab.com/services' })} className="inline-flex items-center gap-2 bg-gradient-to-r from-blue to-cyan text-white font-semibold px-10 py-4 rounded-xl hover:shadow-2xl transition-all">Get Free Consultation <ArrowRight size={20} /></Link>
           </div>
         </section>
       </main>

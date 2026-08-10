@@ -5,6 +5,7 @@ import Footer from "@/components/layout/Footer";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, Layers } from "lucide-react";
+import { prefillHref } from "@/lib/lead-prefill";
 
 export default function AboutPage() {
   const [settings, setSettings] = useState<Record<string,string>>({});
@@ -48,7 +49,7 @@ export default function AboutPage() {
                 <p className="text-slate-600 leading-relaxed mb-6">
                   Our mission: Make world-class web development accessible and affordable for Myanmar businesses. Every project we deliver is built with the same care we&apos;d put into our own.
                 </p>
-                <Link href="/contact" className="inline-flex items-center gap-2 bg-gradient-to-r from-blue to-cyan text-white font-semibold px-6 py-3 rounded-xl hover:shadow-lg transition">
+                <Link href={prefillHref('/contact', { source: 'About page — nexusweblab.com/about' })} className="inline-flex items-center gap-2 bg-gradient-to-r from-blue to-cyan text-white font-semibold px-6 py-3 rounded-xl hover:shadow-lg transition">
                   Work With Us <ArrowRight size={18} />
                 </Link>
               </div>
@@ -94,7 +95,7 @@ export default function AboutPage() {
           <div className="relative z-10 max-w-3xl mx-auto px-4">
             <h2 className="text-3xl font-extrabold text-navy mb-4">{s('ctaTitle','Have a Project in Mind?')}</h2>
             <p className="text-slate-600 mb-8">{s('ctaSubtitle',"Let's discuss your project. Free consultation, no obligation.")}</p>
-            <Link href="/contact" className="inline-flex items-center gap-2 bg-gradient-to-r from-blue to-cyan text-white font-semibold px-8 py-4 rounded-xl hover:shadow-xl hover:shadow-blue/25 transition">
+            <Link href={prefillHref('/contact', { source: 'About page CTA — nexusweblab.com/about' })} className="inline-flex items-center gap-2 bg-gradient-to-r from-blue to-cyan text-white font-semibold px-8 py-4 rounded-xl hover:shadow-xl hover:shadow-blue/25 transition">
               {s('ctaButton','Get in Touch')} <ArrowRight size={18} />
             </Link>
           </div>

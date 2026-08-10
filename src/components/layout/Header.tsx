@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Home, Briefcase, FolderOpen, Info, Mail, FileText, GraduationCap, Phone } from "lucide-react";
+import { prefillHref } from "@/lib/lead-prefill";
 
 type NavItem = {
   label: string;
@@ -51,26 +52,32 @@ export default function Header() {
   // keep the solid mesh header so text never floats invisibly.
   const darkHeroPages = ['/', '/services', '/portfolio', '/blog', '/about', '/contact', '/get-quote'];
   const transparentTop = darkHeroPages.some(p => pathname === p || pathname.startsWith(p + '/'));
+  // Service detail pages (/services/<slug>) use a dark navy overlay hero —
+  // keep the header background transparent but force WHITE nav text there.
+  const detailDarkTop = pathname.startsWith('/services/') && pathname !== '/services';
   const solid = !transparentTop || scrolled;
+  // White text when solid (background appears) OR on dark detail heroes.
+  const whiteText = solid || detailDarkTop;
 
   // Nav text color: dark (black) when header is transparent over the hero,
-  // auto-switches to white once the solid header background appears (scrolled).
-  const navLink = solid
+  // auto-switches to white once the solid header background appears (scrolled)
+  // or on dark service-detail heroes.
+  const navLink = whiteText
     ? 'text-white/85 hover:bg-white/10'
     : 'text-slate-900 hover:bg-black/5 hover:text-black';
-  const navLinkActive = solid
+  const navLinkActive = whiteText
     ? 'text-white bg-white/15'
     : 'text-black bg-black/10';
-  const navIcon = solid
+  const navIcon = whiteText
     ? 'text-cyan-300'
     : 'text-slate-800';
-  const navIconIdle = solid
+  const navIconIdle = whiteText
     ? 'text-cyan-200/80 group-hover:text-cyan-200'
     : 'text-slate-700/90 group-hover:text-black';
-  const courseLink = solid
+  const courseLink = whiteText
     ? 'text-white border-white/25 hover:bg-white/10'
     : 'text-slate-900 border-black/40 hover:bg-black/5 hover:text-black';
-  const burgerLine = solid ? 'bg-white' : 'bg-slate-900';
+  const burgerLine = whiteText ? 'bg-white' : 'bg-slate-900';
 
   return (
     <header className={`sticky top-0 transition-all duration-300 ${
@@ -110,7 +117,7 @@ export default function Header() {
             );
           })}
 
-          <Link href="/get-quote" className="gradient-btn text-sm !py-2.5 !px-5 ml-3">
+          <Link href={prefillHref('/get-quote', { source: pathname === '/' ? 'Home page — nexusweblab.com' : `nexusweblab.com${pathname}` })} className="gradient-btn text-sm !py-2.5 !px-5 ml-3">
             Get a Quote
           </Link>
 
@@ -156,7 +163,7 @@ export default function Header() {
             );
           })}
           <Link
-            href="/get-quote"
+            href={prefillHref('/get-quote', { source: pathname === '/' ? 'Home page — nexusweblab.com' : `nexusweblab.com${pathname}` })}
             className="gradient-btn flex items-center justify-center gap-2 mt-4 !py-3"
             onClick={() => setOpen(false)}
           >

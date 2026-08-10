@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
+import { prefillHref } from "@/lib/lead-prefill";
 import {
   Sparkles, Globe, Palette, TrendingUp, ShoppingCart, Cloud, Wrench,
   ArrowRight, CheckCircle, Star, Zap, ChevronLeft, ChevronRight,
@@ -263,7 +264,7 @@ export default function DemoPage() {
                 This page is a real, working product — not a static mockup. Every component below is interactive, responsive, and production-ready. This is the quality you get on every project.
               </p>
               <div className="flex flex-wrap gap-4">
-                <Link href="/get-quote" className="gradient-btn text-white font-semibold px-8 py-4 rounded-xl inline-flex items-center gap-2">
+                <Link href={prefillHref('/get-quote', { service: 'Web Development / Custom Web App', features: ['Real interactive demo components','Responsive, production-ready build','Next.js + React + Tailwind CSS'], source: 'Live demo page — nexusweblab.com/demo' })} className="gradient-btn text-white font-semibold px-8 py-4 rounded-xl inline-flex items-center gap-2">
                   Get a Free Quote <ArrowRight size={18} />
                 </Link>
                 <Link href="/portfolio" className="inline-flex items-center gap-2 border-2 border-white/30 text-white font-semibold px-8 py-4 rounded-xl hover:bg-white/10 transition-all">
@@ -358,7 +359,7 @@ export default function DemoPage() {
                     <ul className="space-y-2 text-xs text-slate-500 flex-1">
                       {p.feat.map(f => <li key={f} className="flex items-start gap-1.5"><CheckCircle size={13} className="text-emerald-500 mt-0.5 flex-shrink-0" />{f}</li>)}
                     </ul>
-                    <Link href="/get-quote" className={`mt-5 text-center text-sm font-semibold py-2.5 rounded-xl transition ${budget >= p.price ? 'bg-gradient-to-r from-emerald-500 to-blue-600 text-white hover:opacity-90' : 'text-slate-400 pointer-events-none'}`}>
+                    <Link href={prefillHref('/get-quote', { service: p.name, pkg: 'Budget Calculator plan', price: `$${p.price}+`, features: p.feat, source: `Live demo page (budget $${budget}) — nexusweblab.com/demo` })} className={`mt-5 text-center text-sm font-semibold py-2.5 rounded-xl transition ${budget >= p.price ? 'bg-gradient-to-r from-emerald-500 to-blue-600 text-white hover:opacity-90' : 'text-slate-400 pointer-events-none'}`}>
                       {budget >= p.price ? 'Choose Plan' : 'Above budget'}
                     </Link>
                   </div>
@@ -401,7 +402,7 @@ export default function DemoPage() {
             <h2 className="text-3xl sm:text-4xl font-black text-white mb-4">Ready to Build Something Great?</h2>
             <p className="text-slate-300 mb-8">Tell us about your project — get a free, no-obligation quote within 24 hours.</p>
             <div className="flex flex-wrap justify-center gap-4">
-              <Link href="/get-quote" className="gradient-btn text-white font-semibold px-8 py-4 rounded-xl inline-flex items-center gap-2">Start Your Project <ArrowRight size={18} /></Link>
+              <Link href={prefillHref('/get-quote', { source: 'Live demo page — nexusweblab.com/demo' })} className="gradient-btn text-white font-semibold px-8 py-4 rounded-xl inline-flex items-center gap-2">Start Your Project <ArrowRight size={18} /></Link>
             </div>
           </div>
         </section>

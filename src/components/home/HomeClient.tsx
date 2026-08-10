@@ -7,6 +7,7 @@ import Image from "next/image";
 import { Sparkles, Globe, Palette, TrendingUp, ShoppingCart, Cloud, Wrench, ArrowRight, CheckCircle, Star, Zap, ChevronLeft, ChevronRight, Cpu, Rocket, ArrowUpRight, CreditCard } from "lucide-react";
 import PaymentLogos from "@/components/home/PaymentLogos";
 import { useCurrency } from "@/lib/currency";
+import { prefillHref } from "@/lib/lead-prefill";
 import CurrencySwitcher from "@/components/CurrencySwitcher";
 
 const ICON_MAP: Record<string, any> = {
@@ -193,7 +194,7 @@ export default function HomeClient({ initialData }: { initialData: HomeData }) {
               </p>
 
               <div className="hero-item hero-d4 flex flex-wrap gap-4">
-                <Link href="/contact" className="neon-btn">
+                <Link href={prefillHref('/contact', { source: 'Home page — nexusweblab.com' })} className="neon-btn">
                   {s('heroCta','Start Your Project')} <ArrowRight size={20} />
                 </Link>
                 <Link href="/portfolio" className="inline-flex items-center gap-2 glass text-white font-semibold px-6 py-3 rounded-xl text-sm sm:text-base hover:bg-white/10 transition-all">
@@ -551,7 +552,7 @@ export default function HomeClient({ initialData }: { initialData: HomeData }) {
             <h2 className="text-4xl sm:text-5xl font-extrabold mb-4 text-white glow-text">{s('ctaTitle','Ready to Build Something Great?')}</h2>
             <p className="text-white/85 mb-10 text-lg">{s('ctaSubtitle',"Let's discuss your project. Free consultation, no obligation.")}</p>
             <div className="flex flex-wrap justify-center gap-4">
-              <Link href="/contact" className="neon-btn glow-pulse">
+              <Link href={prefillHref('/contact', { source: 'Home page CTA — nexusweblab.com' })} className="neon-btn glow-pulse">
                 {s('ctaButton','Get Free Consultation')} <ArrowRight size={20} />
               </Link>
               <Link href="/services" className="inline-flex items-center gap-2 glass text-white font-semibold px-10 py-4 rounded-xl hover:bg-white/10 transition-all">
