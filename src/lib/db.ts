@@ -26,6 +26,8 @@ async function init() {
 // Human handoff: open handoff requests per visitor + staff replies the visitor polls
 await client.execute(`CREATE TABLE IF NOT EXISTS chat_handoffs (id TEXT PRIMARY KEY, visitor_id TEXT NOT NULL, context TEXT DEFAULT 'website', status TEXT DEFAULT 'open', requested_at TEXT DEFAULT (datetime('now')), resolved_at TEXT)`);
 await client.execute(`CREATE TABLE IF NOT EXISTS chat_staff_messages (id TEXT PRIMARY KEY, visitor_id TEXT NOT NULL, context TEXT DEFAULT 'website', content TEXT NOT NULL, created_at TEXT DEFAULT (datetime('now')))`);
+// Automation: email/phone captured from chat for the nurture follow-up sequence
+await client.execute(`CREATE TABLE IF NOT EXISTS lead_nurture (id TEXT PRIMARY KEY, visitor_id TEXT, email TEXT, phone TEXT, name TEXT, status TEXT DEFAULT 'new', captured_at TEXT DEFAULT (datetime('now')), followup_sent_at TEXT)`);
 await client.execute(`CREATE INDEX IF NOT EXISTS idx_handoffs_open ON chat_handoffs (visitor_id, context, status)`);
   await client.execute(`CREATE TABLE IF NOT EXISTS services (id TEXT PRIMARY KEY, title TEXT NOT NULL, price TEXT, description TEXT, features TEXT DEFAULT '[]', icon TEXT, image TEXT, sort_order INTEGER DEFAULT 0)`);
   await client.execute(`CREATE TABLE IF NOT EXISTS projects (id TEXT PRIMARY KEY, title TEXT NOT NULL, url TEXT, client TEXT, description TEXT, tags TEXT DEFAULT '[]', image TEXT, featured INTEGER DEFAULT 0, sort_order INTEGER DEFAULT 0)`);
