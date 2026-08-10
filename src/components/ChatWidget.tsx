@@ -147,6 +147,9 @@ export default function ChatWidget() {
   // Learning: 👍/👎 feedback on bot answers
   const [rated, setRated] = useState<Set<number>>(new Set());
   const lastUserQuestionRef = useRef("");
+  // Browser zoom level (1 = 100%). Used to counter-scale the widget so it keeps
+  // its ORIGINAL physical size no matter how far the visitor zooms in/out.
+  const [zoom, setZoom] = useState(1);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   // Stable visitor id in localStorage → server stores chat memory per visitor,
@@ -225,9 +228,48 @@ export default function ChatWidget() {
     };
   }, [messages]);
 
-  // NOTE: auto-open removed (2026-08-10) — it made the chat "pop up" on its
-  // own, especially during zoom/resize. The chat now only opens on button click.
-  // The button still pulses subtly to draw attention to the assistant.
+  // Detect browser zoom: visualViewport.scale (desktop zoom + mobile pinch),
+  // fallback to outerWidth/innerWidth ratio for browsers without vv.scale.
+  useEffect(() => {
+    const updateZoom = () => {
+      let z = 1;
+      try {
+        const vv = window.visualViewport;
+        if (vv && typeof vv.scale === "number" && vv.scale > 0) {
+          z = vv.scale;
+        } else {
+          z = window.outerWidth / Math.max(window.innerWidth, 1);
+        }
+        if (!isFinite(z) || z <= 0) z = 1;
+      } catch {
+        z = 1;
+      }
+      setZoom(z);
+    };
+    updateZoom();
+    window.addEventListener("resize", updateZoom);
+    window.visualViewport?.addEventListener("resize", updateZoom);
+    return () => {
+      window.removeEventListener("resize", updateZoom);
+      window.visualViewport?.removeEventListener("resize", updateZoom);
+    };
+  }, []);
+
+  // AUTO-OPEN WELCOME: 10s after a visitor arrives, open the chat automatically.
+  // Once per visit (sessionStorage) — not on every page navigation, and the
+  // zoom-proof wrapper keeps it from "jumping" when the page is zoomed.
+  useEffect(() => {
+    try {
+      if (sessionStorage.getItem("nwl_chat_autoopened")) return;
+      const t = setTimeout(() => {
+        sessionStorage.setItem("nwl_chat_autoopened", "1");
+        setOpen(true);
+      }, 10000);
+      return () => clearTimeout(t);
+    } catch {
+      return;
+    }
+  }, []);
 
   // AUTO-GREET: when the chat opens with no messages yet, send "Hi" once so the
   // bot shows its bilingual welcome (greetedRef guards against duplicates)
@@ -366,10 +408,17 @@ export default function ChatWidget() {
 
   return (
     <>
+      {/* Zoom-proof wrapper: counter-scales with browser zoom so the widget keeps
+          its ORIGINAL size at any zoom level. pointer-events-none so the wrapper
+          never blocks the page; the button/panel re-enable events themselves. */}
+      <div
+        className="fixed inset-0 z-[9999] pointer-events-none"
+        style={{ transform: `scale(${1 / zoom})`, transformOrigin: "bottom right" }}
+      >
       {/* Floating Button */}
       <button
         onClick={() => setOpen(!open)}
-        className={`fixed right-4 z-[9999] w-12 h-12 rounded-full shadow-xl flex items-center justify-center transition-all duration-300 ${
+        className={`pointer-events-auto fixed right-4 z-[9999] w-12 h-12 rounded-full shadow-xl flex items-center justify-center transition-all duration-300 ${
           open
             ? "bg-white text-slate-600 rotate-90 scale-90 hover:scale-95"
             : "bg-gradient-to-br from-blue to-cyan text-white hover:scale-110 hover:shadow-blue/30"
@@ -384,7 +433,7 @@ export default function ChatWidget() {
           viewport (works at any zoom level, on any device). Height shrinks to
           fit small screens; on desktop it caps at 460px. */}
       <div
-        className={`fixed right-3 sm:right-4 z-[9999] w-[min(380px,calc(100vw-1.5rem))] h-[min(460px,calc(100dvh-5.5rem))] flex flex-col bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden transition-all duration-300 origin-bottom-right ${
+        className={`pointer-events-auto fixed right-3 sm:right-4 z-[9999] w-[min(380px,calc(100vw-1.5rem))] h-[min(460px,calc(100dvh-5.5rem))] flex flex-col bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden transition-all duration-300 origin-bottom-right ${
           open ? "scale-100 opacity-100" : "scale-95 opacity-0 pointer-events-none"
         }`}
         style={{ bottom: "calc(env(safe-area-inset-bottom, 0px) + 4.5rem)" }}
@@ -589,6 +638,7 @@ export default function ChatWidget() {
             Powered by <span className="font-semibold text-blue">Nexus Web Lab</span>
           </p>
         </div>
+      </div>
       </div>
     </>
   );
