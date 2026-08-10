@@ -1,0 +1,22 @@
+# Nexus Web Lab
+
+Nexus Web Lab is a professional web design and development agency based in Yangon, Myanmar. We build websites, web apps, e-commerce stores, AI chatbots, and provide SEO, hosting, and maintenance services for businesses worldwide.
+
+## Key pages
+- Home: https://nexusweblab.com/
+- About: https://nexusweblab.com/about
+- Services: https://nexusweblab.com/services
+- Portfolio: https://nexusweblab.com/portfolio
+- Blog: https://nexusweblab.com/blog
+- Contact: https://nexusweblab.com/contact
+- Get a Quote: https://nexusweblab.com/get-quote
+- Privacy Policy: https://nexusweblab.com/privacy
+- Terms of Service: https://nexusweblab.com/terms
+
+## Services
+- Web Development, E-Commerce, UI/UX Design, SEO Package, Hosting & Deploy, Maintenance, Error Fixing, AI Chatbot, Website Redesign
+
+## Contact
+- Email: nexusweblabmm@gmail.com
+- Phone: +95 9 886 264 582
+- Address: No.189, Kha 6 Street, Insein, Yangon, Myanmar

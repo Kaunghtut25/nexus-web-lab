@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 260" width="600" height="260">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#F8FAFC"/><stop offset="100%" stop-color="#F0FDF4"/></linearGradient>
+    <linearGradient id="blue" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#3B82F6"/><stop offset="100%" stop-color="#2563EB"/></linearGradient>
+    <filter id="sh"><feDropShadow dx="0" dy="3" stdDeviation="6" flood-color="#000" flood-opacity="0.08"/></filter>
+  </defs>
+  <rect width="600" height="260" rx="16" fill="url(#bg)"/>
+  
+  <!-- Project cards -->
+  <g filter="url(#sh)">
+    <rect x="20" y="15" width="270" height="110" rx="12" fill="white" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="20" y="15" width="270" height="8" rx="12" fill="url(#blue)"/>
+    <text x="40" y="42" font-family="sans-serif" font-size="12" fill="#0F172A" font-weight="bold">A9 Global Travels</text>
+    <text x="40" y="60" font-family="sans-serif" font-size="10" fill="#64748B">35-page tourism website with admin CMS</text>
+    <rect x="40" y="74" width="50" height="16" rx="8" fill="#EFF6FF"/>
+    <text x="65" y="85" font-family="sans-serif" font-size="8" fill="#3B82F6" text-anchor="middle">Next.js</text>
+    <rect x="96" y="74" width="50" height="16" rx="8" fill="#EFF6FF"/>
+    <text x="121" y="85" font-family="sans-serif" font-size="8" fill="#3B82F6" text-anchor="middle">TypeScript</text>
+    <rect x="152" y="74" width="50" height="16" rx="8" fill="#ECFEFF"/>
+    <text x="177" y="85" font-family="sans-serif" font-size="8" fill="#06B6D4" text-anchor="middle">Tailwind</text>
+  </g>
+  
+  <g filter="url(#sh)">
+    <rect x="310" y="15" width="270" height="110" rx="12" fill="white" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="310" y="15" width="270" height="8" rx="12" fill="#8B5CF6"/>
+    <text x="330" y="42" font-family="sans-serif" font-size="12" fill="#0F172A" font-weight="bold">Stardust.co</text>
+    <text x="330" y="60" font-family="sans-serif" font-size="10" fill="#64748B">E-commerce with 55 products + live chat</text>
+    <rect x="330" y="74" width="50" height="16" rx="8" fill="#F5F3FF"/>
+    <text x="355" y="85" font-family="sans-serif" font-size="8" fill="#8B5CF6" text-anchor="middle">Next.js</text>
+    <rect x="386" y="74" width="50" height="16" rx="8" fill="#F5F3FF"/>
+    <text x="411" y="85" font-family="sans-serif" font-size="8" fill="#8B5CF6" text-anchor="middle">Turso</text>
+    <rect x="442" y="74" width="50" height="16" rx="8" fill="#F0FDF4"/>
+    <text x="467" y="85" font-family="sans-serif" font-size="8" fill="#22C55E" text-anchor="middle">E-Com</text>
+  </g>
+  
+  <g filter="url(#sh)">
+    <rect x="20" y="140" width="270" height="105" rx="12" fill="white" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="20" y="140" width="270" height="8" rx="12" fill="#06B6D4"/>
+    <text x="40" y="167" font-family="sans-serif" font-size="12" fill="#0F172A" font-weight="bold">J Recruit Co., Ltd.</text>
+    <text x="40" y="185" font-family="sans-serif" font-size="10" fill="#64748B">Japan recruitment platform with job board</text>
+    <rect x="40" y="199" width="60" height="16" rx="8" fill="#ECFEFF"/>
+    <text x="70" y="210" font-family="sans-serif" font-size="8" fill="#06B6D4" text-anchor="middle">Next.js 14</text>
+    <rect x="106" y="199" width="50" height="16" rx="8" fill="#ECFEFF"/>
+    <text x="131" y="210" font-family="sans-serif" font-size="8" fill="#06B6D4" text-anchor="middle">Turso</text>
+  </g>
+  
+  <g filter="url(#sh)">
+    <rect x="310" y="140" width="270" height="105" rx="12" fill="white" stroke="#E2E8F0" stroke-width="1"/>
+    <rect x="310" y="140" width="270" height="8" rx="12" fill="#22C55E"/>
+    <text x="330" y="167" font-family="sans-serif" font-size="12" fill="#0F172A" font-weight="bold">Azami Training Center</text>
+    <text x="330" y="185" font-family="sans-serif" font-size="10" fill="#64748B">Bilingual training website with courses</text>
+    <rect x="330" y="199" width="60" height="16" rx="8" fill="#F0FDF4"/>
+    <text x="360" y="210" font-family="sans-serif" font-size="8" fill="#22C55E" text-anchor="middle">Next.js</text>
+    <rect x="396" y="199" width="60" height="16" rx="8" fill="#F0FDF4"/>
+    <text x="426" y="210" font-family="sans-serif" font-size="8" fill="#22C55E" text-anchor="middle">Bilingual</text>
+  </g>
+</svg>
