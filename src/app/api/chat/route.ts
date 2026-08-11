@@ -393,11 +393,16 @@ export async function POST(req: NextRequest) {
         if (isNewLead && (leadAlerted.get(visitorId) || 0) < now - 10 * 60 * 1000) {
           leadAlerted.set(visitorId, now);
           const isMessenger = visitorId.startsWith("fb:");
+          // 🌐 Service auto-filter — extractLeadInfo keyword-matches what the
+          // customer wants (web dev, e-commerce, UI/UX, SEO, hosting, chatbot…)
+          const wanted = leadInfo.service || "Not specified";
+          const sourceTag = isMessenger ? "📱 Messenger" : "💬 Website Chat";
           void notifyTelegram(
-            `🆕 *NEW LEAD — contact info captured*${isMessenger ? " (📱 Messenger)" : " (💬 Website Chat)"}\n\n` +
+            `🆕 *NEW LEAD — ${wanted}* (${sourceTag})\n\n` +
             `${leadInfo.name ? `👤 Name: ${leadInfo.name}\n` : ""}` +
             `${leadInfo.email ? `📧 Email: ${leadInfo.email}\n` : ""}` +
             `${leadInfo.phone ? `📱 Phone: ${leadInfo.phone}\n` : ""}` +
+            `🌐 Service wanted: *${wanted}*\n` +
             `🔎 Visitor: \`${visitorId.slice(0, 20)}…\`\n\n` +
             `➡️ https://nexusweblab.com/admin/leads`
           );

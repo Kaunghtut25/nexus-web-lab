@@ -19,8 +19,9 @@ export interface LeadPayload {
 
 export function formatLeadText(lead: LeadPayload): string {
   const sourceLabel = lead.source === "chatbot" ? "💬 Chatbot Lead" : "📝 Contact Form";
+  const serviceLabel = lead.website_type || "General Inquiry";
   const lines = [
-    `🆕 *New Client Inquiry — Nexus Web Lab*`,
+    `🆕 *New Client Inquiry — ${serviceLabel}*`,
     `🔗 Source: ${sourceLabel}`,
     "",
     `👤 Name: ${lead.name || "—"}`,
