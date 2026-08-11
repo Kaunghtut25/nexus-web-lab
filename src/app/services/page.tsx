@@ -244,6 +244,35 @@ export default function Services() {
           </div>
         </section>
 
+        {/* Conversion Funnel — Visitor → AI → Requirement → Consultation */}
+        <section className="py-20 sm:py-28 mesh-bg">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 text-center">
+            <div className="w-14 h-1 bg-gradient-to-r from-blue to-cyan rounded mx-auto mb-5" />
+            <h2 className="text-3xl font-extrabold text-navy mb-3">From Visitor to Client in 4 Steps</h2>
+            <p className="text-slate-500 mb-14 max-w-2xl mx-auto">A simple, human-friendly path — with AI doing the heavy lifting.</p>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {[
+                { icon: '💬', title: '1 · Talk to AI Assistant', desc: 'Chat with our AI on the site or Messenger — get instant answers 24/7.' },
+                { icon: '📋', title: '2 · Share Your Requirement', desc: 'The AI collects your project details, budget and timeline in minutes.' },
+                { icon: '🤝', title: '3 · Free Consultation', desc: 'We review your requirement and reach out with a tailored plan.' },
+                { icon: '🚀', title: '4 · Become a Client', desc: 'Approve the plan — we build, launch and support your project.' },
+              ].map((s, i) => (
+                <div key={i} className="relative bg-white border border-slate-100 rounded-2xl p-7 hover:shadow-xl hover:shadow-blue/10 hover:-translate-y-1 transition-all duration-300">
+                  {i < 3 && <div className="hidden lg:block absolute top-1/2 -right-3 z-10 text-slate-300">→</div>}
+                  <div className="text-4xl mb-4">{s.icon}</div>
+                  <h3 className="font-bold text-navy mb-2 card-hover-title">{s.title}</h3>
+                  <p className="text-sm text-slate-500 leading-relaxed">{s.desc}</p>
+                </div>
+              ))}
+            </div>
+            <div className="mt-12">
+              <Link href={prefillHref('/contact', { source: 'Services page — conversion funnel' })} className="inline-flex items-center gap-2 bg-gradient-to-r from-blue to-cyan text-white font-semibold px-10 py-4 rounded-xl hover:shadow-xl hover:shadow-blue/25 transition-all">
+                Start Step 1 — Talk to Our AI <ArrowRight size={20} />
+              </Link>
+            </div>
+          </div>
+        </section>
+
         {/* CTA */}
         <section className="py-20 bg-gradient-to-r from-navy via-navy-light to-navy text-center relative overflow-hidden">
           <Image src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1920&h=960&fit=crop&q=80" alt="" aria-hidden fill sizes="100vw" className="object-cover opacity-50" />

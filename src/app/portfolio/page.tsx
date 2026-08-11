@@ -4,8 +4,36 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, ExternalLink, FolderOpen, Layers } from "lucide-react";
+import { ArrowRight, ExternalLink, FolderOpen, Layers, Target, Lightbulb, TrendingUp, Cpu } from "lucide-react";
 import { prefillHref } from "@/lib/lead-prefill";
+
+// Case studies — client problem → solution → result → technology.
+const CASE_STUDIES = [
+  {
+    name: 'A9 Global Travels',
+    category: 'Travel & Tourism',
+    problem: 'A Myanmar travel agency needed a modern booking platform to replace manual tour/hotel/car/visa inquiries, but had no online presence that could be updated without a developer.',
+    solution: 'We designed a premium navy-and-gold travel site (35+ pages) with tours, hotels, car rental, visas, search and booking flows — plus a full admin panel to manage every listing in-house.',
+    result: 'The agency now runs its entire catalog online with a searchable booking experience, and staff update tours, prices and hotels themselves — no developer needed.',
+    tech: ['Next.js', 'TypeScript', 'Tailwind CSS', 'Vercel'],
+  },
+  {
+    name: 'Stardust.co',
+    category: 'E-Commerce',
+    problem: 'A cosmetics brand wanted to sell online in Myanmar with local payment support, but needed more than a static catalog — they needed a store that captures and converts visitors.',
+    solution: 'We built a full e-commerce platform with product catalog, cart, orders, tracking and account areas, and embedded an AI live-chat assistant that answers shoppers 24/7.',
+    result: 'The store went live with an AI sales assistant that qualifies visitors and captures leads around the clock — every conversation becomes a potential sale.',
+    tech: ['Next.js', 'E-Commerce', 'AI Chat', 'Tailwind CSS'],
+  },
+  {
+    name: 'Nexus AI Chatbot',
+    category: 'AI / Automation',
+    problem: 'Businesses lose leads after hours because nobody answers website visitors at night — and FAQs are repetitive, consuming staff time every day.',
+    solution: 'We built a production AI chatbot with real-time SSE streaming, glass-morphism UI, and lead capture wired to notifications — trained on each business\'s own info.',
+    result: 'The chatbot answers instantly 24/7, collects visitor contact details, and hands off to humans when needed — turning after-hours traffic into captured leads.',
+    tech: ['Next.js', 'AI', 'Streaming SSE', 'Edge Runtime'],
+  },
+];
 
 export default function PortfolioPage() {
   const [projects, setProjects] = useState<any[]>([]);
@@ -97,6 +125,49 @@ export default function PortfolioPage() {
                 })}
               </div>
             )}
+          </div>
+        </section>
+
+        {/* Case Studies — Problem → Solution → Result → Tech */}
+        <section className="py-20 sm:py-24 bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6">
+            <div className="text-center mb-14">
+              <div className="inline-flex items-center gap-2 glass-light rounded-full px-4 py-1.5 mb-2 text-sm text-blue-600 font-semibold">
+                <Target size={14} /> Case Studies
+              </div>
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-navy mb-2 card-hover-title">How We Solve Real Problems</h2>
+              <p className="text-slate-500 text-lg max-w-2xl mx-auto">Every project starts with a problem. Here is what changed for our clients.</p>
+            </div>
+            <div className="space-y-8">
+              {CASE_STUDIES.map((cs, i) => (
+                <div key={i} className="group bg-slate-50 border border-slate-100 rounded-2xl p-6 sm:p-8 hover:shadow-xl hover:shadow-blue/5 transition-all duration-300">
+                  <div className="flex flex-wrap items-center gap-3 mb-6">
+                    <h3 className="text-xl sm:text-2xl font-extrabold text-navy card-hover-title">{cs.name}</h3>
+                    <span className="px-3 py-1 bg-gradient-to-r from-blue to-cyan text-white text-xs font-bold rounded-full">{cs.category}</span>
+                  </div>
+                  <div className="grid sm:grid-cols-3 gap-6">
+                    <div>
+                      <div className="flex items-center gap-2 mb-2"><Target size={16} className="text-blue" /><h4 className="font-bold text-navy text-sm uppercase tracking-wide">Problem</h4></div>
+                      <p className="text-sm text-slate-500 leading-relaxed">{cs.problem}</p>
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2 mb-2"><Lightbulb size={16} className="text-cyan" /><h4 className="font-bold text-navy text-sm uppercase tracking-wide">Solution</h4></div>
+                      <p className="text-sm text-slate-500 leading-relaxed">{cs.solution}</p>
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2 mb-2"><TrendingUp size={16} className="text-emerald-600" /><h4 className="font-bold text-navy text-sm uppercase tracking-wide">Result</h4></div>
+                      <p className="text-sm text-slate-500 leading-relaxed">{cs.result}</p>
+                    </div>
+                  </div>
+                  <div className="mt-6 pt-5 border-t border-slate-200 flex flex-wrap items-center gap-2">
+                    <span className="flex items-center gap-1.5 text-xs font-semibold text-slate-400 uppercase tracking-wide mr-1"><Cpu size={13} /> Technology</span>
+                    {cs.tech.map((t) => (
+                      <span key={t} className="px-3 py-1 bg-white border border-slate-200 rounded-full text-xs font-semibold text-slate-600">{t}</span>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
 

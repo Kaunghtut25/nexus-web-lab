@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { unstable_cache } from "next/cache";
+import { headers } from "next/headers";
 import HomeClient from "@/components/home/HomeClient";
 import { dbAllRead } from "@/lib/db";
 
@@ -73,5 +74,25 @@ export default async function HomePage() {
     console.error('[HomePage] DB fetch failed, using fallbacks:', e);
   }
 
-  return <HomeClient initialData={data} />;
+  // GEO/FAQ schema — AI-search readable structured data (mirrors the FAQ
+  // section rendered in HomeClient). Nonce attached for CSP compliance.
+  const nonce = (await headers()).get("x-nonce") ?? undefined;
+  const faqLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+      { "@type": "Question", name: "What services does Nexus Web Lab offer?", acceptedAnswer: { "@type": "Answer", text: "Custom web development, e-commerce stores, UI/UX design, SEO packages, hosting & deployment, website maintenance, error fixing, AI chatbots, and complete website redesigns." } },
+      { "@type": "Question", name: "How much does a website cost?", acceptedAnswer: { "@type": "Answer", text: "Pricing depends on the scope — a landing page starts affordably, while full e-commerce and AI web apps are custom-quoted. Contact us for a free, no-obligation quote." } },
+      { "@type": "Question", name: "Do you build websites for clients outside Myanmar?", acceptedAnswer: { "@type": "Answer", text: "Yes. We work with clients worldwide. Communication, deliverables, and support are fully online, and we accept international payments." } },
+      { "@type": "Question", name: "How long does a typical project take?", acceptedAnswer: { "@type": "Answer", text: "A standard business website usually takes 1–2 weeks. Larger e-commerce or AI-powered projects take 3–6 weeks depending on features and content." } },
+      { "@type": "Question", name: "Do you provide support after launch?", acceptedAnswer: { "@type": "Answer", text: "Absolutely. Every project includes post-launch support, and our premium package offers priority 24/7-style assistance and unlimited revisions." } },
+    ],
+  };
+
+  return (
+    <>
+      <script type="application/ld+json" nonce={nonce} dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
+      <HomeClient initialData={data} />
+    </>
+  );
 }
