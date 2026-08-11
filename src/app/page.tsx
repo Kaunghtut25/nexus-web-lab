@@ -4,8 +4,8 @@ import HomeClient from "@/components/home/HomeClient";
 import { dbAllRead } from "@/lib/db";
 
 export const metadata: Metadata = {
-  title: "Nexus Web Lab — Web Design & Development Agency in Yangon",
-  description: "Web design & development agency in Yangon, Myanmar. We build fast, modern websites, apps, and e-commerce stores for growing businesses.",
+  title: "Nexus Web Lab — AI Automation & AI-Powered Web Development",
+  description: "AI automation, AI chatbots and AI-powered web development in Yangon, Myanmar. We build intelligent digital systems — AI websites, business automation, custom AI agents and SaaS applications.",
 };
 
 // NOTE: this page MUST stay `force-dynamic`.
