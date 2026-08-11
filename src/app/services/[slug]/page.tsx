@@ -35,6 +35,7 @@ const DETAILS: Record<string, {
   deliverables: string[];
   process: { title: string; desc: string }[];
   faq: { q: string; a: string }[];
+  packages?: { name: string; price: string; desc: string; features: string[]; popular?: boolean }[];
 }> = {
   'web-development': {
     tagline: 'Fast, secure, modern websites that represent your brand — and convert visitors into customers.',
@@ -157,20 +158,27 @@ const DETAILS: Record<string, {
     ],
   },
   'ai-chatbot': {
-    tagline: 'An AI assistant that answers your customers 24/7, captures leads and books sales while you sleep.',
-    delivery: '1–2 weeks',
-    overview: 'Imagine a smart assistant that greets every visitor, answers their questions instantly, collects their contact details and even quotes your services — all without you lifting a finger. We build and train AI chatbots trained on your own business information, then connect them to your website, Facebook Messenger or WhatsApp. Every conversation becomes a captured lead delivered straight to your inbox.',
-    deliverables: ['AI trained on your business info', 'Website chat widget with your branding', 'Messenger / WhatsApp integration', 'Lead capture with email & phone', 'Instant answers to FAQs 24/7', 'Handover to human agent when needed', 'Conversation history dashboard', 'Monthly bot training & improvements'],
+    tagline: 'An AI Employee that understands your customers, captures leads, quotes projects and automates your business — 24/7.',
+    delivery: '1–3 weeks depending on scope',
+    overview: 'Move beyond simple chatbots. Nexus builds AI Agents — AI Employees — that don\'t just answer FAQs. They understand what your customer needs, collect lead details, generate quotes, manage bookings, send emails, update your CRM and run workflows automatically. Powered by your own Knowledge Base (RAG) and a NEXUS Master Agent that routes every request to the right specialist agent — Sales, Support, Booking, Marketing or Knowledge. Your business keeps selling while you sleep.',
+    deliverables: ['Knowledge Base AI (RAG) — trained on your PDFs, catalogs, website & FAQs', 'NEXUS Master Agent + Multi-Agent system (Sales / Support / Booking / Marketing)', 'AI Sales Agent — qualifies visitors, collects budget & requirements', 'AI Quote Generator — auto-builds project estimates with timeline', 'Lead capture → CRM / Google Sheets / Telegram', 'Booking & appointment automation', 'Multi-language: English, Burmese, Thai, Chinese', 'Analytics dashboard — visitors, conversations, leads, conversion', 'Human handoff with support ticket', 'Facebook Messenger / WhatsApp / Telegram / Instagram DM integration'],
     process: [
-      { title: 'Knowledge Upload', desc: 'You share your services, prices and FAQs — we train the bot on them.' },
-      { title: 'Build & Connect', desc: 'We build the chat widget and connect it to your site, Messenger or WhatsApp.' },
-      { title: 'Test & Tune', desc: 'We run real conversations, fix weak answers and polish the tone.' },
-      { title: 'Go Live', desc: 'The bot starts answering and capturing leads 24/7 — you get notified instantly.' },
+      { title: 'Knowledge Upload', desc: 'Upload your PDFs, product catalog, website URL and FAQs — we build your Knowledge Base (RAG).' },
+      { title: 'Agent Design', desc: 'We configure the Master Agent and specialist agents (Sales, Support, Booking) for your business.' },
+      { title: 'Connect & Automate', desc: 'We connect CRM, email, calendar, Messenger and WhatsApp — workflows run automatically.' },
+      { title: 'Train & Launch', desc: 'We test real conversations, tune answers, then launch your AI Employee 24/7.' },
     ],
     faq: [
-      { q: 'Does it answer in Burmese?', a: 'Yes — the bot can be trained to answer fluently in Burmese, English or both.' },
-      { q: 'Can customers still reach a human?', a: 'Of course. The bot hands over to you or your team whenever the visitor needs it.' },
-      { q: 'Where can I see the leads?', a: 'Every lead lands in your email, dashboard, or connected tools like Google Sheets and Telegram.' },
+      { q: 'What is the difference between a chatbot and an AI Agent?', a: 'A chatbot answers questions. An AI Agent understands intent, captures leads, generates quotes, updates your CRM and runs workflows — it works like an employee, not a FAQ box.' },
+      { q: 'Can it learn from my documents?', a: 'Yes — Knowledge Base AI (RAG) trains on your PDFs, product catalogs, website and training documents, so every answer is accurate to YOUR business.' },
+      { q: 'Does it answer in Burmese and other languages?', a: 'Yes — English, Burmese, Thai and Chinese. Customers can ask in their own language and get answers in the same language.' },
+      { q: 'Can customers still reach a human?', a: 'Of course. The AI creates a support ticket and hands over to your team whenever the visitor needs a specialist.' },
+      { q: 'Which channels does it connect to?', a: 'Website chat, Facebook Messenger, WhatsApp, Telegram and Instagram DM — one AI Employee, many channels.' },
+    ],
+    packages: [
+      { name: 'Starter AI Chatbot', price: '$299 – $499', desc: 'For businesses that want a smart assistant today.', features: ['Website Chatbot', 'FAQ Training', 'Basic AI Response', 'Lead Collection', '1 Language'], popular: false },
+      { name: 'Business AI Agent', price: '$999 – $2,500', desc: 'A real AI Employee that sells and automates.', features: ['Custom Knowledge Base (RAG)', 'AI Sales Agent', 'CRM Integration', 'Booking Automation', 'Multi-language', 'Analytics Dashboard'], popular: true },
+      { name: 'Enterprise AI Automation', price: '$5,000+', desc: 'Full business automation with a private AI system.', features: ['NEXUS Master Agent', 'Multi-Agent System', 'Voice AI', 'Custom Workflow', 'Private AI Model', 'Full Business Automation'], popular: false },
     ],
   },
   'website-redesign': {
@@ -430,6 +438,42 @@ export default function ServiceDetail() {
             </div>
           </div>
         </section>
+
+        {/* PACKAGES */}
+        {detail.packages && (
+          <section className="py-20 sm:py-24 mesh-bg">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6">
+              <div className="text-center mb-14">
+                <div className="w-14 h-1 bg-gradient-to-r from-blue to-cyan rounded mx-auto mb-5" />
+                <h2 className="text-3xl sm:text-4xl font-extrabold text-navy mb-3">Choose your package</h2>
+                <p className="text-slate-500">From a smart chatbot to a full AI Employee — scale as you grow.</p>
+              </div>
+              <div className="grid md:grid-cols-3 gap-8">
+                {detail.packages.map((pkg, i) => (
+                  <div key={i} className={`relative flex flex-col rounded-2xl p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${pkg.popular ? 'bg-gradient-to-br from-navy to-navy-light text-white shadow-2xl shadow-blue/20 border-2 border-blue' : 'bg-white border border-slate-200 hover:shadow-blue/5'}`}>
+                    {pkg.popular && (
+                      <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-blue to-cyan text-white text-xs font-bold rounded-full shadow-lg whitespace-nowrap">Most Popular</span>
+                    )}
+                    <h3 className={`text-lg font-extrabold mb-1 ${pkg.popular ? 'text-white' : 'text-navy'}`}>{pkg.name}</h3>
+                    <p className={`text-sm mb-4 ${pkg.popular ? 'text-slate-300' : 'text-slate-400'}`}>{pkg.desc}</p>
+                    <p className={`text-3xl font-extrabold mb-6 ${pkg.popular ? 'text-white' : 'text-navy'}`}>{pkg.price}</p>
+                    <ul className="space-y-3 mb-8 flex-1">
+                      {pkg.features.map((f, fi) => (
+                        <li key={fi} className="flex items-start gap-2.5 text-sm">
+                          <Check size={16} className={`mt-0.5 flex-shrink-0 ${pkg.popular ? 'text-cyan-300' : 'text-cyan'}`} />
+                          <span className={pkg.popular ? 'text-slate-200' : 'text-slate-600'}>{f}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    <Link href={prefillHref('/contact', { service: title, pkg: pkg.name, price: pkg.price, features: pkg.features, source: `${title} page — nexusweblab.com/services/${slug}` })} className={`flex items-center justify-center gap-2 w-full py-3.5 rounded-xl font-semibold text-sm transition-all ${pkg.popular ? 'bg-gradient-to-r from-blue to-cyan text-white shadow-lg hover:shadow-blue/30' : 'bg-slate-50 text-navy hover:bg-gradient-to-r hover:from-blue hover:to-cyan hover:text-white'}`}>
+                      Choose {pkg.name} <ArrowRight size={16} />
+                    </Link>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
 
         {/* FAQ */}
         <section className="py-20 sm:py-24 mesh-bg">
