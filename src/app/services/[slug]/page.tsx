@@ -30,6 +30,7 @@ const ICON_MAP: Record<string, any> = { '🌐': Globe, '🛒': ShoppingCart, '�
 // Static enriched content per service (keyed by slug)
 const DETAILS: Record<string, {
   tagline: string;
+  delivery: string;
   overview: string;
   deliverables: string[];
   process: { title: string; desc: string }[];
@@ -37,6 +38,7 @@ const DETAILS: Record<string, {
 }> = {
   'web-development': {
     tagline: 'Fast, secure, modern websites that represent your brand — and convert visitors into customers.',
+    delivery: 'Landing page 3–5 days · Full website 1–3 weeks',
     overview: 'We build custom websites from scratch using Next.js, React and Tailwind CSS — the same stack powering some of the fastest sites on the internet. Every build is fully responsive, SEO-ready and optimized for speed, so your business looks professional on every device and ranks well on Google.',
     deliverables: ['Custom design tailored to your brand', 'Next.js + React + Tailwind CSS build', 'Fully responsive (mobile, tablet, desktop)', 'SEO-ready structure & meta tags', 'Fast loading — Lighthouse 90+', 'Contact forms & lead capture', 'Google Analytics setup', 'Basic training & handover'],
     process: [
@@ -53,6 +55,7 @@ const DETAILS: Record<string, {
   },
   'e-commerce': {
     tagline: 'Online stores that turn visitors into buyers — with payments, inventory and orders all in one place.',
+    delivery: '2–4 weeks depending on scope',
     overview: 'We build complete online stores with product catalogs, shopping carts, order management and local payment gateways like KBZPay, AYA Pay and Wave. You get a full admin panel to manage products, prices, stock and orders — no technical skills needed. AI live chat is included to capture customers 24/7.',
     deliverables: ['Product catalog & categories', 'Shopping cart & checkout flow', 'KBZPay / AYA Pay / Wave / bank transfer', 'Full admin dashboard (products, orders)', 'Order emails & notifications', 'AI live chat widget', 'Delivery & tracking integration', 'Staff training & handover'],
     process: [
@@ -69,6 +72,7 @@ const DETAILS: Record<string, {
   },
   'ui-ux-design': {
     tagline: 'Interfaces people love to use — designed to be beautiful, clear and effortless.',
+    delivery: '3–7 days per screen set',
     overview: 'Great design is not just about looks — it is about how easily your customers find what they need. We design user interfaces and experiences that are visually stunning, intuitive and aligned with your brand. From wireframes to high-fidelity prototypes, we design before we build, so you always know exactly what you are getting.',
     deliverables: ['Brand-aligned UI kit & style guide', 'Wireframes & user flow mapping', 'High-fidelity page designs', 'Responsive design for all screens', 'Interactive clickable prototype (Figma)', 'Design system for future pages', 'Developer-ready handoff', '2 rounds of revisions included'],
     process: [
@@ -85,6 +89,7 @@ const DETAILS: Record<string, {
   },
   'seo-package': {
     tagline: 'Get found on Google — more traffic, more leads, more sales without paid ads.',
+    delivery: 'Launch in 1–2 weeks · results build 4–8 weeks',
     overview: 'We optimize your website so customers actually find you. Our SEO packages cover technical SEO, on-page content optimization, keyword research and Google Business setup. The result: higher rankings on Google, more organic traffic, and steady growth for your business — month after month.',
     deliverables: ['Keyword research & strategy', 'On-page SEO (titles, meta, headings)', 'Technical SEO (speed, sitemap, indexing)', 'Google Search Console setup', 'Google Business Profile setup', 'Content optimization for key pages', 'Local SEO for Myanmar businesses', 'Monthly progress report'],
     process: [
@@ -101,6 +106,7 @@ const DETAILS: Record<string, {
   },
   'hosting-deploy': {
     tagline: 'We handle the technical side — your site stays fast, secure and always online.',
+    delivery: '1–2 days',
     overview: 'Deployment and hosting can be the most confusing part of owning a website. We take care of everything: cloud hosting setup, domain configuration, SSL certificates, CDN and performance tuning. Your site stays fast, secure and online — while you focus on your business.',
     deliverables: ['Cloud hosting setup (Vercel / server)', 'Custom domain configuration', 'Free SSL / HTTPS certificate', 'Global CDN & caching', 'Automatic backups', 'Uptime monitoring & alerts', 'Security hardening', 'Email / business email setup'],
     process: [
@@ -117,6 +123,7 @@ const DETAILS: Record<string, {
   },
   'maintenance': {
     tagline: 'Keep your website fast, fresh and secure — with a team on call, every month.',
+    delivery: 'Ongoing — monthly plan',
     overview: 'Websites need care: updates, backups, security patches and fresh content. Our maintenance plans keep your site running smoothly so you never worry about downtime, hacks or outdated information. Think of it as an insurance policy for your online presence.',
     deliverables: ['Monthly updates & backups', 'Security patches & malware scans', 'Uptime monitoring', 'Content updates (text, images, offers)', 'Performance optimization', 'Bug fixes included', 'Priority support channel', 'Monthly health report'],
     process: [
@@ -133,6 +140,7 @@ const DETAILS: Record<string, {
   },
   'error-fixing': {
     tagline: 'Broken website? We diagnose the problem and fix it — fast, with a clear report.',
+    delivery: '1–3 days · urgent fixes in 24h',
     overview: 'Websites break: layouts fall apart, pages show errors, forms stop sending, sites load slowly or show scary security warnings. The good news — almost everything is fixable. We start with a free diagnosis, give you a fixed-price quote, then fix the issue and hand over a clean report of exactly what was wrong and what we did.',
     deliverables: ['Free diagnosis & fixed-price quote', 'Broken layout & design fixes', '404, white screen & error pages', 'Console & JavaScript errors', 'Forms, buttons & links repair', 'Speed & performance optimization', 'Mobile / responsive breakage', 'SSL & security warning fixes', 'Post-fix testing on all devices', 'Clear before/after report'],
     process: [
@@ -150,6 +158,7 @@ const DETAILS: Record<string, {
   },
   'ai-chatbot': {
     tagline: 'An AI assistant that answers your customers 24/7, captures leads and books sales while you sleep.',
+    delivery: '1–2 weeks',
     overview: 'Imagine a smart assistant that greets every visitor, answers their questions instantly, collects their contact details and even quotes your services — all without you lifting a finger. We build and train AI chatbots trained on your own business information, then connect them to your website, Facebook Messenger or WhatsApp. Every conversation becomes a captured lead delivered straight to your inbox.',
     deliverables: ['AI trained on your business info', 'Website chat widget with your branding', 'Messenger / WhatsApp integration', 'Lead capture with email & phone', 'Instant answers to FAQs 24/7', 'Handover to human agent when needed', 'Conversation history dashboard', 'Monthly bot training & improvements'],
     process: [
@@ -166,6 +175,7 @@ const DETAILS: Record<string, {
   },
   'website-redesign': {
     tagline: 'A modern, high-converting redesign of your existing website — without losing your SEO or content.',
+    delivery: '1–3 weeks',
     overview: 'Your website works, but it looks outdated and does not bring in customers the way it should. We redesign existing websites with a fresh, modern, mobile-first look while carefully preserving your content, brand identity and hard-earned SEO rankings. The result: a site that looks 5 years newer and converts more visitors into enquiries.',
     deliverables: ['Full visual redesign (modern UI)', 'Mobile-first responsive layout', 'SEO preserved — redirects & structure', 'Faster loading performance', 'Updated content & imagery', 'New branding touches (colors, fonts)', 'Lead capture forms upgraded', 'Testing across all devices'],
     process: [
@@ -182,6 +192,7 @@ const DETAILS: Record<string, {
   },
   'social-media-management': {
     tagline: 'Consistent, on-brand social content that keeps your business visible every day.',
+    delivery: 'Ongoing — monthly plan',
     overview: 'We plan, create and publish your social media content so your brand stays active and engaging on Facebook, Instagram and TikTok — without you spending hours every week. You get a monthly content calendar, ready-to-post graphics and captions, plus a simple report showing what worked.',
     deliverables: ['Monthly content calendar', 'Branded post designs & captions', 'Scheduled posting on Facebook / Instagram / TikTok', 'Comment & message engagement', 'Monthly performance report', 'Monthly strategy call'],
     process: [
@@ -198,6 +209,7 @@ const DETAILS: Record<string, {
   },
   'content-writing': {
     tagline: 'Clear, persuasive copy that turns visitors into customers.',
+    delivery: '2–5 days per batch',
     overview: 'Words sell. We write website copy, blog posts, product descriptions and SEO articles that explain your business clearly and guide readers toward action — in English or Burmese. Every piece is researched, structured and edited before delivery.',
     deliverables: ['Website copy & landing page text', 'SEO blog articles (800–1500 words)', 'Product & service descriptions', 'Email newsletters', 'Proofreading & editing of your drafts'],
     process: [
@@ -214,6 +226,7 @@ const DETAILS: Record<string, {
   },
   'logo-brand-identity': {
     tagline: 'A memorable logo and consistent brand identity your customers recognize.',
+    delivery: '2–4 days',
     overview: 'Your logo is the first impression of your business. We design a professional logo with a full brand kit — color palette, typography and usage guidelines — so every page, post and product looks consistent and trustworthy.',
     deliverables: ['Logo design (3 concepts to choose from)', 'Color palette & typography system', 'Brand guidelines PDF', 'Logo files (PNG, SVG, vector source)', 'Social media profile kit'],
     process: [
@@ -230,6 +243,7 @@ const DETAILS: Record<string, {
   },
   'business-email-setup': {
     tagline: 'Look professional with email at your own domain (name@yourbusiness.com).',
+    delivery: '1–2 days',
     overview: 'Free email accounts look unprofessional. We set up business email at your own domain, configure DNS and SPF so your messages actually reach inboxes, and help you connect everything to your phone and computer.',
     deliverables: ['Business email at your domain', 'DNS & SPF / DKIM configuration', 'Mail app setup (phone & computer)', 'Spam-free email delivery', 'Quick setup guide'],
     process: [
@@ -381,7 +395,7 @@ export default function ServiceDetail() {
                   <p className="text-sm text-slate-300 mb-1">Starting from</p>
                   <p className="text-3xl font-extrabold mb-4">{formatPrice(service?.price) || 'Contact us'}</p>
                   <ul className="space-y-3 mb-6 text-sm">
-                    <li className="flex items-center gap-2.5 text-slate-200"><Clock size={15} className="text-cyan-300" /> Fast delivery — 3 days to 3 weeks</li>
+                    <li className="flex items-center gap-2.5 text-slate-200"><Clock size={15} className="text-cyan-300" /> Fast delivery — {detail.delivery}</li>
                     <li className="flex items-center gap-2.5 text-slate-200"><Shield size={15} className="text-cyan-300" /> Quality guaranteed, revisions included</li>
                     <li className="flex items-center gap-2.5 text-slate-200"><Zap size={15} className="text-cyan-300" /> Modern, fast, SEO-ready build</li>
                     <li className="flex items-center gap-2.5 text-slate-200"><MessageCircle size={15} className="text-cyan-300" /> Direct support within 24 hours</li>
