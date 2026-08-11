@@ -54,7 +54,7 @@ export default function Footer() {
           <p className="text-sm mt-1.5">✉️ {s('email','info@nexusweblab.com')}</p>
           <p className="text-sm mt-1.5">📍 {s('address','No.189, Kha 6 Street, Insein, Yangon')}</p>
           <div className="flex items-center gap-3 mt-4">
-            <a href={settings.facebook || "https://facebook.com"} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="w-11 h-11 rounded-full bg-[#1877F2] shadow-md shadow-blue-500/25 flex items-center justify-center text-white hover:scale-110 hover:shadow-lg transition-all duration-200">
+            <a href={settings.facebook || "https://www.facebook.com/profile.php?id=61593132628840"} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="w-11 h-11 rounded-full bg-[#1877F2] shadow-md shadow-blue-500/25 flex items-center justify-center text-white hover:scale-110 hover:shadow-lg transition-all duration-200">
               <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current"><path d="M13.5 21v-7h2.5l.5-3h-3V9.1c0-.9.3-1.6 1.6-1.6H16.6V4.8c-.3 0-1.2-.1-2.3-.1-2.3 0-3.8 1.4-3.8 3.9V11H8v3h2.5v7h3z"/></svg>
             </a>
             <a href={settings.tiktok || "https://tiktok.com"} target="_blank" rel="noopener noreferrer" aria-label="TikTok" className="w-11 h-11 rounded-full bg-black shadow-md shadow-slate-500/25 flex items-center justify-center text-white hover:scale-110 hover:shadow-lg transition-all duration-200">
