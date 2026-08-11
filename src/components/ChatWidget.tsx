@@ -431,9 +431,9 @@ export default function ChatWidget() {
 
       {/* Chat Panel — responsive: never wider than viewport, never taller than
           viewport (works at any zoom level, on any device). Height shrinks to
-          fit small screens; on desktop it caps at 460px. */}
+          fit small screens; on desktop it caps at 600px. */}
       <div
-        className={`pointer-events-auto fixed right-3 sm:right-4 z-[9999] w-[min(380px,calc(100vw-1.5rem))] h-[min(460px,calc(100dvh-5.5rem))] flex flex-col bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden transition-all duration-300 origin-bottom-right ${
+        className={`pointer-events-auto fixed right-3 sm:right-4 z-[9999] w-[min(380px,calc(100vw-1.5rem))] h-[min(600px,calc(100dvh-5.5rem))] flex flex-col bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden transition-all duration-300 origin-bottom-right ${
           open ? "scale-100 opacity-100" : "scale-95 opacity-0 pointer-events-none"
         }`}
         style={{ bottom: "calc(env(safe-area-inset-bottom, 0px) + 4.5rem)" }}
