@@ -105,6 +105,7 @@ export async function POST(req: NextRequest) {
   }
 
   const jobs: { senderId: string; text: string }[] = [];
+  const commentJobs: { commentId: string; text: string; postId: string }[] = [];
   for (const entry of body.entry || []) {
     for (const event of entry.messaging || []) {
       const senderId = event.sender?.id;
@@ -115,14 +116,23 @@ export async function POST(req: NextRequest) {
         jobs.push({ senderId, text: messageText || postbackText });
       }
     }
+    // ── FEED events: comments on page posts (needs pages_manage_comments) ──
+    for (const change of entry.changes || []) {
+      const v = change.value || {};
+      const item = change.field || "";
+      // comment.add / comment_edit → reply to the comment
+      if (item === "feed" && /^comment/.test(v.item || "") && v.comment_id && v.message && v.from?.id) {
+        commentJobs.push({ commentId: v.comment_id, text: String(v.message).slice(0, 500), postId: v.post_id || v.parent_id || "" });
+      }
+    }
   }
 
   // Acknowledge instantly (Facebook requires a fast 200), then run the
   // reply work via `after()` — guaranteed to complete on Vercel even
   // though the response is already sent. (fire-and-forget `void` was
   // getting killed before the Messenger reply was sent → "No reply")
-  console.log("[fb-webhook] POST received. object =", body.object, "| entries =", (body.entry || []).length, "| jobs =", JSON.stringify(jobs));
-  if (jobs.length > 0) {
+  console.log("[fb-webhook] POST received. object =", body.object, "| entries =", (body.entry || []).length, "| jobs =", JSON.stringify(jobs), "| comments =", commentJobs.length);
+  if (jobs.length > 0 || commentJobs.length > 0) {
     after(async () => {
       for (const job of jobs) {
         try {
@@ -131,6 +141,15 @@ export async function POST(req: NextRequest) {
           console.log("[fb-webhook] done processing", job.senderId);
         } catch (e: any) {
           console.error("[fb-webhook] handleMessage error:", e?.message || e);
+        }
+      }
+      for (const job of commentJobs) {
+        try {
+          console.log("[fb-webhook] processing comment", job.commentId, ":", job.text.slice(0, 50));
+          await handleComment(job.commentId, job.text);
+          console.log("[fb-webhook] done comment", job.commentId);
+        } catch (e: any) {
+          console.error("[fb-webhook] handleComment error:", e?.message || e);
         }
       }
     });
@@ -212,5 +231,43 @@ async function handleMessage(senderId: string, text: string) {
   if (!sendRes.ok) {
     const errText = await sendRes.text();
     console.error(`[fb-webhook] Send API failed (${sendRes.status}):`, errText.slice(0, 500));
+  }
+}
+
+// ── Reply to a comment on a page post (feed webhook → pages_manage_comments) ──
+// Reuses the same Nexus AI chatbot, then posts the reply back as a comment.
+async function handleComment(commentId: string, text: string) {
+  if (!PAGE_ACCESS_TOKEN) {
+    console.error("[fb-webhook] FB_PAGE_ACCESS_TOKEN not set — cannot reply to comment");
+    return;
+  }
+  let reply = "Thanks for your comment! 😊 For details, please message us on Messenger or email info@nexusweblab.com.";
+  try {
+    const origin = "https://nexusweblab.com";
+    const chatRes = await fetch(`${origin}/api/chat`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        messages: [{ role: "user", content: `Someone commented on our Facebook post: "${String(text).slice(0, 300)}". Reply as Nexus AI, our female assistant — short, friendly, and ask them to message us on Messenger for details.` }],
+        visitorId: `fbcomment:${commentId}`,
+        context: "website",
+      }),
+    });
+    if (chatRes.ok) {
+      const data = await chatRes.json();
+      if (data.reply) reply = String(data.reply).slice(0, 500);
+    }
+  } catch (e: any) {
+    console.error("[fb-webhook] comment chat error:", e?.message || e);
+  }
+
+  const res = await fetch(`${GRAPH_API.replace("/me/messages", "")}/${commentId}/comments?access_token=PAGE_ACCESS_TOKEN`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message: reply }),
+  });
+  if (!res.ok) {
+    const errText = await res.text();
+    console.error(`[fb-webhook] Comment reply failed (${res.status}):`, errText.slice(0, 300));
   }
 }
