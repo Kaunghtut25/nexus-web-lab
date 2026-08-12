@@ -84,8 +84,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         name: "Nexus Web Lab",
         description: "AI automation & AI-powered web development agency in Yangon, Myanmar. We build intelligent digital systems — AI websites, business automation systems, custom AI agents and SaaS applications.",
         url: "https://nexusweblab.com",
-        email: "info@nexusweblab.com",
-        telephone: "+95 9 886 264 582",
         address: {
           "@type": "PostalAddress",
           streetAddress: "No.189, Kha 6 Street, Insein",
