@@ -27,7 +27,7 @@ export default function SettingsPage() {
     // Hero Section
     {k:'heroTitle',l:'Hero Title'},{k:'heroSubtitle',l:'Hero Subtitle'},{k:'heroCta',l:'Hero CTA Text'},{k:'heroBadge',l:'Hero Badge'},
     // Contact Info
-    {k:'phone',l:'Phone'},{k:'email',l:'Email'},{k:'address',l:'Address (full)'},
+    {k:'address',l:'Address (full)'},
     // Social Links
     {k:'facebook',l:'Facebook URL'},{k:'tiktok',l:'TikTok URL'},{k:'telegram',l:'Telegram URL'},
     // CTA Section
