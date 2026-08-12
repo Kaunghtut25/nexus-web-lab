@@ -48,6 +48,10 @@ const getHomeData = unstable_cache(
 
     const settings: Record<string, string> = {};
     for (const s of settingsRows) settings[s.key as string] = s.value as string;
+    // Contact details are intentionally excluded from the public RSC payload —
+    // all leads must flow through the contact form/chatbot.
+    delete settings['phone'];
+    delete settings['email'];
 
     return {
       settings,
