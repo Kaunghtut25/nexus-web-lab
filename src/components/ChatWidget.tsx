@@ -578,11 +578,11 @@ export default function ChatWidget() {
           <div className="px-3 pt-2 pb-1 bg-white flex flex-wrap gap-1.5">
             {(lang === "mm"
               ? ctx === "course"
-                ? ["သင်တန်းကြေး 💰", "Module တွေ 📚", "စာရင်းသွင်းနည်း 🚀", "လူနဲ့ စကားပြောချင်တယ် 👤"]
-                : ["ဝန်ဆောင်မှုများ 💼", "ဈေးနှုန်း 💰", "AI Chatbot 🤖", "လူနဲ့ စကားပြောချင်တယ် 👤"]
+                ? ["📚 ဒီနေ့ သင်ခန်းစာ", "🎯 Quiz စမ်းမယ်", "📖 Vocab Drill", "သင်တန်းကြေး 💰", "လူနဲ့ စကားပြောချင်တယ် 👤"]
+                : ["📚 ဒီနေ့ သင်ခန်းစာ", "🎯 Quiz စမ်းမယ်", "📖 Vocab Drill", "ဈေးနှုန်း 💰", "လူနဲ့ စကားပြောချင်တယ် 👤"]
               : ctx === "course"
-                ? ["Course fee 💰", "Modules 📚", "How to enroll 🚀", "Talk to human 👤"]
-                : ["Services 💼", "Pricing 💰", "AI Chatbot 🤖", "Talk to human 👤"]
+                ? ["📚 Daily Lesson", "🎯 Quiz me", "📖 Vocab Drill", "Course fee 💰", "Talk to human 👤"]
+                : ["📚 Daily Lesson", "🎯 Quiz me", "📖 Vocab Drill", "Pricing 💰", "Talk to human 👤"]
             ).map((q) => (
               <button
                 key={q}
