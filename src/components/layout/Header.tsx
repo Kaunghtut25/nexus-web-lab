@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Briefcase, FolderOpen, Info, Mail, FileText, GraduationCap, Phone } from "lucide-react";
+import { Home, Briefcase, FolderOpen, Info, Mail, FileText, GraduationCap } from "lucide-react";
 import { prefillHref } from "@/lib/lead-prefill";
 
 type NavItem = {
@@ -28,10 +28,6 @@ export default function Header() {
   // (dark hero pages) show the transparent header after client-side navigation.
   useEffect(() => { setScrolled(false); setOpen(false); }, [pathname]);
   const s = (k:string,d:string) => settings[k] || d;
-
-  const phoneRaw = s('phone','09945598825').replace(/\s/g,'');
-  const waNumber = '95' + phoneRaw.replace(/^0/,'');
-  const email = s('email','info@nexusweblab.com');
 
   const nav: NavItem[] = [
     { label: "Home", href: "/", icon: Home },
@@ -177,9 +173,7 @@ export default function Header() {
             <GraduationCap size={16} /> Course
           </Link>
           <div className="mt-3 flex items-center justify-center gap-3 text-xs text-white/50">
-            <a href={`https://wa.me/${waNumber}`} className="flex items-center gap-1.5 hover:text-cyan-300 transition"><Phone size={13} /> WhatsApp</a>
-            <span className="text-white/20">|</span>
-            <a href={`mailto:${email}`} className="flex items-center gap-1.5 hover:text-cyan-300 transition"><Mail size={13} /> Email</a>
+            <Link href="/contact" className="flex items-center gap-1.5 hover:text-cyan-300 transition"><Mail size={13} /> Contact Us</Link>
           </div>
         </div>
       )}

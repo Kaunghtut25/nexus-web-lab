@@ -4,7 +4,7 @@ import { useSearchParams } from "next/navigation";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import Image from "next/image";
-import { Phone, Mail, MapPin, Send, ArrowRight, CreditCard } from "lucide-react";
+import { Mail, MapPin, Send, ArrowRight, CreditCard, MessageSquare } from "lucide-react";
 import PaymentLogos from "@/components/home/PaymentLogos";
 
 export default function Contact() {
@@ -172,8 +172,6 @@ export default function Contact() {
               <div className="lg:col-span-2 space-y-4">
                 {[
                   { icon: <MapPin size={22} />, title: 'Visit Us', content: s('address','No.189, Kha 6 Street\nInsein, Yangon, Myanmar') },
-                  { icon: <Phone size={22} />, title: 'Call Us', content: s('phone','09945598825') },
-                  { icon: <Mail size={22} />, title: 'Email Us', content: s('email','info@nexusweblab.com') },
                 ].map(b => (
                   <div key={b.title} className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm hover:shadow-md transition-all">
                     <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-blue/10 to-cyan/10 flex items-center justify-center text-blue mb-4">{b.icon}</div>
@@ -187,14 +185,11 @@ export default function Contact() {
                   <h3 className="font-bold text-navy mb-4 flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" /> Prefer Instant Contact?
                   </h3>
+                  <p className="text-sm text-slate-500 mb-4">Use the form and our team will reply within 24 hours — or chat with Nexus AI, our 24/7 assistant! 🤖</p>
                   <div className="grid grid-cols-1 gap-2.5">
-                    <a href={`tel:${s('phone','09945598825').replace(/\s/g,'')}`} className="flex items-center gap-3 px-4 py-3 rounded-xl border border-slate-200 hover:border-blue hover:bg-blue/5 transition-all group">
-                      <Phone size={17} className="text-blue shrink-0" />
-                      <span className="text-sm font-semibold text-navy group-hover:text-blue">Call Now</span>
-                    </a>
-                    <a href={`mailto:${s('email','info@nexusweblab.com')}`} className="flex items-center gap-3 px-4 py-3 rounded-xl border border-slate-200 hover:border-blue hover:bg-blue/5 transition-all group">
-                      <Mail size={17} className="text-blue shrink-0" />
-                      <span className="text-sm font-semibold text-navy group-hover:text-blue">Email Directly</span>
+                    <a href="#contact-form" className="flex items-center gap-3 px-4 py-3 rounded-xl border border-slate-200 hover:border-blue hover:bg-blue/5 transition-all group">
+                      <MessageSquare size={17} className="text-blue shrink-0" />
+                      <span className="text-sm font-semibold text-navy group-hover:text-blue">Fill the Contact Form</span>
                     </a>
                   </div>
                 </div>

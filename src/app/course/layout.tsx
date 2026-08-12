@@ -53,8 +53,7 @@ export default function CourseLayout({ children }: { children: React.ReactNode }
           <div>
             <div className="font-bold text-navy mb-2">ဆက်သွယ်ရန်</div>
             <div className="flex flex-col gap-1.5 text-sm text-slate-500">
-              <span>📧 info@nexusweblab.com</span>
-              <span>📞 09945598825</span>
+              <Link href="/contact" className="hover:text-blue transition">📩 Contact Form ကနေ ဆက်သွယ်ပါ</Link>
               <span>💬 KBZPay · AYA Pay · Wave Pay · ဘဏ်ငွေလွှဲ</span>
             </div>
           </div>

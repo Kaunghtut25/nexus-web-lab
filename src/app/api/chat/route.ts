@@ -46,11 +46,9 @@ const WEBSITE_GUIDELINE = `You are Nexus AI, the official virtual assistant for 
 ## COMPANY
 - Name: Nexus Web Lab
 - Location: No.189, Kha 6 Street, Insein, Yangon, Myanmar
-- Email: info@nexusweblab.com
-- Phone / Viber: 09945598825
-- Facebook: search "Nexus Web Lab"
-- Process: Discovery → Design → Development → Launch (free consultation, no obligation)
 - Website: https://nexusweblab.com
+- Contact: via the [contact form](https://nexusweblab.com/contact) — the team replies within 24 hours
+- Process: Discovery → Design → Development → Launch (free consultation, no obligation)
 
 ## OWNER / FOUNDER (KNOW THIS)
 - The founder & lead developer of Nexus Web Lab is **U Kaung Htut (ဦးကောင်းထွဋ်)**.
@@ -58,7 +56,7 @@ const WEBSITE_GUIDELINE = `You are Nexus AI, the official virtual assistant for 
 - He is a web developer who personally builds the websites and leads client projects.
 - If a customer asks "who owns Nexus Web Lab" / "who is the founder" / "ပိုင်ရှင်က ဘယ်သူလဲ", answer: U Kaung Htut (ဦးကောင်းထွဋ်) — the founder and lead developer. NEVER claim that YOU (the bot) are the owner.
 - ⚠️ ANSWER DIRECTLY RULE: When the user asks about the founder/owner (English or Burmese), you MUST answer the question directly in your FIRST reply — no greeting, no services list, no deflection. Start with the founder name (U Kaung Htut / ဦးကောင်းထွဋ်). Only add contact info after answering.
-- If asked, you can say customers can contact him directly via email info@nexusweblab.com or Viber 09945598825.
+- If asked, you can say customers can reach him through the [contact form](https://nexusweblab.com/contact).
 
 ## AVAILABLE SERVICES (names only — do not show prices unless asked)
 1. Web Development — Custom websites with Next.js, React, TypeScript
@@ -114,7 +112,7 @@ You become a friendly FEMALE web-development tutor. Teach one small topic at a t
 - Detect the language the customer writes in and reply in the same language (Burmese ↔ English).
 
 ## CONTACT
-- Invite customers to the contact form or email info@nexusweblab.com when they're ready to proceed.
+- Invite customers to the [contact form](https://nexusweblab.com/contact) when they're ready to proceed.
 - **LEAD COLLECTION**: When the customer shows real interest (asks about starting, pricing, or wants to hire us), politely ask for their name, email, and phone number — one at a time — so our team can contact them.
 - **LINK FORMAT**: Use clickable markdown links — [ဒီလင့်ခ်ကိုနှိပ်ပါ](https://nexusweblab.com/contact) or [View our portfolio](https://nexusweblab.com/portfolio). Never show raw URLs.
 - If asked something outside this info, say you'll have the team follow up via email within 24 hours.`;
@@ -164,7 +162,7 @@ You become a friendly FEMALE course tutor. Teach one small topic at a time — n
 
 ## LINK FORMAT
 - Always use clickable markdown links — [ဒီမှာ စာရင်းသွင်းပါ](https://nexusweblab.com/course/register), [Login ဝင်ရန်](https://nexusweblab.com/course/login), [သင်တန်းအကြောင်း](https://nexusweblab.com/course). Never show raw URLs.
-- If a student is having account/login problems, tell them to contact the teacher at info@nexusweblab.com or Viber 09945598825.`;
+- If a student is having account/login problems, tell them to use the [contact form](https://nexusweblab.com/contact).`;
 
 const API_URL = "https://api.deepseek.com/v1";
 const API_KEY = process.env.DEEPSEEK_API_KEY || "";
@@ -314,10 +312,10 @@ async function logUnanswered(visitorId: string, question: string, reply: string)
 
 function websiteFallbackReply(text: string, isFirst: boolean): string {
   if (text.includes("price") || text.includes("cost") || text.includes("how much") || text.includes("budget") || text.includes("ဈေး")) {
-    return "Our international pricing (USD):\n• Web Development — from $500\n• E-Commerce — from $800\n• UI/UX Design — from $300\n• SEO — from $200\n• Hosting — from $50/mo\n• Maintenance — from $30/mo\n\nWe also accept MMK (1 USD ≈ 4,500 MMK). Want a custom quote? Visit our contact page or email info@nexusweblab.com 😊";
+    return "Our international pricing (USD):\n• Web Development — from $500\n• E-Commerce — from $800\n• UI/UX Design — from $300\n• SEO — from $200\n• Hosting — from $50/mo\n• Maintenance — from $30/mo\n\nWe also accept MMK (1 USD ≈ 4,500 MMK). Want a custom quote? [Send us a message](https://nexusweblab.com/contact) 😊";
   }
   if (text.includes("contact") || text.includes("email") || text.includes("phone") || text.includes("viber")) {
-    return "You can reach us at:\n📧 info@nexusweblab.com\n📞 09945598825 (phone / Viber)\n📍 No.189, Kha 6 Street, Insein, Yangon\n\n[ဒီလင့်ခ်ကိုနှိပ်ပါ](https://nexusweblab.com/contact) — or we reply within 24 hours!";
+    return "You can reach us through the [contact form](https://nexusweblab.com/contact) — we reply within 24 hours! 📩";
   }
   if (isFirst) {
     return "Hello! 👋 Welcome to Nexus Web Lab! We offer the following services:\n\n1. Web Development\n2. E-Commerce\n3. UI/UX Design\n4. SEO\n5. Hosting & Deploy\n6. Maintenance\n7. AI Chatbot Integration\n\nHow can I help you today?";
@@ -507,7 +505,7 @@ export async function POST(req: NextRequest) {
       const founderReply =
         ctx === "course"
           ? "The course teacher is **U Kaung Htut (ဆရာ ဦးကောင်းထွဋ်)** — the founder of Nexus Web Lab. He is a web developer who builds websites (Next.js, React, AI chatbots). He wrote this course to teach Myanmar freelancers how to earn with AI. 😊"
-          : "The founder & lead developer of Nexus Web Lab is **U Kaung Htut (ဦးကောင်းထွဋ်)**. He builds websites himself. Contact him directly: info@nexusweblab.com or Viber 09945598825. 😊";
+          : "The founder & lead developer of Nexus Web Lab is **U Kaung Htut (ဦးကောင်းထွဋ်)**. He builds websites himself. You can reach him through the [contact form](https://nexusweblab.com/contact). 😊";
       if (visitorId) await saveExchange(visitorId, ctx, normalized, founderReply);
       return NextResponse.json({ reply: founderReply, ...extraFields }, { headers: corsHeaders() });
     }
@@ -664,7 +662,7 @@ export async function POST(req: NextRequest) {
     return sendReply(reply);
   } catch (e: any) {
     return NextResponse.json(
-      { reply: "Sorry, I'm having a temporary connection issue. Please try again or email info@nexusweblab.com 😊", error: String(e?.message || e).slice(0, 200) },
+      { reply: "Sorry, I'm having a temporary connection issue. Please try again or use the [contact form](https://nexusweblab.com/contact) 😊", error: String(e?.message || e).slice(0, 200) },
       { status: 200, headers: corsHeaders() }
     );
   }

@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { Mail } from "lucide-react";
 
 export default function Footer() {
   const [settings, setSettings] = useState<Record<string,string>>({});
@@ -50,9 +51,10 @@ export default function Footer() {
         </div>
         <div>
           <h3 className="font-semibold mb-4 text-sm uppercase tracking-wider text-slide card-hover-title">Contact</h3>
-          <p className="text-sm">📞 {s('phone','09945598825')}</p>
-          <p className="text-sm mt-1.5">✉️ {s('email','info@nexusweblab.com')}</p>
-          <p className="text-sm mt-1.5">📍 {s('address','No.189, Kha 6 Street, Insein, Yangon')}</p>
+          <p className="text-sm">📍 {s('address','No.189, Kha 6 Street, Insein, Yangon')}</p>
+          <Link href="/contact" className="mt-2 inline-flex items-center gap-1.5 text-sm text-blue hover:text-cyan transition">
+            <Mail size={15} /> Send us a message →
+          </Link>
           <div className="flex items-center gap-3 mt-4">
             <a href={settings.facebook || "https://www.facebook.com/profile.php?id=61593132628840"} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="w-11 h-11 rounded-full bg-[#1877F2] shadow-md shadow-blue-500/25 flex items-center justify-center text-white hover:scale-110 hover:shadow-lg transition-all duration-200">
               <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current"><path d="M13.5 21v-7h2.5l.5-3h-3V9.1c0-.9.3-1.6 1.6-1.6H16.6V4.8c-.3 0-1.2-.1-2.3-.1-2.3 0-3.8 1.4-3.8 3.9V11H8v3h2.5v7h3z"/></svg>
@@ -62,9 +64,6 @@ export default function Footer() {
             </a>
             <a href={settings.telegram || "https://t.me"} target="_blank" rel="noopener noreferrer" aria-label="Telegram" className="w-11 h-11 rounded-full bg-[#229ED9] shadow-md shadow-sky-500/25 flex items-center justify-center text-white hover:scale-110 hover:shadow-lg transition-all duration-200">
               <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current"><path d="M21.9 4.6c.3-1.1-.7-1.9-1.7-1.5L3.6 9.7c-1.1.4-1 2 .1 2.3l4.3 1.3 1.7 5.3c.3 1 1.6 1.2 2.2.3l2.3-3.2 4.5 3.3c.9.6 2.1.2 2.4-.9l2.8-13.5zM9.4 12.8l8-5.4c.3-.2.7.2.4.5l-6.6 6.3-.3 2.7-1.5-4.1z"/></svg>
-            </a>
-            <a href={`mailto:${settings.email || 'info@nexusweblab.com'}`} aria-label="Email" className="w-11 h-11 rounded-full bg-[#EA4335] shadow-md shadow-red-500/25 flex items-center justify-center text-white hover:scale-110 hover:shadow-lg transition-all duration-200">
-              <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current"><path d="M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm8 6.5L5.5 7h13L12 11.5zM5 8.5V17h14V8.5l-7 4.5-7-4.5z"/></svg>
             </a>
           </div>
         </div>

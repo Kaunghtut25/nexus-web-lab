@@ -13,7 +13,7 @@ const DEMO_REPLIES: Record<string, string> = {
   ecommerce: "We build online stores from $800 — product management, cart, payment integration, order tracking. Includes full admin panel!",
   seo: "Our SEO package starts at $200 — audit, meta tags, schema markup, speed optimization, and monthly reports.",
   chatbot: "Yes! AI chatbots are our specialty — from FAQ bots to full AI agents with RAG and multi-language. From $600, demo available!",
-  contact: "Reach us at info@nexusweblab.com or 09945598825. We reply within 24 hours!",
+  contact: "ကျွန်မတို့ကို Contact စာမျက်နှာက form ကနေ ဆက်သွယ်နိုင်ပါတယ် — ၂၄ နာရီအတွင်း ပြန်ကြားပေးပါမယ်! 📩 [Send a message](https://nexusweblab.com/contact)",
   international: "Yes! We work with clients worldwide via Fiverr, Upwork, and direct contracts. English communication supported.",
   timeline: "Landing pages: 1-2 weeks. Business sites: 2-4 weeks. E-commerce: 3-6 weeks. Rush delivery available!",
   support: "1 month free support included with every project. Ongoing maintenance plans from $30/mo.",

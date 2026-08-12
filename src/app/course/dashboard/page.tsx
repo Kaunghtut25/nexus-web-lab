@@ -165,13 +165,10 @@ export default async function CourseDashboardPage() {
         <div className="mt-10 bg-white rounded-2xl border border-slate-200 p-6 text-center">
           <p className="text-sm text-slate-500">
             ❓ မေးခွန်းရှိရင် —{" "}
-            <a href="mailto:info@nexusweblab.com" className="text-blue font-bold hover:underline">
-              info@nexusweblab.com
-            </a>{" "}
-            (သို့) Viber{" "}
-            <a href="viber://chat?number=%2B959945598825" target="_blank" rel="noopener noreferrer" className="text-blue font-bold hover:underline">
-              09945598825
-            </a>
+            <Link href="/contact" className="text-blue font-bold hover:underline">
+              Contact Form ကနေ ဆက်သွယ်ပါ
+            </Link>{" "}
+            (ကျွန်မတို့ ၂၄ နာရီအတွင်း ပြန်ကြားပေးပါမယ်)
           </p>
         </div>
       </div>
