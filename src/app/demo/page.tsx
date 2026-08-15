@@ -163,7 +163,7 @@ export default function DemoPage() {
   const plans = [
     { name: "Essential", price: 300, feat: ["5-page website", "Mobile responsive", "Contact form", "Basic SEO", "1 revision round"] },
     { name: "Business", price: 800, feat: ["Up to 12 pages", "CMS / admin panel", "Blog section", "Advanced SEO", "3 revision rounds", "Priority support"] },
-    { name: "Custom App", price: 1500, feat: ["Web app / dashboard", "Database + API", "AI integration", "User accounts", "Unlimited revisions", "Dedicated support"] },
+    { name: "Custom App", price: 1500, feat: ["Web app / dashboard", "Database + API", "AI integration", "User accounts", "Revisions within scope", "Dedicated support"] },
   ];
 
   const submitForm = (e: React.FormEvent) => {

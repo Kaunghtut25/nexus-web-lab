@@ -3,23 +3,27 @@ import { dbAll, dbRun } from '@/lib/db';
 import { v4 as uuid } from 'uuid';
 import { requireAuth } from '../admin/auth-guard';
 import { notifyLead } from '@/lib/notify';
+import { guardForm } from '@/lib/form-guard';
 
 // POST — public submission from get-quote page
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
+    const guard = guardForm(req, body, ['name', 'email', 'message']);
+    if (!guard.ok) return NextResponse.json({ error: guard.error }, { status: guard.status });
+    const c = guard.body;
     const id = uuid();
     await dbRun(
       'INSERT INTO quotes (id, name, email, phone, service, budget, timeline, message) VALUES (?,?,?,?,?,?,?,?)',
-      [id, body.name || 'Anonymous', body.email || '', body.phone || '', body.service || '', body.budget || '', body.timeline || '', body.message || '']
+      [id, c.name || 'Anonymous', c.email || '', c.phone || '', c.service || '', c.budget || '', c.timeline || '', c.message || '']
     );
     // Notify via Telegram
     notifyLead({
-      name: body.name || 'Anonymous',
-      email: body.email || '',
-      phone: body.phone || '',
-      website_type: body.service || '',
-      details: `Budget: ${body.budget || 'N/A'} | Timeline: ${body.timeline || 'N/A'} | ${body.message || ''}`.slice(0, 400),
+      name: c.name || 'Anonymous',
+      email: c.email || '',
+      phone: c.phone || '',
+      website_type: c.service || '',
+      details: `Budget: ${c.budget || 'N/A'} | Timeline: ${c.timeline || 'N/A'} | ${c.message || ''}`.slice(0, 400),
       source: 'quote-form',
     });
     return NextResponse.json({ success: true });

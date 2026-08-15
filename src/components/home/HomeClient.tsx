@@ -50,7 +50,7 @@ const DEFAULT_PREMIUM = [
   { icon: '💳', title: 'Payment Gateway Integration', description: 'Accept KBZPay, AYA Pay, Wave, bank transfer, or international gateways — securely integrated.' },
   { icon: '🤖', title: 'AI Chatbot / Smart Features', description: '24/7 AI assistant, smart search, and automation built into your website to capture every lead.' },
   { icon: '🎧', title: 'Priority Support', description: 'You get fast, direct support — we respond within 24 hours, every time.' },
-  { icon: '♾️', title: 'Unlimited Revisions', description: 'We keep refining until you are 100% happy. No extra charges, no limits.' },
+  { icon: '♾️', title: 'Revisions Within Scope', description: 'Revisions covered within the approved project scope — so you stay in control without surprise costs.' },
 ];
 
 const DEFAULT_TESTIMONIALS = [

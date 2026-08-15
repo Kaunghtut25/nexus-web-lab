@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { deliverLeadOnce, ChatMessage } from "@/lib/lead";
+import { guardForm } from "@/lib/form-guard";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -10,6 +11,9 @@ export const dynamic = "force-dynamic";
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
+    // Cheap spam/abuse gate (rate limit + honeypot) without blocking legit chats.
+    const guard = guardForm(req, body, []);
+    if (!guard.ok) return NextResponse.json({ success: false, error: guard.error }, { status: guard.status });
     const messages: ChatMessage[] = (body?.messages || []).map((m: any) => ({
       role: m?.role === "bot" ? "assistant" : m?.role === "user" ? "user" : "assistant",
       content: m?.content ?? m?.text ?? "",

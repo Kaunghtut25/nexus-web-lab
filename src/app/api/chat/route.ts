@@ -80,7 +80,7 @@ const WEBSITE_GUIDELINE = `You are Nexus AI, the official virtual assistant for 
 4. SEO Package — From $200 (≈ 900,000 MMK)
 5. Hosting & Deploy — From $50/mo (≈ 225,000 MMK/mo)
 6. Maintenance — From $30/mo (≈ 135,000 MMK/mo)
-7. AI Chatbot / Automation — From $500 (≈ 2,250,000 MMK)
+7. AI Agent & Automation (AI chatbot, RAG, workflows) — From $299 (≈ 1,345,000 MMK)
 8. Website Error Fixing — From $50
 9. Website Redesign — From $250
 10. Social Media Management — From $150/mo
@@ -350,10 +350,14 @@ export async function POST(req: NextRequest) {
 
     // Normalize widget messages: ChatWidget sends {role, text} but DeepSeek
     // requires {role, content}. Accept both so the API never 400s.
+    // SECURITY: never trust a client-supplied "system" role — an attacker could
+    // inject a fake system message to override the bot's guidelines. Everything
+    // from the client is forced to "user"/"assistant"; only OUR code below
+    // builds the real system prompt.
     const normalized = (messages as any[]).map((m) => ({
-      role: m?.role === "bot" ? "assistant" : (m?.role === "system" ? "system" : m?.role === "assistant" ? "assistant" : "user"),
-      content: m?.content ?? m?.text ?? "",
-    })).filter((m) => typeof m.content === "string" && m.content.trim().length > 0);
+      role: m?.role === "bot" || m?.role === "assistant" ? "assistant" : "user",
+      content: String(m?.content ?? m?.text ?? "").slice(0, 4000),
+    })).filter((m) => m.content.trim().length > 0);
 
     // ── MEMORY: load THIS context's past conversations from Turso ──
     let memory: { role: string; content: string }[] = [];

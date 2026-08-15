@@ -65,7 +65,7 @@ export default function AboutPage() {
         <section className="py-16" style={{ background: 'linear-gradient(135deg, #0F172A, #1E3A5F)' }}>
           <div className="max-w-5xl mx-auto px-4 sm:px-6">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-              {[s('stat1Value','105+'), s('stat2Value','104+'), s('stat3Value','100%'), s('stat4Value','24/7')].map((v, i) => (
+              {[s('stat1Value','134+'), s('stat2Value','129+'), s('stat3Value','98.9%'), s('stat4Value','24/7')].map((v, i) => (
                 <div key={i}>
                   <div className="text-4xl font-extrabold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent mb-2">{v}</div>
                   <div className="text-slate-400 text-sm font-medium">{[s('stat1Label','Projects Delivered'), s('stat2Label','Happy Clients'), s('stat3Label','Client Satisfaction'), s('stat4Label','Support')][i]}</div>

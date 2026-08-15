@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
@@ -9,6 +9,8 @@ import { Send, ArrowRight, CheckCircle, Clock, Shield, Sparkles } from "lucide-r
 export default function GetQuote() {
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const submittedRef = useRef(false);
   const searchParams = useSearchParams();
 
   // Read CTA context (?svc=...&msg=...) to prefill message box + service select.
@@ -29,13 +31,26 @@ export default function GetQuote() {
   }, [svcParam]);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault(); setLoading(true);
+    e.preventDefault();
+    if (submittedRef.current || loading) return;
+    submittedRef.current = true;
+    setError(null);
+    setLoading(true);
     const form = new FormData(e.currentTarget);
     const body = Object.fromEntries(form);
     try {
-      await fetch("/api/quotes", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(body) });
-      setSent(true);
-    } catch {}
+      const res = await fetch("/api/quotes", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(body) });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setError(data.error || "Something went wrong. Please try again.");
+        submittedRef.current = false;
+      } else {
+        setSent(true);
+      }
+    } catch {
+      setError("Network error — please check your connection and try again.");
+      submittedRef.current = false;
+    }
     setLoading(false);
   }
 
@@ -77,6 +92,16 @@ export default function GetQuote() {
                       </h2>
                       <p className="text-sm text-slate-500 mb-6">Fill in the details below and we&apos;ll prepare a custom estimate.</p>
                       <form onSubmit={handleSubmit} className="space-y-4">
+                        {/* Honeypot — hidden from humans, bots autofill it */}
+                        <div className="hidden" aria-hidden="true">
+                          <label htmlFor="company_website">Leave this field empty</label>
+                          <input id="company_website" name="company_website" type="text" tabIndex={-1} autoComplete="off" />
+                        </div>
+                        {error && (
+                          <div role="alert" className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl px-4 py-3">
+                            {error}
+                          </div>
+                        )}
                         <div className="grid sm:grid-cols-2 gap-4">
                           <input name="name" placeholder="Your Name *" required className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-base focus:outline-none focus:border-blue focus:ring-2 focus:ring-blue/10 transition" />
                           <input name="email" type="email" placeholder="Your Email *" required className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-base focus:outline-none focus:border-blue focus:ring-2 focus:ring-blue/10 transition" />

@@ -3,21 +3,25 @@ import { dbAll, dbRun } from '@/lib/db';
 import { v4 as uuid } from 'uuid';
 import { requireAuth } from '../admin/auth-guard';
 import { notifyLead } from '@/lib/notify';
+import { guardForm } from '@/lib/form-guard';
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
+    const guard = guardForm(req, body, ['name', 'email', 'message']);
+    if (!guard.ok) return NextResponse.json({ error: guard.error }, { status: guard.status });
+    const c = guard.body;
     await dbRun(
       'INSERT INTO contacts (id, name, email, phone, service, message) VALUES (?,?,?,?,?,?)',
-      [uuid(), body.name || 'Anonymous', body.email || '', body.phone || '', body.service || '', body.message || '']
+      [uuid(), c.name || 'Anonymous', c.email || '', c.phone || '', c.service || '', c.message || '']
     );
     // Deliver direct contact-form submissions to the owner on Telegram.
     notifyLead({
-      name: body.name || 'Anonymous',
-      email: body.email || '',
-      phone: body.phone || '',
-      website_type: body.service || '',
-      details: (body.message || '').slice(0, 400),
+      name: c.name || 'Anonymous',
+      email: c.email || '',
+      phone: c.phone || '',
+      website_type: c.service || '',
+      details: (c.message || '').slice(0, 400),
       source: 'contact-form',
     });
     return NextResponse.json({ success: true });

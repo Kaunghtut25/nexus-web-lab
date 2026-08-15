@@ -12,6 +12,10 @@ const SERVICE_SLUGS = [
   'error-fixing',
   'ai-chatbot',
   'website-redesign',
+  'social-media-management',
+  'content-writing',
+  'logo-brand-identity',
+  'business-email-setup',
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {

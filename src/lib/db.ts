@@ -154,7 +154,7 @@ async function seedHeroSlidesAndFeatures() {
       ['pf3', 'Payment Gateway Integration', 'Accept KBZPay, AYA Pay, Wave, bank transfer, or international gateways — securely integrated.', '💳', 3],
       ['pf4', 'AI Chatbot / Smart Features', '24/7 AI assistant, smart search, and automation built into your website to capture every lead.', '🤖', 4],
       ['pf5', 'Priority Support', 'You get fast, direct support — we respond within 24 hours, every time.', '🎧', 5],
-      ['pf6', 'Unlimited Revisions', 'We keep refining until you are 100% happy. No extra charges, no limits.', '♾️', 6],
+      ['pf6', 'Revisions Within Scope', 'Revisions covered within the approved project scope — so you stay in control without surprise costs.', '♾️', 6],
     ];
     for (const [id, title, description, icon, sort_order] of premiums) {
       await client.execute('INSERT OR REPLACE INTO premium_features (id,title,description,icon,sort_order) VALUES (?,?,?,?,?)', [id, title, description, icon, sort_order]);

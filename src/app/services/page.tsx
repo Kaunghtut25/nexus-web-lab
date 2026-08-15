@@ -87,7 +87,11 @@ export default function Services() {
                     <div
                       key={sv.id}
                       onClick={() => setSelected(isSelected ? null : sv.id)}
-                      className={`group relative bg-white rounded-2xl overflow-hidden transition-all duration-300 cursor-pointer hover:-translate-y-1 ${
+                      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSelected(isSelected ? null : sv.id); } }}
+                      role="button"
+                      tabIndex={0}
+                      aria-expanded={isSelected}
+                      className={`group relative bg-white rounded-2xl overflow-hidden transition-all duration-300 cursor-pointer hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue ${
                         isSelected
                           ? 'border-2 border-blue shadow-lg shadow-blue/10'
                           : selected ? 'border border-slate-100 hover:shadow-xl'
@@ -167,7 +171,7 @@ export default function Services() {
                 <h3 className="text-xl font-extrabold text-navy mb-1">Starter / Basic</h3>
                 <p className="text-sm text-slate-400 mb-4">Single Landing Page</p>
                 <div className="mb-2">
-                  <span className="text-3xl font-extrabold text-navy">$350</span>
+                  <span className="text-3xl font-extrabold text-navy">{formatPrice('$350')}</span>
                 </div>
                 <p className="text-sm text-slate-500 mb-6">Delivery: 3–5 days</p>
                 <ul className="space-y-3 mb-8">
@@ -190,7 +194,7 @@ export default function Services() {
                 <h3 className="text-xl font-extrabold text-navy mb-1">Standard</h3>
                 <p className="text-sm text-slate-400 mb-4">Full Business Website</p>
                 <div className="mb-2">
-                  <span className="text-3xl font-extrabold text-navy">$600</span>
+                  <span className="text-3xl font-extrabold text-navy">{formatPrice('$600')}</span>
                 </div>
                 <p className="text-sm text-slate-500 mb-6">Delivery: 7–10 days</p>
                 <ul className="space-y-3 mb-8">
@@ -212,18 +216,18 @@ export default function Services() {
                 <h3 className="text-xl font-extrabold text-navy mb-1">Premium</h3>
                 <p className="text-sm text-slate-400 mb-4">Custom E-Commerce / AI Web App</p>
                 <div className="mb-2">
-                  <span className="text-3xl font-extrabold text-navy">$1,200–$2,500+</span>
+                  <span className="text-3xl font-extrabold text-navy">{formatPrice('$1,200–$2,500+')}</span>
                 </div>
                 <p className="text-sm text-slate-500 mb-6">Delivery: 2–3 weeks</p>
                 <ul className="space-y-3 mb-8">
-                  {['Custom E-Commerce or AI Web App','Full Admin Dashboard','Payment Gateway Integration','AI Chatbot / Smart Features','Priority Support','Unlimited Revisions'].map((f, fi) => (
+                  {['Custom E-Commerce or AI Web App','Full Admin Dashboard','Payment Gateway Integration','AI Chatbot / Smart Features','Priority Support','Revisions Within Scope'].map((f, fi) => (
                     <li key={fi} className="flex items-start gap-2 text-sm text-slate-600">
                       <Check size={16} className="mt-0.5 flex-shrink-0 text-cyan" />
                       <span>{f}</span>
                     </li>
                   ))}
                 </ul>
-                <Link href={prefillHref('/contact', { service: 'Web Development', pkg: 'Premium — Custom E-Commerce / AI Web App', price: '$1,200–$2,500+', features: ['Custom E-Commerce or AI Web App','Full Admin Dashboard','Payment Gateway Integration','AI Chatbot / Smart Features','Priority Support','Unlimited Revisions'], source: 'Services page — nexusweblab.com/services' })} className="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold text-sm bg-slate-50 text-navy hover:bg-gradient-to-r hover:from-blue hover:to-cyan hover:text-white transition-all">
+                <Link href={prefillHref('/contact', { service: 'Web Development', pkg: 'Premium — Custom E-Commerce / AI Web App', price: '$1,200–$2,500+', features: ['Custom E-Commerce or AI Web App','Full Admin Dashboard','Payment Gateway Integration','AI Chatbot / Smart Features','Priority Support','Revisions Within Scope'], source: 'Services page — nexusweblab.com/services' })} className="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold text-sm bg-slate-50 text-navy hover:bg-gradient-to-r hover:from-blue hover:to-cyan hover:text-white transition-all">
                   Get Started <ArrowRight size={16} />
                 </Link>
               </div>
