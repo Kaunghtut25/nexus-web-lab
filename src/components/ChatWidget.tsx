@@ -443,7 +443,7 @@ export default function ChatWidget() {
         {/* Header */}
         <div className="bg-gradient-to-r from-blue to-cyan px-5 py-4 flex items-center gap-3">
           <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center overflow-hidden">
-            <img src="/logo-transparent.png" alt="Nexus Web Lab" className="w-full h-full object-cover" />
+            <img src="/logo-transparent.png" alt="Nexus Web Lab" width={512} height={512} className="w-full h-full object-cover" />
           </div>
           <div>
             <h3 className="text-white font-bold text-sm">Nexus AI Assistant</h3>
@@ -505,7 +505,7 @@ export default function ChatWidget() {
             <div key={i} className={`flex gap-2 ${m.role === "user" ? "justify-end" : "justify-start"}`}>
               {m.role === "bot" && (
                 <div className="w-7 h-7 rounded-full bg-white border border-slate-200 flex items-center justify-center overflow-hidden flex-shrink-0 mt-1">
-                  <img src="/logo-transparent.png" alt="Nexus AI" className="w-full h-full object-cover" />
+                  <img src="/logo-transparent.png" alt="Nexus AI" width={512} height={512} className="w-full h-full object-cover" />
                 </div>
               )}
               <div
@@ -619,7 +619,7 @@ export default function ChatWidget() {
             }}
             placeholder="Type your message... (Enter = new line)"
             rows={1}
-            className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none focus:border-blue focus:ring-2 focus:ring-blue/10 resize-none overflow-y-auto max-h-[112px]"
+            className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-base focus:outline-none focus:border-blue focus:ring-2 focus:ring-blue/10 resize-none overflow-y-auto max-h-[112px]"
             aria-label="Chat message"
           />
           <button

@@ -52,6 +52,9 @@ export default function Footer() {
         <div>
           <h3 className="font-semibold mb-4 text-sm uppercase tracking-wider text-slide card-hover-title">Contact</h3>
           <p className="text-sm">📍 {s('address','Yangon, Myanmar')}</p>
+          <p className="text-sm mt-2">✉️ <a href={`mailto:${s('contactEmail','info@nexusweblab.com')}`} className="hover-green-blue inline-flex items-center min-h-[44px] py-1 break-all">{s('contactEmail','info@nexusweblab.com')}</a></p>
+          <p className="text-sm">📞 <a href={`tel:${s('contactPhone','+959886264582')}`} className="hover-green-blue inline-flex items-center min-h-[44px] py-1">{s('contactPhoneDisplay','09 886 264 582')}</a></p>
+          <p className="text-sm mt-2">🕘 {s('businessHours','Mon–Sat: 9:00 AM – 6:00 PM')}</p>
           <Link href="/contact" className="mt-2 inline-flex items-center gap-1.5 text-sm text-blue hover:text-cyan transition">
             <Mail size={15} /> Send us a message →
           </Link>

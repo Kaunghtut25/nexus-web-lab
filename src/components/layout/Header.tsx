@@ -113,11 +113,11 @@ export default function Header() {
             );
           })}
 
-          <Link href={prefillHref('/get-quote', { source: pathname === '/' ? 'Home page — nexusweblab.com' : `nexusweblab.com${pathname}` })} className="gradient-btn text-sm !py-2.5 !px-5 ml-3">
+          <Link href={prefillHref('/get-quote', { source: pathname === '/' ? 'Home page — nexusweblab.com' : `nexusweblab.com${pathname}` })} className="gradient-btn text-sm !py-2.5 !px-5 ml-3 min-h-[48px] inline-flex items-center">
             Get a Quote
           </Link>
 
-          <Link href="/course" className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold border nav-hover transition-all ml-2 ${courseLink}`}>
+          <Link href="/course" className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold border nav-hover transition-all ml-2 min-h-[48px] ${courseLink}`}>
             <GraduationCap size={16} /> Course
           </Link>
         </nav>

@@ -28,6 +28,7 @@ export default function SettingsPage() {
     {k:'heroTitle',l:'Hero Title'},{k:'heroSubtitle',l:'Hero Subtitle'},{k:'heroCta',l:'Hero CTA Text'},{k:'heroBadge',l:'Hero Badge'},
     // Contact Info
     {k:'address',l:'Address (full)'},
+    {k:'contactEmail',l:'Contact Email'},{k:'contactPhone',l:'Contact Phone (international, e.g. +959...)'},{k:'contactPhoneDisplay',l:'Contact Phone (display, e.g. 09 886 264 582)'},{k:'businessHours',l:'Business Hours'},
     // Social Links
     {k:'facebook',l:'Facebook URL'},{k:'tiktok',l:'TikTok URL'},{k:'telegram',l:'Telegram URL'},
     // CTA Section

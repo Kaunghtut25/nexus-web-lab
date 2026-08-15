@@ -194,10 +194,10 @@ export default function HomeClient({ initialData }: { initialData: HomeData }) {
               </p>
 
               <div className="hero-item hero-d4 flex flex-wrap gap-4">
-                <Link href={prefillHref('/contact', { source: 'Home page — nexusweblab.com' })} className="neon-btn">
+                <Link href={prefillHref('/contact', { source: 'Home page — nexusweblab.com' })} className="neon-btn min-h-[52px]">
                   {s('heroCta','Start Your Project')} <ArrowRight size={20} />
                 </Link>
-                <Link href="/portfolio" className="inline-flex items-center gap-2 glass text-white font-semibold px-6 py-3 rounded-xl text-sm sm:text-base hover:bg-white/10 transition-all">
+                <Link href="/portfolio" className="inline-flex items-center gap-2 glass text-white font-semibold px-6 py-3 rounded-xl text-sm sm:text-base hover:bg-white/10 transition-all min-h-[52px]">
                   {s('heroViewPortfolio','View Portfolio')}
                 </Link>
               </div>
