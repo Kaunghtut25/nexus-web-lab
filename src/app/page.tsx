@@ -6,7 +6,7 @@ import { dbAllRead } from "@/lib/db";
 
 export const metadata: Metadata = {
   title: "Nexus Web Lab — AI Automation & AI-Powered Web Development",
-  description: "AI automation, AI chatbots and AI-powered web development in Yangon, Myanmar. We build intelligent digital systems — AI websites, business automation, custom AI agents and SaaS applications.",
+  description: "AI automation, AI chatbots & AI-powered web development in Yangon, Myanmar. Custom AI agents, business automation & SaaS apps — get a free consultation.",
 };
 
 // NOTE: this page MUST stay `force-dynamic`.
