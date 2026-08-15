@@ -7,8 +7,10 @@ import Image from "next/image";
 import { ArrowRight, ExternalLink, FolderOpen, Layers, Target, Lightbulb, TrendingUp, Cpu } from "lucide-react";
 import { prefillHref } from "@/lib/lead-prefill";
 
-// Case studies — client problem → solution → result → technology.
-const CASE_STUDIES = [
+// Case-study fallbacks — used ONLY when the DB has no project with
+// case-study fields (problem/solution/result). DB is the source of truth:
+// the same fields can be edited in Admin → Projects.
+const CASE_STUDY_FALLBACKS = [
   {
     name: 'A9 Global Travels',
     category: 'Travel & Tourism',
@@ -44,10 +46,25 @@ export default function PortfolioPage() {
       setProjects((d.projects || []).map((p: any) => ({
         ...p,
         tags: Array.isArray(p.tags) ? p.tags : (typeof p.tags === 'string' ? (() => { try { return JSON.parse(p.tags); } catch { return []; } })() : []),
+        tech: Array.isArray(p.tech) ? p.tech : (typeof p.tech === 'string' ? (() => { try { return JSON.parse(p.tech); } catch { return []; } })() : []),
       })));
       setLoading(false);
     }).catch(() => setLoading(false));
   }, []);
+
+  // Case studies from DB (projects that have problem/solution/result fields),
+  // falling back to the curated constant only when no project has them.
+  const caseStudies = projects
+    .filter((p: any) => p.problem && p.solution && p.result)
+    .map((p: any) => ({
+      name: p.title,
+      category: p.category || p.client || 'Case Study',
+      problem: p.problem,
+      solution: p.solution,
+      result: p.result,
+      tech: Array.isArray(p.tech) && p.tech.length ? p.tech : (typeof p.tags === 'string' ? p.tags.split(',').map((t:string)=>t.trim()).filter(Boolean) : (Array.isArray(p.tags) ? p.tags : [])),
+    }));
+  const displayCaseStudies = caseStudies.length > 0 ? caseStudies : CASE_STUDY_FALLBACKS;
 
   return (
     <>
@@ -139,7 +156,7 @@ export default function PortfolioPage() {
               <p className="text-slate-500 text-lg max-w-2xl mx-auto">Every project starts with a problem. Here is what changed for our clients.</p>
             </div>
             <div className="space-y-8">
-              {CASE_STUDIES.map((cs, i) => (
+              {displayCaseStudies.map((cs, i) => (
                 <div key={i} className="group bg-slate-50 border border-slate-100 rounded-2xl p-6 sm:p-8 hover:shadow-xl hover:shadow-blue/5 transition-all duration-300">
                   <div className="flex flex-wrap items-center gap-3 mb-6">
                     <h3 className="text-xl sm:text-2xl font-extrabold text-navy card-hover-title">{cs.name}</h3>
@@ -161,7 +178,7 @@ export default function PortfolioPage() {
                   </div>
                   <div className="mt-6 pt-5 border-t border-slate-200 flex flex-wrap items-center gap-2">
                     <span className="flex items-center gap-1.5 text-xs font-semibold text-slate-400 uppercase tracking-wide mr-1"><Cpu size={13} /> Technology</span>
-                    {cs.tech.map((t) => (
+                    {cs.tech.map((t: string) => (
                       <span key={t} className="px-3 py-1 bg-white border border-slate-200 rounded-full text-xs font-semibold text-slate-600">{t}</span>
                     ))}
                   </div>

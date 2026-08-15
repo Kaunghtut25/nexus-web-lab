@@ -4,20 +4,21 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import Link from "next/link";
 import Image from "next/image";
-import { Sparkles, Globe, Palette, TrendingUp, ShoppingCart, Cloud, Wrench, ArrowRight, CheckCircle, Star, Zap, ChevronLeft, ChevronRight, Cpu, Rocket, ArrowUpRight, CreditCard } from "lucide-react";
+import { Sparkles, Globe, Palette, TrendingUp, ShoppingCart, Cloud, Wrench, ArrowRight, CheckCircle, Star, Zap, ChevronLeft, ChevronRight, Cpu, Rocket, ArrowUpRight, CreditCard, type LucideIcon } from "lucide-react";
 import PaymentLogos from "@/components/home/PaymentLogos";
 import { useCurrency } from "@/lib/currency";
 import { prefillHref } from "@/lib/lead-prefill";
 import CurrencySwitcher from "@/components/CurrencySwitcher";
+import { FAQS } from "@/lib/faq";
 
-const ICON_MAP: Record<string, any> = {
+const ICON_MAP: Record<string, LucideIcon> = {
   '🌐': Globe, '🛒': ShoppingCart, '🎨': Palette, '📈': TrendingUp, '☁️': Cloud, '🔧': Wrench,
   globe: Globe, 'shopping-cart': ShoppingCart, palette: Palette, 'trending-up': TrendingUp, cloud: Cloud, wrench: Wrench,
 };
 
 const FALLBACK_SLIDES = [
+  { img: '/images/hero/slide-ai.jpg', title: 'AI-Powered Web Development & Business Automation', subtitle: 'Custom websites, AI chatbots & automation — built with Next.js & React' },
   { img: '/images/hero/slide-webdev.jpg', title: 'Custom Web Development', subtitle: 'Modern websites built with Next.js & React' },
-  { img: '/images/hero/slide-ai.jpg', title: 'AI-Powered Solutions', subtitle: 'Chatbots, automation & intelligent apps' },
   { img: '/images/hero/slide-ecom.jpg', title: 'E-Commerce Experts', subtitle: 'Online stores that convert visitors to customers' },
 ];
 
@@ -60,8 +61,11 @@ const DEFAULT_TESTIMONIALS = [
 ];
 
 // Animated counter component
+// SSR renders the REAL value (crawlers & no-JS get "134+", not "0");
+// the count-up animation starts from 0 only when scrolled into view.
+// Respects prefers-reduced-motion (jumps straight to the final value).
 function Counter({ value, label }: { value: string; label: string }) {
-  const [display, setDisplay] = useState("0");
+  const [display, setDisplay] = useState(value);
   const ref = useRef<HTMLDivElement>(null);
   const match = value.match(/^(\d+)(.*)$/);
   const numeric = match ? parseInt(match[1], 10) || 0 : 0;
@@ -69,6 +73,11 @@ function Counter({ value, label }: { value: string; label: string }) {
 
   useEffect(() => {
     let raf = 0;
+    // Accessibility: no count-up animation for users who prefer reduced motion.
+    if (typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setDisplay(value);
+      return;
+    }
     const obs = new IntersectionObserver((entries) => {
       if (entries[0].isIntersecting) {
         const start = performance.now();
@@ -79,13 +88,14 @@ function Counter({ value, label }: { value: string; label: string }) {
           setDisplay(String(Math.round(numeric * eased)) + suffix);
           if (p < 1) raf = requestAnimationFrame(tick);
         };
+        setDisplay("0" + suffix);
         raf = requestAnimationFrame(tick);
         obs.disconnect();
       }
     }, { threshold: 0.3 });
     if (ref.current) obs.observe(ref.current);
     return () => { obs.disconnect(); cancelAnimationFrame(raf); };
-  }, [numeric, suffix]);
+  }, [numeric, suffix, value]);
 
   return (
     <div ref={ref} className="glass px-2.5 py-2 text-center holo-border">
@@ -519,13 +529,7 @@ export default function HomeClient({ initialData }: { initialData: HomeData }) {
                 </div>
               </div>
               <div className="space-y-4">
-                {[
-                  { q: 'What services does Nexus Web Lab offer?', a: 'Custom web development, e-commerce stores, UI/UX design, SEO packages, hosting & deployment, website maintenance, error fixing, AI chatbots, and complete website redesigns.' },
-                  { q: 'How much does a website cost?', a: 'Pricing depends on the scope — a landing page starts affordably, while full e-commerce and AI web apps are custom-quoted. Contact us for a free, no-obligation quote.' },
-                  { q: 'Do you build websites for clients outside Myanmar?', a: 'Yes. We work with clients worldwide. Communication, deliverables, and support are fully online, and we accept international payments.' },
-                  { q: 'How long does a typical project take?', a: 'A standard business website usually takes 1–2 weeks. Larger e-commerce or AI-powered projects take 3–6 weeks depending on features and content.' },
-                  { q: 'Do you provide support after launch?', a: 'Absolutely. Every project includes post-launch support, and our premium package offers priority 24/7-style assistance and unlimited revisions.' },
-                ].map((f, i) => (
+                {FAQS.map((f, i) => (
                   <div key={i} className="glass-light p-5 rounded-2xl holo-border">
                     <h3 className="font-bold text-navy mb-1.5 text-[15px] card-hover-title">{f.q}</h3>
                     <p className="text-sm text-slate-500 leading-relaxed">{f.a}</p>

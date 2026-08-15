@@ -46,6 +46,13 @@ await client.execute(`CREATE INDEX IF NOT EXISTS idx_handoffs_open ON chat_hando
   // Migration: add image column if missing
   try { await client.execute(`ALTER TABLE projects ADD COLUMN image TEXT`); } catch { /* column exists */ }
 
+  // Migration: add case-study columns to projects (problem/solution/result/tech)
+  try { await client.execute(`ALTER TABLE projects ADD COLUMN problem TEXT`); } catch { /* column exists */ }
+  try { await client.execute(`ALTER TABLE projects ADD COLUMN solution TEXT`); } catch { /* column exists */ }
+  try { await client.execute(`ALTER TABLE projects ADD COLUMN result TEXT`); } catch { /* column exists */ }
+  try { await client.execute(`ALTER TABLE projects ADD COLUMN tech TEXT DEFAULT '[]'`); } catch { /* column exists */ }
+  try { await client.execute(`ALTER TABLE projects ADD COLUMN category TEXT`); } catch { /* column exists */ }
+
   // Migration: add image column to services if missing
   try { await client.execute(`ALTER TABLE services ADD COLUMN image TEXT`); } catch { /* column exists */ }
 

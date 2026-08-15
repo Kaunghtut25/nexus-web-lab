@@ -6,7 +6,12 @@ import { CACHE_HEADERS } from '@/lib/cache';
 
 export async function GET(): Promise<NextResponse> {
   const rows = await dbAll('SELECT * FROM projects ORDER BY sort_order');
-  return NextResponse.json({ projects: rows.map(r => ({...r, tags: parseJson(r.tags), featured: !!r.featured})) }, { headers: CACHE_HEADERS });
+  return NextResponse.json({ projects: rows.map(r => ({
+    ...r,
+    tags: parseJson(r.tags),
+    tech: parseJson(r.tech),
+    featured: !!r.featured,
+  })) }, { headers: CACHE_HEADERS });
 }
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
@@ -17,9 +22,10 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     if (!body.title) return NextResponse.json({ error: 'Title is required' }, { status: 400 });
     const id = body.id || uuid();
     const tags = Array.isArray(body.tags) ? JSON.stringify(body.tags) : (typeof body.tags === 'string' ? body.tags : '[]');
+    const tech = Array.isArray(body.tech) ? JSON.stringify(body.tech) : (typeof body.tech === 'string' ? body.tech : '[]');
     const featured = body.featured ? 1 : 0;
-    await dbRun('INSERT OR REPLACE INTO projects (id,title,url,client,description,tags,image,featured,sort_order) VALUES (?,?,?,?,?,?,?,?,?)',
-      [id, body.title, body.url || '', body.client || '', body.description || '', tags, body.image||'', featured, body.sort_order||0]);
+    await dbRun('INSERT OR REPLACE INTO projects (id,title,url,client,description,tags,image,featured,sort_order,problem,solution,result,tech,category) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
+      [id, body.title, body.url || '', body.client || '', body.description || '', tags, body.image||'', featured, body.sort_order||0, body.problem || '', body.solution || '', body.result || '', tech, body.category || '']);
     return NextResponse.json({ success: true, id });
   } catch (e: any) {
     return NextResponse.json({ error: e.message || 'Server error' }, { status: 500 });
