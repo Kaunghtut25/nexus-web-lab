@@ -40,3 +40,39 @@ These rules are binding for EVERY coding task in this repository (user-approved 
 - Contact info: DB settings (`address`, phone, email) — footer/contact/privacy/terms read these
 - Currency: `src/lib/currency.tsx` (USD default, MMK switch, rate 4500 — single formatter)
 <!-- END:safe-code-rules -->
+
+<!-- BEGIN:coding-workflow -->
+# MANDATORY CODING WORKFLOW (every task, no exceptions)
+
+Follow this sequence on EVERY coding task. Do not skip steps.
+
+## BEFORE CODING
+1. **Inspect** — read the project structure relevant to the task.
+2. **Search existing code** — grep for existing components, functions, hooks, utilities, routes, types, styles that already do this.
+3. **Find the owner** — identify the exact file responsible for the functionality (Component → Parent → Page → API → Service → DB).
+4. **Plan the smallest change** — write down the minimal diff needed. If the plan is bigger than ~20 lines, reconsider.
+5. **Check git status** — know the current branch and existing uncommitted changes. Never overwrite unrelated user changes.
+
+## DURING CODING
+1. **Modify existing files** — do NOT create a new file if an existing one can be modified (the default is always update-in-place).
+2. **Reuse components/hooks/utilities** — no second Button, no second formatPrice, no second validation helper.
+3. **No duplicate files** — never `X-new`, `X-v2`, `X-final`, `X-backup`, `X-temp`, `X-copy`.
+4. **No unrelated changes** — touch only what the task requires plus technically required dependencies.
+5. **No `any` shortcuts** — type the data you touch; use interfaces/type guards for untrusted input (JSON boundaries).
+
+## AFTER CODING
+1. **TypeScript check** — `npx tsc --noEmit` → must be 0 errors.
+2. **Lint** — run the project's linter if configured.
+3. **Build** — `npm run build` → must succeed; fix anything you broke.
+4. **Search duplicates/dead code** — grep for now-unused imports, duplicate implementations, dead branches introduced by your change.
+5. **Cleanup** — remove proven-obsolete leftovers (verified unreferenced first).
+6. **Report changes** — files modified / created / deleted (+why) / reused / validation / remaining issues (§22 format).
+7. **Commit** — one coherent commit per logical change with a clear message.
+
+## GIT IS THE ONLY SAFETY NET 🛡️
+- **NEVER create backup files inside source**: no `.bak`, `.old`, `.backup`, `-copy`, `-old`, `-final`, `-v2`, or manual copies of files for "safety".
+- Version control = **Git branches + commits** only. That is the professional practice.
+- Before risky changes: commit current state first (so `git checkout -- .` / `git revert` can restore instantly).
+- Never reset/revert/checkout/delete USER changes unless explicitly instructed.
+- If you find an existing backup file in source: verify it is unreferenced, then move it OUT of the source tree (e.g. workspace `.openclaw/tmp/`) — never keep it in src.
+<!-- END:coding-workflow -->
