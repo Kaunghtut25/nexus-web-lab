@@ -4,7 +4,7 @@ import { useSearchParams } from "next/navigation";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import Image from "next/image";
-import { Mail, MapPin, Send, ArrowRight, CreditCard, MessageSquare, Phone, Clock } from "lucide-react";
+import { Mail, MapPin, Send, ArrowRight, CreditCard, MessageSquare } from "lucide-react";
 import PaymentLogos from "@/components/home/PaymentLogos";
 
 export default function Contact() {
@@ -200,18 +200,11 @@ export default function Contact() {
               <div className="lg:col-span-2 space-y-4">
                 {[
                   { icon: <MapPin size={22} />, title: 'Visit Us', content: s('address','Yangon, Myanmar') },
-                  { icon: <Mail size={22} />, title: 'Email Us', content: s('contactEmail','info@nexusweblab.com'), href: `mailto:${s('contactEmail','info@nexusweblab.com')}` },
-                  { icon: <Phone size={22} />, title: 'Call Us', content: s('contactPhoneDisplay','09 886 264 582'), href: `tel:${s('contactPhone','+959886264582')}` },
-                  { icon: <Clock size={22} />, title: 'Business Hours', content: s('businessHours','Mon–Sat: 9:00 AM – 6:00 PM') },
                 ].map(b => (
                   <div key={b.title} className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm hover:shadow-md transition-all">
                     <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-blue/10 to-cyan/10 flex items-center justify-center text-blue mb-4">{b.icon}</div>
                     <h3 className="text-sm font-bold text-navy uppercase tracking-wider mb-2">{b.title}</h3>
-                    {b.href ? (
-                      <a href={b.href} className="text-slate-500 text-sm leading-relaxed whitespace-pre-line hover:text-blue transition break-all">{b.content}</a>
-                    ) : (
-                      <p className="text-slate-500 text-sm leading-relaxed whitespace-pre-line">{b.content}</p>
-                    )}
+                    <p className="text-slate-500 text-sm leading-relaxed whitespace-pre-line">{b.content}</p>
                   </div>
                 ))}
 
