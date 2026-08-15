@@ -17,9 +17,9 @@ const ICON_MAP: Record<string, LucideIcon> = {
 };
 
 const FALLBACK_SLIDES = [
-  { img: '/images/hero/slide-ai.jpg', title: 'AI-Powered Web Development & Business Automation', subtitle: 'Custom websites, AI chatbots & automation — built with Next.js & React' },
-  { img: '/images/hero/slide-webdev.jpg', title: 'Custom Web Development', subtitle: 'Modern websites built with Next.js & React' },
-  { img: '/images/hero/slide-ecom.jpg', title: 'E-Commerce Experts', subtitle: 'Online stores that convert visitors to customers' },
+  { img: '/images/hero/home-hero-02-ai-solutions.jpg', title: 'AI-Powered Web Development & Business Automation', subtitle: 'Custom websites, AI chatbots & automation — built with Next.js & React' },
+  { img: '/images/hero/home-hero-01-web-development.jpg', title: 'Custom Web Development', subtitle: 'Modern websites built with Next.js & React' },
+  { img: '/images/hero/home-hero-03-ecommerce.jpg', title: 'E-Commerce Experts', subtitle: 'Online stores that convert visitors to customers' },
 ];
 
 const SERVICE_IMAGES = [

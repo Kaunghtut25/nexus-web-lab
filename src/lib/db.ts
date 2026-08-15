@@ -147,9 +147,9 @@ async function seedHeroSlidesAndFeatures() {
   const slideCount = await client.execute('SELECT COUNT(*) as cnt FROM hero_slides');
   if ((slideCount.rows[0]?.cnt as number) === 0) {
     const slides = [
-      ['hs1', 'Nexus Web Lab — Custom Web Development', 'Modern websites built with Next.js & React', '/images/hero/slide-webdev.jpg', 1],
-      ['hs2', 'Nexus Web Lab — AI-Powered Solutions', 'Chatbots, automation & intelligent apps', '/images/hero/slide-ai.jpg', 2],
-      ['hs3', 'Nexus Web Lab — E-Commerce Experts', 'Online stores that convert visitors to customers', '/images/hero/slide-ecom.jpg', 3],
+      ['hs1', 'AI-Powered Web Development & Business Automation', 'Custom websites, AI chatbots & automation — built with Next.js & React', '/images/hero/home-hero-02-ai-solutions.jpg', 1],
+      ['hs2', 'Custom Web Development', 'Modern websites built with Next.js & React', '/images/hero/home-hero-01-web-development.jpg', 2],
+      ['hs3', 'E-Commerce Experts', 'Online stores that convert visitors to customers', '/images/hero/home-hero-03-ecommerce.jpg', 3],
     ];
     for (const [id, title, subtitle, image, sort_order] of slides) {
       await client.execute('INSERT OR REPLACE INTO hero_slides (id,title,subtitle,image,sort_order) VALUES (?,?,?,?,?)', [id, title, subtitle, image, sort_order]);
