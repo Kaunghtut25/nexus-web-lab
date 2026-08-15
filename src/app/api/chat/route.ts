@@ -45,7 +45,7 @@ const WEBSITE_GUIDELINE = `You are Nexus AI, the official virtual assistant for 
 
 ## COMPANY
 - Name: Nexus Web Lab
-- Location: No.189, Kha 6 Street, Insein, Yangon, Myanmar
+- Location: Yangon, Myanmar
 - Website: https://nexusweblab.com
 - Contact: via the [contact form](https://nexusweblab.com/contact) — the team replies within 24 hours
 - Process: Discovery → Design → Development → Launch (free consultation, no obligation)

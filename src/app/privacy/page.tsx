@@ -38,7 +38,7 @@ const sections = [
   },
   {
     title: "8. Data Protection Contact (DPA)",
-    body: "Nexus Web Lab acts as a data controller for the personal data you submit through our website. For all data protection inquiries, GDPR requests, or privacy concerns, please contact our Data Protection contact: Nexus Web Lab, No.189, Kha 6 Street, Insein, Yangon, Myanmar — email info@nexusweblab.com, phone +95 9 886 264 582.",
+    body: "Nexus Web Lab acts as a data controller for the personal data you submit through our website. For all data protection inquiries, GDPR requests, or privacy concerns, please contact our Data Protection contact: Nexus Web Lab, Yangon, Myanmar — email info@nexusweblab.com, phone +95 9 886 264 582.",
   },
   {
     title: "9. Third-Party Links",
@@ -50,7 +50,7 @@ const sections = [
   },
   {
     title: "11. Contact Us",
-    body: "If you have any questions about this Privacy Policy or how we handle your data, please contact us at info@nexusweblab.com, call +95 9 886 264 582, or visit us at No.189, Kha 6 Street, Insein, Yangon, Myanmar.",
+    body: "If you have any questions about this Privacy Policy or how we handle your data, please contact us at info@nexusweblab.com, call +95 9 886 264 582, or visit us at Yangon, Myanmar.",
   },
 ];
 

@@ -73,7 +73,7 @@ async function seedSettings() {
     ['heroSubtitle','Nexus Web Lab delivers professional websites, apps, and digital solutions. From concept to deployment — we handle everything.'],
     ['heroCta','Start Your Project'],
     ['heroBadge','Available for new projects'],
-    ['address','No.189, Kha 6 Street, Insein, Yangon'],
+    ['address','Yangon, Myanmar'],
     ['stat1Value','134+'],
     ['stat1Label','Projects Delivered'],
     ['stat2Value','129+'],

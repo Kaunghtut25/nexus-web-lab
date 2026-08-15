@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidateTag } from 'next/cache';
 import { dbAllRead, dbRun } from '@/lib/db';
 import { requireAuth } from '../admin/auth-guard';
 import { CACHE_HEADERS } from '@/lib/cache';
@@ -23,5 +24,6 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   for (const [key, value] of Object.entries(body)) {
     await dbRun("INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)", [key, String(value)]);
   }
+  revalidateTag('home-data', 'default');
   return NextResponse.json({ success: true });
 }

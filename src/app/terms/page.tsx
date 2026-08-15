@@ -50,7 +50,7 @@ const sections = [
   },
   {
     title: "11. Contact",
-    body: "Questions about these Terms of Service can be directed to info@nexusweblab.com, +95 9 886 264 582, or No.189, Kha 6 Street, Insein, Yangon, Myanmar.",
+    body: "Questions about these Terms of Service can be directed to info@nexusweblab.com, +95 9 886 264 582, or Yangon, Myanmar.",
   },
 ];
 

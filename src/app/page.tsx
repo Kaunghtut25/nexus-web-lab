@@ -64,7 +64,7 @@ const getHomeData = unstable_cache(
     };
   },
   ['home-data'],
-  { revalidate: 300 }
+  { revalidate: 300, tags: ['home-data'] }
 );
 
 export default async function HomePage() {

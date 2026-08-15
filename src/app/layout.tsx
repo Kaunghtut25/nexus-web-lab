@@ -1,15 +1,10 @@
 import type { Metadata } from "next";
 import dynamic from "next/dynamic";
-import { Inter } from "next/font/google";
 import { headers } from "next/headers";
 import "./globals.css";
 import ScrollToTop from "@/components/ScrollToTop";
 import CookieConsent from "@/components/CookieConsent";
 import { CurrencyProvider } from "@/lib/currency";
-
-// Self-hosted Inter with preload + swap (no render-blocking Google Fonts request,
-// no FOIT, no CLS from font fallback)
-const inter = Inter({ subsets: ["latin"], display: "swap", variable: "--font-inter" });
 
 // Code-split the chat widget — it's a heavy client component (~378 lines) and
 // is not needed for first paint. Dynamic import keeps it out of the main bundle.
@@ -86,7 +81,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         url: "https://nexusweblab.com",
         address: {
           "@type": "PostalAddress",
-          streetAddress: "No.189, Kha 6 Street, Insein",
+          streetAddress: "Yangon",
           addressLocality: "Yangon",
           addressRegion: "Yangon Region",
           addressCountry: "MM",
@@ -172,7 +167,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <link rel="preconnect" href="https://images.unsplash.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://images.unsplash.com" />
       </head>
-      <body className={`${inter.variable} min-h-screen flex flex-col`}>
+      <body className="min-h-screen flex flex-col">
         <script type="application/ld+json" nonce={nonce} dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
         <CurrencyProvider>
           <ScrollToTop />

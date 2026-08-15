@@ -171,7 +171,7 @@ export default function Contact() {
               {/* Info Cards — Dynamic from Settings */}
               <div className="lg:col-span-2 space-y-4">
                 {[
-                  { icon: <MapPin size={22} />, title: 'Visit Us', content: s('address','No.189, Kha 6 Street\nInsein, Yangon, Myanmar') },
+                  { icon: <MapPin size={22} />, title: 'Visit Us', content: s('address','Yangon, Myanmar') },
                 ].map(b => (
                   <div key={b.title} className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm hover:shadow-md transition-all">
                     <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-blue/10 to-cyan/10 flex items-center justify-center text-blue mb-4">{b.icon}</div>

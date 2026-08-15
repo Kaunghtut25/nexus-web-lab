@@ -51,7 +51,7 @@ export default function Footer() {
         </div>
         <div>
           <h3 className="font-semibold mb-4 text-sm uppercase tracking-wider text-slide card-hover-title">Contact</h3>
-          <p className="text-sm">📍 {s('address','No.189, Kha 6 Street, Insein, Yangon')}</p>
+          <p className="text-sm">📍 {s('address','Yangon, Myanmar')}</p>
           <Link href="/contact" className="mt-2 inline-flex items-center gap-1.5 text-sm text-blue hover:text-cyan transition">
             <Mail size={15} /> Send us a message →
           </Link>
