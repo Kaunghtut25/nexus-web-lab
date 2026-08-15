@@ -366,7 +366,9 @@ export async function POST(req: NextRequest) {
     // inject a fake system message to override the bot's guidelines. Everything
     // from the client is forced to "user"/"assistant"; only OUR code below
     // builds the real system prompt.
-    const normalized = (messages as any[]).map((m) => ({
+    interface RawChatMessage { role?: string; content?: unknown; text?: unknown }
+    const rawMessages: RawChatMessage[] = Array.isArray(messages) ? messages : [];
+    const normalized = rawMessages.map((m) => ({
       role: m?.role === "bot" || m?.role === "assistant" ? "assistant" : "user",
       content: String(m?.content ?? m?.text ?? "").slice(0, 4000),
     })).filter((m) => m.content.trim().length > 0);
