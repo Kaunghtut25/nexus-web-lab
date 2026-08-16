@@ -10,7 +10,7 @@ export default function Footer() {
   }, []);
   const s = (k:string,d:string) => settings[k] || d;
   return (
-    <footer className="mesh-bg text-slate-600 mt-auto border-t border-slate-200 relative overflow-hidden">
+    <footer className="mesh-bg text-slate-600 mt-auto border-t border-slate-200 relative overflow-hidden pb-16 md:pb-0">
       <div className="orb w-[400px] h-[400px] bg-cyan-400/10 bottom-[-150px] right-[-100px]" />
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-10">
         <div>
