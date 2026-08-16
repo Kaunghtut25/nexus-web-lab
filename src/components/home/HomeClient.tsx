@@ -169,10 +169,12 @@ export default function HomeClient({ initialData }: { initialData: HomeData }) {
         <section className="relative -mt-20 min-h-[420px] sm:min-h-[500px] lg:min-h-[560px] bg-[#050816] text-white overflow-hidden">
           {/* No floating orbs over hero image — image must stay 100% sharp */}
 
-          {/* Slide images — active slide drifts (Ken Burns) and settles into full view */}
+          {/* Slide images — active slide drifts (Ken Burns) and settles into full view.
+              ALL slides are eager (priority) so the crossfade never waits on a
+              lazy-loaded image — that wait is what caused the stutter on change. */}
           {slides.map((slide, i) => (
-            <div key={i} className={`absolute inset-0 transition-opacity duration-[1500ms] ${i === currentSlide ? 'opacity-100 hero-reveal' : 'opacity-0'}`}>
-              <Image src={slide.img || slide.image} alt={slide.title} width={1376} height={768} priority={i === 0} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 1376px" quality={75} fetchPriority={i === 0 ? 'high' : 'auto'} className={`absolute inset-0 w-full h-full object-cover ${i === currentSlide ? 'hero-kenburns' : ''}`} />
+            <div key={i} className={`absolute inset-0 transition-opacity duration-[1500ms] ease-out ${i === currentSlide ? 'opacity-100 hero-reveal' : 'opacity-0'}`}>
+              <Image src={slide.img || slide.image} alt={slide.title} width={1376} height={768} priority sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 1376px" quality={75} fetchPriority={i === 0 ? 'high' : 'low'} className={`absolute inset-0 w-full h-full object-cover ${i === currentSlide ? 'hero-kenburns' : ''}`} />
             </div>
           ))}
           {/* Light sweep — one pass per slide change */}

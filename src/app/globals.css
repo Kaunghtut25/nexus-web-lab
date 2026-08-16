@@ -558,14 +558,14 @@ button, a, input, select, textarea, [role="button"] {
   50% { transform: scale(1.08) translate(-1%, -0.6%); }
   100% { transform: scale(1.04) translate(0, 0); }
 }
-.hero-kenburns { animation: heroKenburns 16s ease-in-out infinite; }
+.hero-kenburns { animation: heroKenburns 16s ease-in-out infinite; will-change: transform; transform: translateZ(0); }
 
 /* Image settles into full view after appearing (transform-only; opacity is handled by the crossfade) */
 @keyframes heroReveal {
   0% { transform: scale(1.07); }
   100% { transform: scale(1); }
 }
-.hero-reveal { animation: heroReveal 1.6s cubic-bezier(0.16,1,0.3,1) both; }
+.hero-reveal { animation: heroReveal 1.6s cubic-bezier(0.16,1,0.3,1) both; will-change: transform, opacity; transform: translateZ(0); }
 
 /* Staggered one-by-one entrance for hero content */
 @keyframes heroUp {
