@@ -50,10 +50,11 @@ function Counter({ value, label }: { value: string; label: string }) {
 
 // ═══ HERO MARQUEE — isolated from the rest of the homepage ═══
 // 1) Slide state lives HERE, so a slide change re-renders only this component.
-// 2) Only ONE image layer is ever mounted. On slide change it fades out, swaps
-//    the <img src> underneath (at opacity 0), then fades in. Two full-screen
-//    4K layers are NEVER blended at once — that simultaneous blend was the
-//    GPU cost that stuttered on every device.
+// 2) TRUE CROSSFADE, never a black gap: when the slide changes, the OLD image
+//    stays mounted and fades out (opacity → 0) while the NEW image is mounted
+//    on top and fades in (CSS animation 0 → 1). Only 2 layers exist during the
+//    transition; the outgoing layer unmounts when done. No hidden phase, no
+//    dark background flash between images.
 // 3) All slide titles/subtitles are stacked and crossfade via pure CSS opacity —
 //    no React remount, no drop-shadow filter replay per slide.
 export default function HeroMarquee({
@@ -64,10 +65,10 @@ export default function HeroMarquee({
   settings: Record<string, string>;
 }) {
   const [currentSlide, setCurrentSlide] = useState(0);
-  // The slide whose image is currently mounted. Swapped during the hidden phase.
+  // The slide whose image is currently visible at full opacity.
   const [displayed, setDisplayed] = useState(0);
-  // true while the visible image is fading out (then the src swaps, then fades in)
-  const [dim, setDim] = useState(false);
+  // The slide whose image is still mounted and fading out (null when idle).
+  const [leaving, setLeaving] = useState<number | null>(null);
   const s = (k: string, fb: string) => settings[k] || fb;
 
   const nextSlide = useCallback(() => setCurrentSlide((prev) => (prev + 1) % slides.length), [slides.length]);
@@ -81,28 +82,32 @@ export default function HeroMarquee({
     return () => clearInterval(timer);
   }, [nextSlide]);
 
-  // Sequential image swap — never two layers blended.
+  // Crossfade: keep the old layer fading out while the new one fades in on top.
+  // The outgoing layer unmounts after the transition completes.
   useEffect(() => {
     if (currentSlide === displayed) return;
-    setDim(true);
-    const out = setTimeout(() => {
-      setDisplayed(currentSlide);
-      // Let the new src paint at opacity 0, then fade it in.
-      setTimeout(() => setDim(false), 60);
-    }, 280);
-    return () => clearTimeout(out);
+    setLeaving(displayed);
+    setDisplayed(currentSlide);
+    const t = setTimeout(() => setLeaving(null), 650);
+    return () => clearTimeout(t);
   }, [currentSlide, displayed]);
 
   return (
     <section className="relative -mt-20 min-h-[420px] sm:min-h-[500px] lg:min-h-[560px] bg-[#050816] text-white overflow-hidden">
       {/* Preload the other slides into the browser cache WITHOUT mounting them as
-          layers — so a swap never waits on fetch, but only ONE image layer is
-          ever composited (no two-4K-blend stutter). */}
-      {slides.map((slide, i) => i !== displayed ? (
+          layers — a swap never waits on fetch. Only the outgoing + incoming layers
+          exist during the crossfade. */}
+      {slides.map((slide, i) => i !== displayed && i !== leaving ? (
         <link key={i} rel="preload" as="image" href={slide.img || slide.image} fetchPriority="low" />
       ) : null)}
-      {/* Single mounted image layer — crossfade never blends two 4K layers */}
-      <div className={`absolute inset-0 transition-opacity duration-300 ease-out ${dim ? 'opacity-0' : 'opacity-100'}`}>
+      {/* Outgoing layer — fades out while the new image fades in on top (no black gap) */}
+      {leaving !== null && leaving !== displayed && (
+        <div key={`out-${leaving}`} className="absolute inset-0 transition-opacity duration-500 ease-out opacity-0" aria-hidden="true">
+          <Image src={slides[leaving]?.img || slides[leaving]?.image} alt="" width={1376} height={768} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 1376px" quality={75} className="absolute inset-0 w-full h-full object-cover" />
+        </div>
+      )}
+      {/* Incoming/current layer — visible at full opacity; CSS animation fades it in on mount */}
+      <div key={`in-${displayed}`} className="absolute inset-0 hero-crossfade-in">
         <Image src={slides[displayed]?.img || slides[displayed]?.image} alt={slides[displayed]?.title || ''} width={1376} height={768} priority sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 1376px" quality={75} className="absolute inset-0 w-full h-full object-cover" />
       </div>
       {/* Dot grid — very subtle */}

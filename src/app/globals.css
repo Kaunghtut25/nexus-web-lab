@@ -550,6 +550,17 @@ button, a, input, select, textarea, [role="button"] {
 
 /* ===== HERO CINEMATIC ANIMATIONS ===== */
 
+/* True crossfade for the hero image swap: the incoming layer plays this on
+   mount (opacity 0 → 1) while the outgoing layer fades out via a transition.
+   Opacity-only, so it runs on the compositor — no paint/layout per frame. */
+@keyframes hero-crossfade {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+.hero-crossfade-in {
+  animation: hero-crossfade 0.5s ease-out forwards;
+}
+
 /* Staggered one-by-one entrance for hero content — plays ONCE on mount only
    (the hero text container is no longer keyed per slide, so it never replays). */
 @keyframes heroUp {
