@@ -95,6 +95,12 @@ export default function HeroMarquee({
 
   return (
     <section className="relative -mt-20 min-h-[420px] sm:min-h-[500px] lg:min-h-[560px] bg-[#050816] text-white overflow-hidden">
+      {/* Preload the other slides into the browser cache WITHOUT mounting them as
+          layers — so a swap never waits on fetch, but only ONE image layer is
+          ever composited (no two-4K-blend stutter). */}
+      {slides.map((slide, i) => i !== displayed ? (
+        <link key={i} rel="preload" as="image" href={slide.img || slide.image} fetchPriority="low" />
+      ) : null)}
       {/* Single mounted image layer — crossfade never blends two 4K layers */}
       <div className={`absolute inset-0 transition-opacity duration-300 ease-out ${dim ? 'opacity-0' : 'opacity-100'}`}>
         <Image src={slides[displayed]?.img || slides[displayed]?.image} alt={slides[displayed]?.title || ''} width={1376} height={768} priority sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 1376px" quality={75} className="absolute inset-0 w-full h-full object-cover" />
