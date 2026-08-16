@@ -486,7 +486,6 @@ body {
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: text-slide 5s linear infinite;
 }
 
 /* Hover color shift for links/headings */
@@ -550,14 +549,6 @@ button, a, input, select, textarea, [role="button"] {
 }
 
 /* ===== HERO CINEMATIC ANIMATIONS ===== */
-
-/* Text swap on slide change — opacity only (no transform/layout), so it can't
-   cause stutter even when it runs alongside the image crossfade. */
-.hero-text-fade { animation: heroTextFade 0.7s ease-out both; }
-@keyframes heroTextFade {
-  0% { opacity: 0; }
-  100% { opacity: 1; }
-}
 
 /* Staggered one-by-one entrance for hero content — plays ONCE on mount only
    (the hero text container is no longer keyed per slide, so it never replays). */

@@ -49,10 +49,13 @@ function Counter({ value, label }: { value: string; label: string }) {
 }
 
 // ═══ HERO MARQUEE — isolated from the rest of the homepage ═══
-// Its `currentSlide` state lives HERE, so a slide change re-renders ONLY this
-// small component — never the services/projects/testimonials sections below.
-// (Previously the state lived in HomeClient, so every 5s tick re-rendered the
-// entire homepage → the stutter seen on every device.)
+// 1) Slide state lives HERE, so a slide change re-renders only this component.
+// 2) Only ONE image layer is ever mounted. On slide change it fades out, swaps
+//    the <img src> underneath (at opacity 0), then fades in. Two full-screen
+//    4K layers are NEVER blended at once — that simultaneous blend was the
+//    GPU cost that stuttered on every device.
+// 3) All slide titles/subtitles are stacked and crossfade via pure CSS opacity —
+//    no React remount, no drop-shadow filter replay per slide.
 export default function HeroMarquee({
   slides,
   settings,
@@ -61,6 +64,10 @@ export default function HeroMarquee({
   settings: Record<string, string>;
 }) {
   const [currentSlide, setCurrentSlide] = useState(0);
+  // The slide whose image is currently mounted. Swapped during the hidden phase.
+  const [displayed, setDisplayed] = useState(0);
+  // true while the visible image is fading out (then the src swaps, then fades in)
+  const [dim, setDim] = useState(false);
   const s = (k: string, fb: string) => settings[k] || fb;
 
   const nextSlide = useCallback(() => setCurrentSlide((prev) => (prev + 1) % slides.length), [slides.length]);
@@ -74,14 +81,24 @@ export default function HeroMarquee({
     return () => clearInterval(timer);
   }, [nextSlide]);
 
+  // Sequential image swap — never two layers blended.
+  useEffect(() => {
+    if (currentSlide === displayed) return;
+    setDim(true);
+    const out = setTimeout(() => {
+      setDisplayed(currentSlide);
+      // Let the new src paint at opacity 0, then fade it in.
+      setTimeout(() => setDim(false), 60);
+    }, 280);
+    return () => clearTimeout(out);
+  }, [currentSlide, displayed]);
+
   return (
     <section className="relative -mt-20 min-h-[420px] sm:min-h-[500px] lg:min-h-[560px] bg-[#050816] text-white overflow-hidden">
-      {/* Slide images — pure opacity crossfade (700ms) */}
-      {slides.map((slide, i) => (
-        <div key={i} className={`absolute inset-0 transition-opacity duration-700 ease-out ${i === currentSlide ? 'opacity-100' : 'opacity-0'}`}>
-          <Image src={slide.img || slide.image} alt={slide.title} width={1376} height={768} priority sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 1376px" quality={75} fetchPriority={i === 0 ? 'high' : 'low'} className="absolute inset-0 w-full h-full object-cover" />
-        </div>
-      ))}
+      {/* Single mounted image layer — crossfade never blends two 4K layers */}
+      <div className={`absolute inset-0 transition-opacity duration-300 ease-out ${dim ? 'opacity-0' : 'opacity-100'}`}>
+        <Image src={slides[displayed]?.img || slides[displayed]?.image} alt={slides[displayed]?.title || ''} width={1376} height={768} priority sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 1376px" quality={75} className="absolute inset-0 w-full h-full object-cover" />
+      </div>
       {/* Dot grid — very subtle */}
       <div className="absolute inset-0 dot-grid z-[1] opacity-10" />
       {/* Center scrim — soft radial dark glow behind the text only */}
@@ -98,14 +115,21 @@ export default function HeroMarquee({
             <span className="text-cyan-300 font-bold">2026 Ready</span>
           </span>
 
-          {/* Only title+subtitle remounts per slide (cheap opacity fade) */}
-          <div key={currentSlide} className="hero-text-fade">
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold leading-[1.05] mb-3 cursor-default drop-shadow-[0_2px_4px_rgba(5,8,22,0.95),0_4px_16px_rgba(5,8,22,0.9),0_8px_32px_rgba(5,8,22,0.7)]">
-              <span className="text-white glow-text hover-green-blue">{slides[currentSlide]?.title || s('heroTitle', '')}</span>
-            </h1>
-            <p className="text-sm sm:text-base mb-6 leading-relaxed max-w-xl cursor-default drop-shadow-[0_1px_3px_rgba(5,8,22,0.95),0_3px_12px_rgba(5,8,22,0.95),0_6px_24px_rgba(5,8,22,0.75)]">
-              <span className="text-slide glow-text hover-green-blue" style={{ animationDuration: '7s' }}>{slides[currentSlide]?.subtitle || s('heroSubtitle', '')}</span>
-            </p>
+          {/* All titles/subtitles stacked in ONE grid cell — height stays constant
+              (no layout shift), pure CSS opacity crossfade, no React remount.
+              text-shadow instead of drop-shadow filter: shadows paint with the text
+              layer instead of forcing a separate filtered layer per slide. */}
+          <div className="grid">
+            {slides.map((slide, i) => (
+              <div key={i} aria-hidden={i !== currentSlide} className={`col-start-1 row-start-1 transition-opacity duration-500 ease-out ${i === currentSlide ? 'opacity-100' : 'opacity-0'}`}>
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold leading-[1.05] mb-3 cursor-default [text-shadow:0_2px_4px_rgba(5,8,22,0.95),0_4px_16px_rgba(5,8,22,0.9),0_8px_32px_rgba(5,8,22,0.7)]">
+                  <span className="text-white glow-text hover-green-blue">{slide.title || s('heroTitle', '')}</span>
+                </h1>
+                <p className="text-sm sm:text-base mb-6 leading-relaxed max-w-xl cursor-default [text-shadow:0_1px_3px_rgba(5,8,22,0.95),0_3px_12px_rgba(5,8,22,0.95),0_6px_24px_rgba(5,8,22,0.75)]">
+                  <span className="text-slide glow-text hover-green-blue" style={{ animationDuration: '7s' }}>{slide.subtitle || s('heroSubtitle', '')}</span>
+                </p>
+              </div>
+            ))}
           </div>
 
           <div className="hero-item hero-d4 flex flex-wrap gap-4">
