@@ -1,17 +1,11 @@
 import type { Metadata } from "next";
-import dynamic from "next/dynamic";
 import { headers } from "next/headers";
 import { ArrowRight } from "lucide-react";
 import "./globals.css";
 import ScrollToTop from "@/components/ScrollToTop";
 import CookieConsent from "@/components/CookieConsent";
+import ChatWidgetLoader from "@/components/ChatWidgetLoader";
 import { CurrencyProvider } from "@/lib/currency";
-
-// Code-split the chat widget — it's a heavy client component (~378 lines) and
-// is not needed for first paint. Dynamic import keeps it out of the main bundle.
-const ChatWidget = dynamic(() => import("@/components/ChatWidget"), {
-  loading: () => null,
-});
 
 export const metadata: Metadata = {
   title: "Nexus Web Lab — AI Automation & AI-Powered Web Development",
@@ -190,7 +184,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               Start Your Project <ArrowRight size={18} />
             </a>
           </div>
-          <ChatWidget />
+          <ChatWidgetLoader />
           <CookieConsent />
         </CurrencyProvider>
       </body>

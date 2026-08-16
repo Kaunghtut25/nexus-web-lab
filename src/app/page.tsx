@@ -57,7 +57,12 @@ const getHomeData = unstable_cache(
     return {
       settings,
       services: servicesRows.map((r: any) => ({ ...r, features: parseJson(r.features) })),
-      projects: projectsRows.map((r: any) => ({ ...r, tags: parseJson(r.tags) })),
+      // Home grid only needs these fields — excludes large case-study text
+      // (problem/solution/result/tech) that would bloat the RSC payload.
+      projects: projectsRows.map((r: any) => ({
+        id: r.id, title: r.title, url: r.url, client: r.client,
+        description: r.description, tags: parseJson(r.tags), image: r.image, featured: r.featured,
+      })),
       testimonials: testimonialsRows,
       slides: slidesRows,
       features: featuresRows,
