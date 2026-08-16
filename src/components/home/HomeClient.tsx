@@ -188,8 +188,11 @@ export default function HomeClient({ initialData }: { initialData: HomeData }) {
           {/* Slide text background — transparent: image stays 100% visible; text readability handled by drop-shadows + glow */}
 
           <div className="relative z-10 flex items-center min-h-[420px] sm:min-h-[500px] lg:min-h-[560px] max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
-            {/* keyed by slide so the staggered entrance replays on every change */}
-            <div key={currentSlide} className="max-w-3xl">
+            {/* NOT keyed by slide: the staggered entrance replays only on first mount.
+                On slide change the text swaps via a cheap opacity fade (hero-text-fade)
+                instead of remounting + replaying translateY animations (that replay
+                was a major cause of the stutter on every 7s slide change). */}
+            <div className="max-w-3xl">
               <span className="hero-item hero-d1 inline-flex items-center gap-2 glass rounded-full px-3 py-1 mb-5 text-xs sm:text-sm text-cyan-200 font-semibold glow-pulse">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                 {s('heroBadge','Available for new projects')}
@@ -197,13 +200,18 @@ export default function HomeClient({ initialData }: { initialData: HomeData }) {
                 <span className="text-cyan-300 font-bold">2026 Ready</span>
               </span>
 
-              <h1 className="hero-item hero-d2 text-3xl sm:text-4xl lg:text-5xl font-extrabold leading-[1.05] mb-3 cursor-default drop-shadow-[0_2px_4px_rgba(5,8,22,0.95),0_4px_16px_rgba(5,8,22,0.9),0_8px_32px_rgba(5,8,22,0.7)]">
-                <span className="text-white glow-text hover-green-blue">{slides[currentSlide]?.title || s('heroTitle', '')}</span>
-              </h1>
+              {/* Only the title+subtitle remounts per slide (cheap opacity fade).
+                  The CTA row + counters stay mounted — their entrance animation
+                  plays once, not on every 7s slide change (that replay caused stutter). */}
+              <div key={currentSlide} className="hero-text-fade">
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold leading-[1.05] mb-3 cursor-default drop-shadow-[0_2px_4px_rgba(5,8,22,0.95),0_4px_16px_rgba(5,8,22,0.9),0_8px_32px_rgba(5,8,22,0.7)]">
+                  <span className="text-white glow-text hover-green-blue">{slides[currentSlide]?.title || s('heroTitle', '')}</span>
+                </h1>
 
-              <p className="hero-item hero-d3 text-sm sm:text-base mb-6 leading-relaxed max-w-xl cursor-default drop-shadow-[0_1px_3px_rgba(5,8,22,0.95),0_3px_12px_rgba(5,8,22,0.95),0_6px_24px_rgba(5,8,22,0.75)]">
-                <span className="text-slide glow-text hover-green-blue" style={{ animationDuration: '7s' }}>{slides[currentSlide]?.subtitle || s('heroSubtitle', '')}</span>
-              </p>
+                <p className="text-sm sm:text-base mb-6 leading-relaxed max-w-xl cursor-default drop-shadow-[0_1px_3px_rgba(5,8,22,0.95),0_3px_12px_rgba(5,8,22,0.95),0_6px_24px_rgba(5,8,22,0.75)]">
+                  <span className="text-slide glow-text hover-green-blue" style={{ animationDuration: '7s' }}>{slides[currentSlide]?.subtitle || s('heroSubtitle', '')}</span>
+                </p>
+              </div>
 
               <div className="hero-item hero-d4 flex flex-wrap gap-4">
                 <Link href={prefillHref('/contact', { source: 'Home page — nexusweblab.com' })} className="neon-btn min-h-[52px]">

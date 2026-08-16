@@ -560,6 +560,20 @@ button, a, input, select, textarea, [role="button"] {
 }
 .hero-kenburns { animation: heroKenburns 16s ease-in-out infinite; will-change: transform; transform: translateZ(0); }
 
+/* Text swap on slide change — opacity only (no transform/layout), so it can't
+   cause stutter even when it runs alongside the image crossfade. */
+.hero-text-fade { animation: heroTextFade 0.7s ease-out both; }
+@keyframes heroTextFade {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+/* Ken Burns is expensive on 4K images — disable on small screens where the
+   stutter is most visible; keep the subtle drift on desktop. */
+@media (max-width: 767px) {
+  .hero-kenburns { animation: none; }
+}
+
 /* Image settles into full view after appearing (transform-only; opacity is handled by the crossfade) */
 @keyframes heroReveal {
   0% { transform: scale(1.07); }
