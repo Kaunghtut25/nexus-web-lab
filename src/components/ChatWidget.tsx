@@ -423,7 +423,8 @@ export default function ChatWidget() {
             ? "bg-white text-slate-600 rotate-90 scale-90 hover:scale-95"
             : "bg-gradient-to-br from-blue to-cyan text-white hover:scale-110 hover:shadow-blue/30"
         }`}
-        style={{ bottom: "calc(env(safe-area-inset-bottom, 0px) + 1rem)" }}
+        style={{ bottom: "calc(env(safe-area-inset-bottom, 0px) + 4.75rem)" }}
+        data-mobile-bar={true}
         aria-label={open ? "Close chat" : "Open chat"}
       >
         {open ? <X size={22} /> : <MessageCircle size={22} />}
@@ -436,7 +437,9 @@ export default function ChatWidget() {
         className={`pointer-events-auto fixed right-3 sm:right-4 z-[9999] w-[min(380px,calc(100vw-1.5rem))] h-[min(600px,calc(100dvh-5.5rem))] flex flex-col bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden transition-all duration-300 origin-bottom-right ${
           open ? "scale-100 opacity-100" : "scale-95 opacity-0 pointer-events-none"
         }`}
-        style={{ bottom: "calc(env(safe-area-inset-bottom, 0px) + 4.5rem)" }}
+        style={{ bottom: "calc(env(safe-area-inset-bottom, 0px) + 8.25rem)" }}
+        data-mobile-bar={true}
+        data-mobile-panel={true}
         role="dialog"
         aria-label="Nexus AI chat"
       >

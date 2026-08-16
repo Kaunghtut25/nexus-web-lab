@@ -604,3 +604,14 @@ button, a, input, select, textarea, [role="button"] {
     scroll-behavior: auto !important;
   }
 }
+
+/* Sticky mobile CTA bar: chat launcher/panel sit above it on mobile,
+   return to normal offsets on desktop (bar is md:hidden). */
+@media (min-width: 768px) {
+  [data-mobile-bar="true"] {
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 1rem) !important;
+  }
+  [data-mobile-panel="true"] {
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 4.5rem) !important;
+  }
+}

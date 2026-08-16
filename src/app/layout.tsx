@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import dynamic from "next/dynamic";
 import { headers } from "next/headers";
+import { ArrowRight } from "lucide-react";
 import "./globals.css";
 import ScrollToTop from "@/components/ScrollToTop";
 import CookieConsent from "@/components/CookieConsent";
@@ -182,6 +183,13 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <CurrencyProvider>
           <ScrollToTop />
           {children}
+          {/* Mobile-only sticky CTA bar — audit fix: primary CTA must be reachable
+              without scrolling (crawlers + users on small screens). Desktop hero CTA stays. */}
+          <div className="md:hidden fixed bottom-0 inset-x-0 z-[9990] bg-[#0F1D45]/95 backdrop-blur border-t border-white/10 px-4 pt-2.5 pb-[calc(env(safe-area-inset-bottom,0px)+0.625rem)]">
+            <a href="/get-quote" className="gradient-btn w-full flex items-center justify-center gap-2 text-sm font-bold px-4 min-h-[48px] rounded-xl">
+              Start Your Project <ArrowRight size={18} />
+            </a>
+          </div>
           <ChatWidget />
           <CookieConsent />
         </CurrencyProvider>

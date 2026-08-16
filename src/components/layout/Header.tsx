@@ -84,7 +84,7 @@ export default function Header() {
         : 'bg-transparent border-b border-transparent'
     }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between h-16">
-        <Link href="/" className="flex items-center gap-3 shrink-0 group">
+        <Link href="/" className="flex items-center gap-3 shrink-0 group min-h-[48px]">
           <img src="/logo-transparent.png" alt="Nexus Web Lab" width={512} height={512} className="h-12 w-auto transition-transform group-hover:scale-105 sm:h-14" />
           <span className="hidden sm:block text-slide font-black text-lg tracking-tight">{s('siteName','Nexus Web Lab')}</span>
         </Link>
@@ -147,7 +147,7 @@ export default function Header() {
                 key={n.href}
                 href={n.href}
                 onClick={() => setOpen(false)}
-                className={`flex items-center gap-3 py-3.5 px-3 rounded-xl text-sm font-medium transition-all duration-200 ${
+                className={`flex items-center gap-3 py-4 px-3 rounded-xl text-sm font-medium transition-all duration-200 ${
                   active
                     ? 'text-white bg-white/15'
                     : 'text-white/80 hover:text-white hover:bg-white/10 nav-hover'

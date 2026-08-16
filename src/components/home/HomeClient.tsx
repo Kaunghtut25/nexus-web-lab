@@ -226,14 +226,14 @@ export default function HomeClient({ initialData }: { initialData: HomeData }) {
             </div>
           </div>
 
-          <button onClick={prevSlide} className="absolute left-4 top-1/2 -translate-y-1/2 z-20 p-3 rounded-xl glass text-white hover:bg-white/10 transition-all hidden sm:block" aria-label="Previous">
+          <button onClick={prevSlide} className="absolute left-4 top-1/2 -translate-y-1/2 z-20 min-w-[48px] min-h-[48px] p-3 rounded-xl glass text-white hover:bg-white/10 transition-all hidden sm:block" aria-label="Previous">
             <ChevronLeft size={22} />
           </button>
-          <button onClick={nextSlide} className="absolute right-4 top-1/2 -translate-y-1/2 z-20 p-3 rounded-xl glass text-white hover:bg-white/10 transition-all hidden sm:block" aria-label="Next">
+          <button onClick={nextSlide} className="absolute right-4 top-1/2 -translate-y-1/2 z-20 min-w-[48px] min-h-[48px] p-3 rounded-xl glass text-white hover:bg-white/10 transition-all hidden sm:block" aria-label="Next">
             <ChevronRight size={22} />
           </button>
 
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex gap-1 sm:gap-2">
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex gap-2">
             {slides.map((_, i) => (
               <button key={i} onClick={() => setCurrentSlide(i)} className={`flex items-center justify-center min-w-[44px] min-h-[44px] group`} aria-label={`Go to slide ${i + 1}`}>
                 <span className={`block h-2 rounded-full transition-all ${i === currentSlide ? 'bg-gradient-to-r from-blue to-cyan w-10' : 'bg-white/30 hover:bg-white/50 w-2 group-hover:bg-white/60'}`} />
@@ -306,7 +306,7 @@ export default function HomeClient({ initialData }: { initialData: HomeData }) {
               })}
             </div>
             <div className="text-center mt-12">
-              <Link href="/services" className="inline-flex items-center gap-2 text-blue font-semibold hover:gap-3 transition-all min-h-[44px] px-2 py-2">View All Services <ArrowRight size={18} /></Link>
+              <Link href="/services" className="inline-flex items-center gap-2 text-blue font-semibold hover:gap-3 transition-all min-h-[48px] px-2 py-2">View All Services <ArrowRight size={18} /></Link>
             </div>
           </div>
         </section>
