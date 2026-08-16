@@ -487,7 +487,6 @@ body {
   background-clip: text;
   -webkit-text-fill-color: transparent;
   animation: text-slide 5s linear infinite;
-  filter: drop-shadow(0 0 12px rgba(52,211,153,0.55)) drop-shadow(0 0 28px rgba(34,211,238,0.45)) drop-shadow(0 0 48px rgba(96,165,250,0.35));
 }
 
 /* Hover color shift for links/headings */
@@ -552,14 +551,6 @@ button, a, input, select, textarea, [role="button"] {
 
 /* ===== HERO CINEMATIC ANIMATIONS ===== */
 
-/* Slow Ken Burns drift on the active hero image — subtle, GPU-composited */
-@keyframes heroKenburns {
-  0% { transform: scale(1.04) translate(0, 0); }
-  50% { transform: scale(1.08) translate(-1%, -0.6%); }
-  100% { transform: scale(1.04) translate(0, 0); }
-}
-.hero-kenburns { animation: heroKenburns 16s ease-in-out infinite; will-change: transform; transform: translateZ(0); }
-
 /* Text swap on slide change — opacity only (no transform/layout), so it can't
    cause stutter even when it runs alongside the image crossfade. */
 .hero-text-fade { animation: heroTextFade 0.7s ease-out both; }
@@ -568,20 +559,8 @@ button, a, input, select, textarea, [role="button"] {
   100% { opacity: 1; }
 }
 
-/* Ken Burns is expensive on 4K images — disable on small screens where the
-   stutter is most visible; keep the subtle drift on desktop. */
-@media (max-width: 767px) {
-  .hero-kenburns { animation: none; }
-}
-
-/* Image settles into full view after appearing (transform-only; opacity is handled by the crossfade) */
-@keyframes heroReveal {
-  0% { transform: scale(1.07); }
-  100% { transform: scale(1); }
-}
-.hero-reveal { animation: heroReveal 1.6s cubic-bezier(0.16,1,0.3,1) both; will-change: transform, opacity; transform: translateZ(0); }
-
-/* Staggered one-by-one entrance for hero content */
+/* Staggered one-by-one entrance for hero content — plays ONCE on mount only
+   (the hero text container is no longer keyed per slide, so it never replays). */
 @keyframes heroUp {
   0% { opacity: 0; transform: translateY(26px); }
   100% { opacity: 1; transform: translateY(0); }
@@ -594,19 +573,13 @@ button, a, input, select, textarea, [role="button"] {
 .hero-d5 { animation-delay: 0.75s; }
 .hero-d6 { animation-delay: 0.9s; }
 
-/* Light sweep across the hero, once per slide change */
-@keyframes heroShine {
-  0% { transform: translateX(-130%) skewX(-18deg); }
-  60%, 100% { transform: translateX(260%) skewX(-18deg); }
+/* Gentle one-time drift for STATIC page heroes (about/contact/blog/etc.).
+   Not used by the home marquee — that uses a pure opacity crossfade. */
+@keyframes heroKenburns {
+  0% { transform: scale(1.04); }
+  100% { transform: scale(1.1); }
 }
-.hero-shine {
-  position: absolute;
-  top: 0; bottom: 0;
-  width: 35%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.07), transparent);
-  animation: heroShine 1.8s ease-in-out 0.5s both;
-  pointer-events: none;
-}
+.hero-kenburns { animation: heroKenburns 20s ease-out forwards; }
 
 /* Respect users who prefer reduced motion — also lets Lighthouse/GTmetrix
    reach CPU idle faster by disabling decorative infinite animations. */
