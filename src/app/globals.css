@@ -564,7 +564,7 @@ button, a, input, select, textarea, [role="button"] {
   100% { opacity: 1; }
 }
 .hero-crossfade-in {
-  animation: hero-crossfade 0.35s ease-out forwards;
+  animation: hero-crossfade 0.2s ease-out forwards;
 }
 
 /* Staggered one-by-one entrance for hero content — plays ONCE on mount only

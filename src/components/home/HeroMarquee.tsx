@@ -88,21 +88,25 @@ export default function HeroMarquee({
     if (currentSlide === displayed) return;
     setLeaving(displayed);
     setDisplayed(currentSlide);
-    const t = setTimeout(() => setLeaving(null), 450);
+    const t = setTimeout(() => setLeaving(null), 260);
     return () => clearTimeout(t);
   }, [currentSlide, displayed]);
 
   return (
     <section className="relative -mt-20 min-h-[420px] sm:min-h-[500px] lg:min-h-[560px] bg-[#050816] text-white overflow-hidden">
-      {/* Preload the other slides into the browser cache WITHOUT mounting them as
-          layers — a swap never waits on fetch. Only the outgoing + incoming layers
-          exist during the crossfade. */}
-      {slides.map((slide, i) => i !== displayed && i !== leaving ? (
-        <link key={i} rel="preload" as="image" href={slide.img || slide.image} fetchPriority="low" />
-      ) : null)}
+      {/* Preload the OTHER slides as OPTIMIZED versions (2048px, q70 — exactly what
+          the browser will display) instead of raw 4K originals. Decoding three
+          4K bitmaps up front was the GPU/RAM pressure that made every swap
+          stutter on the Intel iGPU. */}
+      {slides.map((slide, i) => {
+        if (i === displayed || i === leaving) return null;
+        const raw = slide.img || slide.image;
+        const opt = `/_next/image?url=${encodeURIComponent(raw)}&w=2048&q=70`;
+        return <link key={i} rel="preload" as="image" imageSrcSet={`${opt} 2048w`} imageSizes="1024px" fetchPriority="low" />;
+      })}
       {/* Outgoing layer — fades out while the new image fades in on top (no black gap) */}
       {leaving !== null && leaving !== displayed && (
-        <div key={`out-${leaving}`} className="hero-img-layer absolute inset-0 transition-opacity duration-300 ease-out opacity-0" aria-hidden="true">
+        <div key={`out-${leaving}`} className="hero-img-layer absolute inset-0 transition-opacity duration-150 ease-out opacity-0" aria-hidden="true">
           <Image src={slides[leaving]?.img || slides[leaving]?.image} alt="" width={1024} height={576} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 1024px" quality={70} className="absolute inset-0 w-full h-full object-cover" />
         </div>
       )}
