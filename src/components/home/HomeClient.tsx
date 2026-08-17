@@ -111,7 +111,7 @@ export default function HomeClient({ initialData }: { initialData: HomeData }) {
         <HeroMarquee slides={slides} settings={settings} />
 
         {/* ═══ MARQUEE STRIP ═══ */}
-        <div className="py-3 overflow-hidden bg-[#050816]">
+        <div className="py-3 overflow-hidden glass-strip">
           <div className="marquee">
             <div className="marquee-track">
               {(() => {

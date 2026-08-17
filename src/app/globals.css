@@ -398,6 +398,16 @@ body {
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }
 }
+/* Glass marquee strip — transparent like the .glass cards: white 6% tint +
+   subtle backdrop blur, so the page background glows through behind the
+   scrolling tech list. Border top/bottom keeps the strip defined. */
+.glass-strip {
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
 .marquee {
   display: flex;
   overflow: hidden;
