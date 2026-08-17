@@ -156,7 +156,7 @@ export default function HomeClient({ initialData }: { initialData: HomeData }) {
                   <Link key={sv.id || i} href={`/services/${slug}`} className="group block">
                     <SpotlightCard className="bento bg-white border border-slate-100 rounded-2xl group glow-pulse h-full">
                       <div className="relative h-64 overflow-hidden rounded-t-2xl bg-slate-100">
-                        <Image src={sv.image || SERVICE_IMAGES[i] || SERVICE_IMAGES[0]} alt={sv.title} width={1200} height={750} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" quality={80} />
+                        <Image src={sv.image || SERVICE_IMAGES[i] || SERVICE_IMAGES[0]} alt={sv.title} width={1200} height={750} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" quality={100} />
                         <div className="absolute inset-0 bg-gradient-to-t from-navy/60 via-transparent to-transparent" />
                         <div className="absolute bottom-3 left-4 flex items-center gap-2">
                           <div className="w-9 h-9 rounded-xl glass flex items-center justify-center text-cyan-300"><IconComp size={18} /></div>
@@ -230,7 +230,7 @@ export default function HomeClient({ initialData }: { initialData: HomeData }) {
                   return (
                     <a key={p.id} href={p.url || '#'} target="_blank" rel="noopener noreferrer" className="bento bg-white border border-slate-100 rounded-2xl group glow-pulse block">
                       <div className="relative h-72 overflow-hidden rounded-t-2xl">
-                        <Image src={p.image || PI[pi]} alt={p.title} width={1600} height={1066} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" quality={80} />
+                        <Image src={p.image || PI[pi]} alt={p.title} width={1600} height={1066} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" quality={100} />
                         <div className="absolute inset-0 bg-gradient-to-t from-navy/40 via-transparent to-transparent" />
                         <ArrowUpRight className="absolute top-4 right-4 text-white/70 group-hover:text-blue-600 group-hover:scale-110 transition-all" size={24} />
                       </div>

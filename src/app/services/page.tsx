@@ -115,7 +115,7 @@ export default function Services() {
                         <span className="absolute top-3 left-4 z-20 px-4 py-1 bg-gradient-to-r from-blue to-cyan text-white text-xs font-bold rounded-full shadow-lg">Most Popular</span>
                       )}
                       <div className="relative h-64 overflow-hidden bg-slate-100">
-                        <Image src={sv.image || IMAGES[i] || IMAGES[0]} alt={sv.title} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover group-hover:scale-105 transition-transform duration-500" quality={80} />
+                        <Image src={sv.image || IMAGES[i] || IMAGES[0]} alt={sv.title} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover group-hover:scale-105 transition-transform duration-500" quality={100} />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/25 to-transparent" />
                         <div className="absolute bottom-3 left-4 flex items-center gap-2">
                           <div className="w-9 h-9 rounded-lg bg-white/90 flex items-center justify-center text-blue"><IconComp size={20} /></div>
