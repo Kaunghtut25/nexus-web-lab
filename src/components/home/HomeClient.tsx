@@ -24,19 +24,19 @@ const FALLBACK_SLIDES = [
 ];
 
 const SERVICE_IMAGES = [
-  'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&h=750&fit=crop&q=100', // Web Development - laptop code
-  'https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=1200&h=750&fit=crop&q=100', // E-Commerce - online shopping bags
-  'https://images.unsplash.com/photo-1559028012-481c04fa702d?w=1200&h=750&fit=crop&q=100', // UI/UX Design - designer workspace
-  'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&h=750&fit=crop&q=100', // SEO - analytics
-  'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&h=750&fit=crop&q=100', // Hosting - server
-  'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=1200&h=750&fit=crop&q=100', // Maintenance - tools
-  'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1200&h=750&fit=crop&q=100', // Errors Fixing - code debug
-  'https://images.unsplash.com/photo-1535378917042-10a22c95931a?w=1200&h=750&fit=crop&q=100', // AI Chatbot - AI robot
-  'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=1200&h=750&fit=crop&q=100', // Redesign - design workspace
-  'https://images.unsplash.com/photo-1611162616305-c69b3fa7fbe0?w=1200&h=750&fit=crop&q=100', // Social Media - phone apps
-  'https://images.unsplash.com/photo-1455390582262-044cdead277a?w=1200&h=750&fit=crop&q=100', // Content Writing - pen notebook
-  'https://images.unsplash.com/photo-1626785774573-4b799315345d?w=1200&h=750&fit=crop&q=100', // Brand Identity - branding
-  'https://images.unsplash.com/photo-1563986768609-322da13575f3?w=1200&h=750&fit=crop&q=100', // Business Email - email laptop
+  'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1920&h=1080&fit=crop&q=100', // Web Development - laptop code
+  'https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=1920&h=1080&fit=crop&q=100', // E-Commerce - online shopping bags
+  'https://images.unsplash.com/photo-1559028012-481c04fa702d?w=1920&h=1080&fit=crop&q=100', // UI/UX Design - designer workspace
+  'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1920&h=1080&fit=crop&q=100', // SEO - analytics
+  'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1920&h=1080&fit=crop&q=100', // Hosting - server
+  'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=1920&h=1080&fit=crop&q=100', // Maintenance - tools
+  'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1920&h=1080&fit=crop&q=100', // Errors Fixing - code debug
+  'https://images.unsplash.com/photo-1535378917042-10a22c95931a?w=1920&h=1080&fit=crop&q=100', // AI Chatbot - AI robot
+  'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=1920&h=1080&fit=crop&q=100', // Redesign - design workspace
+  'https://images.unsplash.com/photo-1611162616305-c69b3fa7fbe0?w=1920&h=1080&fit=crop&q=100', // Social Media - phone apps
+  'https://images.unsplash.com/photo-1455390582262-044cdead277a?w=1920&h=1080&fit=crop&q=100', // Content Writing - pen notebook
+  'https://images.unsplash.com/photo-1626785774573-4b799315345d?w=1920&h=1080&fit=crop&q=100', // Brand Identity - branding
+  'https://images.unsplash.com/photo-1563986768609-322da13575f3?w=1920&h=1080&fit=crop&q=100', // Business Email - email laptop
 ];
 
 const DEFAULT_FEATURES = [
@@ -156,7 +156,7 @@ export default function HomeClient({ initialData }: { initialData: HomeData }) {
                   <Link key={sv.id || i} href={`/services/${slug}`} className="group block">
                     <SpotlightCard className="bento bg-white border border-slate-100 rounded-2xl group glow-pulse h-full">
                       <div className="relative h-64 overflow-hidden rounded-t-2xl bg-slate-100">
-                        <Image src={sv.image || SERVICE_IMAGES[i] || SERVICE_IMAGES[0]} alt={sv.title} width={1200} height={750} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" quality={100} />
+                        <Image src={sv.image || SERVICE_IMAGES[i] || SERVICE_IMAGES[0]} alt={sv.title} width={1920} height={1080} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" quality={100} />
                         <div className="absolute inset-0 bg-gradient-to-t from-navy/60 via-transparent to-transparent" />
                         <div className="absolute bottom-3 left-4 flex items-center gap-2">
                           <div className="w-9 h-9 rounded-xl glass flex items-center justify-center text-cyan-300"><IconComp size={18} /></div>
