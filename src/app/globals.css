@@ -552,13 +552,19 @@ button, a, input, select, textarea, [role="button"] {
 
 /* True crossfade for the hero image swap: the incoming layer plays this on
    mount (opacity 0 → 1) while the outgoing layer fades out via a transition.
-   Opacity-only, so it runs on the compositor — no paint/layout per frame. */
+   Short (350ms) + opacity-only + GPU-promoted layers = imperceptible swap.
+   .hero-img-layer: translateZ(0) promotes the layer to the GPU compositor so
+   the opacity blend never touches the CPU paint path. */
+.hero-img-layer {
+  transform: translateZ(0);
+  will-change: opacity;
+}
 @keyframes hero-crossfade {
   0% { opacity: 0; }
   100% { opacity: 1; }
 }
 .hero-crossfade-in {
-  animation: hero-crossfade 0.5s ease-out forwards;
+  animation: hero-crossfade 0.35s ease-out forwards;
 }
 
 /* Staggered one-by-one entrance for hero content — plays ONCE on mount only

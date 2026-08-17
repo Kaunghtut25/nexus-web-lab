@@ -88,7 +88,7 @@ export default function HeroMarquee({
     if (currentSlide === displayed) return;
     setLeaving(displayed);
     setDisplayed(currentSlide);
-    const t = setTimeout(() => setLeaving(null), 650);
+    const t = setTimeout(() => setLeaving(null), 450);
     return () => clearTimeout(t);
   }, [currentSlide, displayed]);
 
@@ -102,13 +102,13 @@ export default function HeroMarquee({
       ) : null)}
       {/* Outgoing layer — fades out while the new image fades in on top (no black gap) */}
       {leaving !== null && leaving !== displayed && (
-        <div key={`out-${leaving}`} className="absolute inset-0 transition-opacity duration-500 ease-out opacity-0" aria-hidden="true">
-          <Image src={slides[leaving]?.img || slides[leaving]?.image} alt="" width={1376} height={768} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 1376px" quality={75} className="absolute inset-0 w-full h-full object-cover" />
+        <div key={`out-${leaving}`} className="hero-img-layer absolute inset-0 transition-opacity duration-300 ease-out opacity-0" aria-hidden="true">
+          <Image src={slides[leaving]?.img || slides[leaving]?.image} alt="" width={1024} height={576} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 1024px" quality={70} className="absolute inset-0 w-full h-full object-cover" />
         </div>
       )}
       {/* Incoming/current layer — visible at full opacity; CSS animation fades it in on mount */}
-      <div key={`in-${displayed}`} className="absolute inset-0 hero-crossfade-in">
-        <Image src={slides[displayed]?.img || slides[displayed]?.image} alt={slides[displayed]?.title || ''} width={1376} height={768} priority sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 1376px" quality={75} className="absolute inset-0 w-full h-full object-cover" />
+      <div key={`in-${displayed}`} className="hero-img-layer absolute inset-0 hero-crossfade-in">
+        <Image src={slides[displayed]?.img || slides[displayed]?.image} alt={slides[displayed]?.title || ''} width={1024} height={576} priority sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 1024px" quality={70} className="absolute inset-0 w-full h-full object-cover" />
       </div>
       {/* Dot grid — very subtle */}
       <div className="absolute inset-0 dot-grid z-[1] opacity-10" />
