@@ -10,6 +10,24 @@ import { prefillHref } from "@/lib/lead-prefill";
 import CurrencySwitcher from "@/components/CurrencySwitcher";
 
 const ICON_MAP: Record<string, any> = { '🌐': Globe, '🛒': ShoppingCart, '🎨': Palette, '📈': TrendingUp, '☁️': Cloud, '🔧': Wrench };
+/* Live services are fetched from the DB, but the cards must paint IMMEDIATELY.
+   This fallback mirrors the current DB content so SSR/first paint shows cards
+   instantly; the background fetch then swaps in any admin edits. */
+const FALLBACK_SERVICES = [
+  { id: 'web-dev-1', title: 'Web Development', price: 'From $600', description: 'Custom websites with Next.js, React, TypeScript. Full admin panel, SEO optimized, mobile responsive.', features: ['Custom Design','Admin Dashboard','SEO Setup','Mobile Responsive','3 Revisions','1 Month Support'], icon: '🌐', image: '' },
+  { id: 'ecom-1', title: 'E-Commerce', price: 'From $1,200', description: 'Online stores with product management, shopping cart, and payment integration.', features: ['Product CRUD','Cart & Checkout','Payment Gateway','Order Management','Inventory Tracking','Customer Accounts'], icon: '🛒', image: '' },
+  { id: 'uiux-1', title: 'UI/UX Design', price: 'From $300', description: 'Wireframes, prototypes, and pixel-perfect designs that users love.', features: ['Wireframing','High-Fidelity Mockups','Interactive Prototypes','Design System','2 Revisions','Source Files'], icon: '🎨', image: '' },
+  { id: 'seo-1', title: 'SEO Package', price: 'From $200', description: 'Technical SEO audit, on-page optimization, and performance improvements.', features: ['SEO Audit','Meta Tags','Schema Markup','Speed Optimization','Monthly Reports','Keyword Research'], icon: '📈', image: '' },
+  { id: 'host-1', title: 'Hosting & Deploy', price: 'From $50/mo', description: 'Reliable cloud hosting with SSL, CDN, automatic backups, and one-click deployment.', features: ['SSL Certificate','CDN Included','Auto Backups','99.9% Uptime','One-Click Deploy','Domain Setup'], icon: '☁️', image: '' },
+  { id: 'maint-1', title: 'Maintenance', price: 'From $30/mo', description: 'Ongoing updates, security patches, content changes, and priority support.', features: ['Content Updates','Security Patches','Uptime Monitoring','Monthly Backups','Priority Support','Performance Tuning'], icon: '🔧', image: '' },
+  { id: 'errfix-1', title: 'Website Errors Fixing', price: 'From $50', description: 'Is your website broken, showing errors, or not working as it should? We diagnose and fix any issue — layout breaks, 404 pages, white screens, console errors, broken forms, slow loading and more — fast, with a clear report.', features: ['Broken layout & design fixes','404 / white screen / error pages','Console & JavaScript errors','Forms, buttons & links not working','Slow loading & performance issues','Mobile / responsive breakage','SSL & security warnings','Free diagnosis & fixed-price quote'], icon: '🛠️', image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1200&h=750&fit=crop&q=100' },
+  { id: 'chatbot-1', title: 'AI Agent & Automation', price: 'From $299', description: 'AI Employees that understand your customers, capture leads, generate quotes and automate your business — 24/7 on website, Messenger, WhatsApp and Telegram.', features: ['Knowledge Base AI (RAG) — trained on your documents','NEXUS Master Agent + Multi-Agent system','AI Sales Agent with quote generation','Lead capture → CRM / Telegram','Multi-language: English, Burmese, Thai, Chinese','Analytics dashboard','Human handoff with support ticket','Messenger / WhatsApp / Telegram integration'], icon: '🤖', image: 'https://images.unsplash.com/photo-1535378917042-10a22c95931a?w=1200&h=750&fit=crop&q=100' },
+  { id: 'redesign-1', title: 'Website Redesign', price: 'From $250', description: 'A modern, high-converting redesign of your existing website — fresh look, mobile-first, faster — without losing your content or Google rankings.', features: ['Full visual redesign (modern UI)','Mobile-first responsive layout','SEO preserved with redirects','Faster loading performance','Updated content & imagery','Brand refresh (colors, fonts)','Upgraded lead capture forms','Tested across all devices'], icon: '✨', image: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=1200&h=750&fit=crop&q=100' },
+  { id: 'smm-1', title: 'Social Media Management', price: 'From $150/mo', description: 'Content calendars, posting, engagement and monthly reports across Facebook, Instagram and TikTok.', features: ['Content strategy & calendar','Scheduled posting','Engagement & replies','Monthly performance report'], icon: '📱', image: 'https://images.unsplash.com/photo-1611926653458-09294b3142bf?w=1920&h=960&fit=crop&q=100' },
+  { id: 'content-1', title: 'Content Writing & Copywriting', price: 'From $100', description: 'Website copy, blog posts, product descriptions and SEO articles that sell your business.', features: ['Website copywriting','SEO blog articles','Product descriptions','Proofreading & editing'], icon: '✍️', image: 'https://images.unsplash.com/photo-1455390582262-044cdead277a?w=1920&h=960&fit=crop&q=100' },
+  { id: 'brand-1', title: 'Logo & Brand Identity', price: 'From $150', description: 'Professional logo design, color palette, typography and brand guidelines for a consistent look.', features: ['Logo design (3 concepts)','Color palette & typography','Brand guidelines PDF','All source files'], icon: '🎯', image: 'https://images.unsplash.com/photo-1626785774573-4b799315345d?w=1920&h=960&fit=crop&q=100' },
+  { id: 'email-1', title: 'Business Email Setup', price: 'From $30', description: 'Professional email addresses at your own domain (name@yourbusiness.com) with proper DNS & SPF setup.', features: ['Domain email setup','DNS & SPF configuration','Mail client setup','Spam-free delivery'], icon: '📧', image: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?w=1920&h=960&fit=crop&q=100' },
+];
 const IMAGES = [
   'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1920&h=960&fit=crop&q=100',
   'https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=1920&h=960&fit=crop&q=100',
@@ -23,16 +41,17 @@ const IMAGES = [
 ];
 
 export default function Services() {
-  const [services, setServices] = useState<any[]>([]);
+  // Start with the fallback list so cards paint in SSR/first paint — no spinner.
+  const [services, setServices] = useState<any[]>(FALLBACK_SERVICES);
   const [selected, setSelected] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
   const { currency, formatPrice } = useCurrency();
 
   useEffect(() => {
-    fetch('/api/services').then(r=>r.json()).then(d => {
-      setServices(d.services || []);
-      setLoading(false);
-    }).catch(() => setLoading(false));
+    let cancelled = false;
+    fetch('/api/services').then(r => r.json()).then(d => {
+      if (!cancelled && Array.isArray(d.services) && d.services.length > 0) setServices(d.services);
+    }).catch(() => { /* keep fallback */ });
+    return () => { cancelled = true; };
   }, []);
 
   return (
@@ -63,15 +82,7 @@ export default function Services() {
                 <CurrencySwitcher />
               </div>
             </div>
-            {loading ? (
-              <div className="flex items-center justify-center py-20">
-                <div className="flex gap-2">
-                  <span className="w-3 h-3 rounded-full bg-blue animate-pulse" />
-                  <span className="w-3 h-3 rounded-full bg-blue animate-pulse" style={{ animationDelay: '0.2s' }} />
-                  <span className="w-3 h-3 rounded-full bg-blue animate-pulse" style={{ animationDelay: '0.4s' }} />
-                </div>
-              </div>
-            ) : services.length === 0 ? (
+            {services.length === 0 ? (
               <div className="text-center py-20 text-slate-400">
                 <Globe size={48} className="mx-auto mb-4 opacity-30" />
                 <p>No services added yet. Add services in the admin panel.</p>
