@@ -11,6 +11,11 @@ const nextConfig: NextConfig = {
       { protocol: 'https', hostname: 'i.pravatar.cc', pathname: '/**' },
     ],
     formats: ['image/avif', 'image/webp'],
+    // Next.js 16 snaps every image's quality prop to the CLOSEST value in this
+    // list (findClosestQuality). The default is [75] only — so quality={70} or
+    // {100} silently render as 75, which made card images look soft. Allow the
+    // values the site actually uses so props take effect.
+    qualities: [70, 75, 80, 90, 100],
   },
   async headers() {
     return [
