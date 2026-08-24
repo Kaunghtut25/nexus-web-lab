@@ -108,7 +108,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         priceRange: "$999 - $10,000+",
         image: "https://nexusweblab.com/logo.png",
         logo: "https://nexusweblab.com/logo.png",
-        sameAs: ["https://www.facebook.com/people/Nexus-Web-Lab/61593132628840"],
+        sameAs: [
+          "https://www.facebook.com/people/Nexus-Web-Lab/61593132628840",
+          "https://github.com/Kaunghtut25",
+        ],
       },
       {
         "@type": "WebSite",
