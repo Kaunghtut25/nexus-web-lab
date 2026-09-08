@@ -35,7 +35,6 @@ export default function Header() {
     { label: "Portfolio", href: "/portfolio", icon: FolderOpen },
     { label: "Blog", href: "/blog", icon: FileText },
     { label: "About", href: "/about", icon: Info },
-    { label: "Contact", href: "/contact", icon: Mail },
   ];
 
   const isActive = (href: string) => {
@@ -113,12 +112,16 @@ export default function Header() {
             );
           })}
 
-          <Link href={prefillHref('/get-quote', { source: pathname === '/' ? 'Home page — nexusweblab.com' : `nexusweblab.com${pathname}` })} className="gradient-btn text-sm !py-2.5 !px-5 ml-3 min-h-[48px] inline-flex items-center">
-            Get a Quote
+          <Link href="/course" className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold border nav-hover transition-all ml-1 min-h-[48px] ${courseLink}`}>
+            <GraduationCap size={16} /> Course
           </Link>
 
-          <Link href="/course" className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold border nav-hover transition-all ml-2 min-h-[48px] ${courseLink}`}>
-            <GraduationCap size={16} /> Course
+          <Link href={prefillHref('/contact', { source: pathname === '/' ? 'Home page — nexusweblab.com' : `nexusweblab.com${pathname}` })} className="gradient-btn text-sm !py-2.5 !px-5 ml-2 min-h-[48px] inline-flex items-center">
+            Contact Us
+          </Link>
+
+          <Link href={prefillHref('/get-quote', { source: pathname === '/' ? 'Home page — nexusweblab.com' : `nexusweblab.com${pathname}` })} className="neon-btn text-sm !py-2.5 !px-5 ml-2 min-h-[48px] inline-flex items-center">
+            Get a Quote
           </Link>
         </nav>
 
@@ -159,22 +162,26 @@ export default function Header() {
             );
           })}
           <Link
-            href={prefillHref('/get-quote', { source: pathname === '/' ? 'Home page — nexusweblab.com' : `nexusweblab.com${pathname}` })}
-            className="gradient-btn flex items-center justify-center gap-2 mt-4 !py-3"
-            onClick={() => setOpen(false)}
-          >
-            <Mail size={16} /> Get a Quote
-          </Link>
-          <Link
             href="/course"
-            className="flex items-center justify-center gap-2 mt-2 px-4 py-3 rounded-xl border border-white/25 text-white text-sm font-semibold hover:bg-white/10 nav-hover transition-all"
+            className="flex items-center justify-center gap-2 mt-3 px-4 py-3 rounded-xl border border-white/25 text-white text-sm font-semibold hover:bg-white/10 nav-hover transition-all"
             onClick={() => setOpen(false)}
           >
             <GraduationCap size={16} /> Course
           </Link>
-          <div className="mt-3 flex items-center justify-center gap-3 text-xs text-white/50">
-            <Link href="/contact" className="flex items-center gap-1.5 hover:text-cyan-300 transition"><Mail size={13} /> Contact Us</Link>
-          </div>
+          <Link
+            href={prefillHref('/contact', { source: pathname === '/' ? 'Home page — nexusweblab.com' : `nexusweblab.com${pathname}` })}
+            className="gradient-btn flex items-center justify-center gap-2 mt-3 !py-3"
+            onClick={() => setOpen(false)}
+          >
+            <Mail size={16} /> Contact Us
+          </Link>
+          <Link
+            href={prefillHref('/get-quote', { source: pathname === '/' ? 'Home page — nexusweblab.com' : `nexusweblab.com${pathname}` })}
+            className="neon-btn flex items-center justify-center gap-2 mt-2 !py-3"
+            onClick={() => setOpen(false)}
+          >
+            Get a Quote
+          </Link>
         </div>
       )}
     </header>

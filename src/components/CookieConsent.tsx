@@ -38,22 +38,22 @@ export default function CookieConsent() {
     <div
       role="dialog"
       aria-label="Cookie consent"
-      className={`fixed bottom-4 left-4 right-4 sm:left-auto sm:right-6 sm:max-w-md z-[120] glass border border-white/20 rounded-2xl p-5 shadow-2xl shadow-black/30 animate-slide-up transition-opacity duration-300 ${decided ? "opacity-100" : "opacity-100"}`}
+      className={`fixed bottom-4 left-4 right-4 sm:left-auto sm:right-6 sm:max-w-sm z-[120] bg-white border border-slate-200 rounded-xl p-4 shadow-xl animate-slide-up transition-opacity duration-300 ${decided ? "opacity-100" : "opacity-100"}`}
     >
-      <p className="text-sm text-slate-600 leading-relaxed mb-4">
-        We use essential cookies to make our website work correctly. We don&apos;t use tracking or advertising cookies. Your privacy matters to us — see our{" "}
-        <Link href="/privacy" className="text-blue hover:underline inline-block py-1 min-h-[44px]">Privacy Policy</Link> for full details, including GDPR data-subject rights.
+      <p className="text-xs text-slate-600 leading-relaxed mb-3">
+        We use essential cookies only. No tracking. See{" "}
+        <Link href="/privacy" className="text-blue hover:underline">Privacy Policy</Link>.
       </p>
-      <div className="flex gap-3">
+      <div className="flex gap-2">
         <button
           onClick={() => decide("accepted")}
-          className="gradient-btn flex-1 justify-center !py-2.5 text-sm min-h-[44px]"
+          className="gradient-btn flex-1 justify-center !py-2 text-xs min-h-[36px]"
         >
           Accept
         </button>
         <button
           onClick={() => decide("rejected")}
-          className="flex-1 px-4 py-2.5 rounded-xl border border-slate-300 text-slate-600 text-sm font-semibold hover:bg-slate-50 transition min-h-[44px]"
+          className="flex-1 px-3 py-2 rounded-lg border border-slate-300 text-slate-600 text-xs font-semibold hover:bg-slate-50 transition min-h-[36px]"
         >
           Decline
         </button>

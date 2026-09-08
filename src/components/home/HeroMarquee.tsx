@@ -40,7 +40,7 @@ function Counter({ value, label }: { value: string; label: string }) {
   }, [numeric, suffix, value]);
 
   return (
-    <div ref={ref} className="glass px-2.5 py-2 text-center holo-border">
+    <div ref={ref} className="glass px-2.5 py-2 text-center holo-border bg-[rgba(10,16,48,0.6)] border-[rgba(255,255,255,0.2)]">
       <div className="text-lg sm:text-xl font-bold text-slide">{display}</div>
       <div className="text-[11px] text-slate-300 mt-0.5">{label}</div>
       <span className="sr-only">{value}</span>
@@ -57,6 +57,25 @@ function Counter({ value, label }: { value: string; label: string }) {
 //    dark background flash between images.
 // 3) All slide titles/subtitles are stacked and crossfade via pure CSS opacity —
 //    no React remount, no drop-shadow filter replay per slide.
+// Map hero image paths to their pre-optimized webp versions (1024x576, q82)
+// used during SSR so the background-image div doesn't fetch the raw 2048px JPEG.
+const HERO_OPT: Record<string, string> = {
+  '/images/hero/home-hero-01-web-development.jpg': '/images/_hero-opt/home-hero-01-web-development.webp',
+  '/images/hero/home-hero-02-ai-solutions.jpg': '/images/_hero-opt/home-hero-02-ai-solutions.webp',
+  '/images/hero/home-hero-03-ecommerce.jpg': '/images/_hero-opt/home-hero-03-ecommerce.webp',
+};
+const heroOpt = (raw?: string) => (raw ? HERO_OPT[raw] : undefined) || '/images/_hero-opt/home-hero-02-ai-solutions.webp';
+
+// Tiny blurred previews (16x9, base64) of the three hero originals, so the
+// first paint shows a colored preview instead of the near-black section
+// background while the optimized image is still being fetched/decoded.
+const HERO_BLUR: Record<string, string> = {
+  '/images/hero/home-hero-01-web-development.jpg': 'data:image/jpeg;base64,/9j/2wBDAA0JCgsKCA0LCgsODg0PEyAVExISEyccHhcgLikxMC4pLSwzOko+MzZGNywtQFdBRkxOUlNSMj5aYVpQYEpRUk//2wBDAQ4ODhMREyYVFSZPNS01T09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0//wAARCAAJABADASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAABAb/xAAZEAACAwEAAAAAAAAAAAAAAAAAAQIDMTL/xAAVAQEBAAAAAAAAAAAAAAAAAAACA//EABcRAAMBAAAAAAAAAAAAAAAAAAABAhH/2gAMAwEAAhEDEQA/ALe7GDc2pDLcBS6FD1k7R//Z',
+  '/images/hero/home-hero-02-ai-solutions.jpg': 'data:image/jpeg;base64,/9j/2wBDAA0JCgsKCA0LCgsODg0PEyAVExISEyccHhcgLikxMC4pLSwzOko+MzZGNywtQFdBRkxOUlNSMj5aYVpQYEpRUk//2wBDAQ4ODhMREyYVFSZPNS01T09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0//wAARCAAJABADASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAABgQF/8QAHBABAAIBBQAAAAAAAAAAAAAAAQAEAgURITEy/8QAFAEBAAAAAAAAAAAAAAAAAAAABP/EABYRAQEBAAAAAAAAAAAAAAAAAAEAEf/aAAwDAQACEAD8ARW7riO7MG5eFeZdqHTDln0xQZDXb/9k=',
+  '/images/hero/home-hero-03-ecommerce.jpg': 'data:image/jpeg;base64,/9j/2wBDAA0JCgsKCA0LCgsODg0PEyAVExISEyccHhcgLikxMC4pLSwzOko+MzZGNywtQFdBRkxOUlNSMj5aYVpQYEpRUk//2wBDAQ4ODhMREyYVFSZPNS01T09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0//wAARCAAJABADASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAgUG/8QAHBAAAgEFAQAAAAAAAAAAAAAAAAIRAxQVITIx/8QAFAEBAAAAAAAAAAAAAAAAAAAAAv/EABgRAAIDAAAAAAAAAAAAAAAAAAABAgMh/9oADAMBAAIRAxEAPwDSZFY9DfK+pIi8jpdDrehmj//Z',
+};
+const heroBlur = (raw?: string) => (raw ? HERO_BLUR[raw] : undefined) || HERO_BLUR['/images/hero/home-hero-01-web-development.jpg'];
+
 export default function HeroMarquee({
   slides,
   settings,
@@ -67,12 +86,28 @@ export default function HeroMarquee({
   const [currentSlide, setCurrentSlide] = useState(0);
   // The slide whose image is currently visible at full opacity.
   const [displayed, setDisplayed] = useState(0);
+  // True once the very first hero image has decoded. Until then the incoming
+  // layer skips the opacity-0 fade — otherwise first paint shows the near-black
+  // section background through the whole 0.2s animation (the "black hero" flash
+  // on cold loads). After this, slide swaps keep the crossfade.
+  const [firstImageReady, setFirstImageReady] = useState(false);
   // The slide whose image is still mounted and fading out (null when idle).
   const [leaving, setLeaving] = useState<number | null>(null);
+  // True only after first client mount. On SSR we render the section background
+  // + text only (no <Image>), so the server never pays Next.js image-optimize
+  // cost — the hero appears instantly with the blur/gradient and loads its
+  // image client-side. Saves ~1s of cold TTFB.
+  const [imagesMounted, setImagesMounted] = useState(false);
   const s = (k: string, fb: string) => settings[k] || fb;
 
   const nextSlide = useCallback(() => setCurrentSlide((prev) => (prev + 1) % slides.length), [slides.length]);
   const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
+
+  useEffect(() => {
+    // Mount images only after first client paint — saves ~1s of SSR image
+    // optimization on the home page TTFB.
+    setImagesMounted(true);
+  }, []);
 
   useEffect(() => {
     // Auto-advance only while the tab is visible.
@@ -93,31 +128,42 @@ export default function HeroMarquee({
   }, [currentSlide, displayed]);
 
   return (
-    <section className="relative -mt-20 min-h-[420px] sm:min-h-[500px] lg:min-h-[560px] bg-[#050816] text-white overflow-hidden">
+    <section className="relative -mt-20 min-h-[420px] sm:min-h-[500px] lg:min-h-[560px] bg-[radial-gradient(ellipse_at_top_left,#0a1030_0%,#050816_60%)] text-white overflow-hidden">
       {/* Preload the OTHER slides as OPTIMIZED versions (2048px, q70 — exactly what
           the browser will display) instead of raw 4K originals. Decoding three
           4K bitmaps up front was the GPU/RAM pressure that made every swap
           stutter on the Intel iGPU. */}
-      {slides.map((slide, i) => {
+      {imagesMounted && slides.map((slide, i) => {
         if (i === displayed || i === leaving) return null;
         const raw = slide.img || slide.image;
         const opt = `/_next/image?url=${encodeURIComponent(raw)}&w=2048&q=70`;
         return <link key={i} rel="preload" as="image" imageSrcSet={`${opt} 2048w`} imageSizes="1024px" fetchPriority="low" />;
       })}
       {/* Outgoing layer — fades out while the new image fades in on top (no black gap) */}
-      {leaving !== null && leaving !== displayed && (
+      {imagesMounted && leaving !== null && leaving !== displayed && (
         <div key={`out-${leaving}`} className="hero-img-layer absolute inset-0 transition-opacity duration-150 ease-out opacity-0" aria-hidden="true">
-          <Image src={slides[leaving]?.img || slides[leaving]?.image} alt="" width={1024} height={576} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 1024px" quality={70} className="absolute inset-0 w-full h-full object-cover" />
+          <Image src={slides[leaving]?.img || slides[leaving]?.image} alt="" width={1024} height={576} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 1024px" quality={70} placeholder="blur" blurDataURL={heroBlur(slides[leaving]?.img || slides[leaving]?.image)} className="absolute inset-0 w-full h-full object-cover" />
         </div>
       )}
       {/* Incoming/current layer — visible at full opacity; CSS animation fades it in on mount */}
-      <div key={`in-${displayed}`} className="hero-img-layer absolute inset-0 hero-crossfade-in">
-        <Image src={slides[displayed]?.img || slides[displayed]?.image} alt={slides[displayed]?.title || ''} width={1024} height={576} priority sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 1024px" quality={70} className="absolute inset-0 w-full h-full object-cover" />
+      <div key={`in-${displayed}`} className={`hero-img-layer absolute inset-0 ${firstImageReady ? 'hero-crossfade-in' : ''}`}>
+        {imagesMounted ? (
+          <Image src={slides[displayed]?.img || slides[displayed]?.image} alt={slides[displayed]?.title || ''} width={1024} height={576} priority placeholder="blur" blurDataURL={heroBlur(slides[displayed]?.img || slides[displayed]?.image)} onLoad={() => { if (!firstImageReady) setFirstImageReady(true); }} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 1024px" quality={70} className="absolute inset-0 w-full h-full object-cover" />
+        ) : (
+          // SSR / first paint: show the blur background inline (no <Image>),
+          // so the server never invokes the optimizer. Client mounts Image
+          // on first effect and the real optimized image fades in on load.
+          <div
+            aria-hidden={!slides[displayed]?.title}
+            className="absolute inset-0 w-full h-full bg-center bg-cover bg-no-repeat"
+            style={{ backgroundImage: `url("${heroOpt(slides[displayed]?.img || slides[displayed]?.image)}")`, backgroundColor: '#0a1030' }}
+          />
+        )}
       </div>
       {/* Dot grid — very subtle */}
       <div className="absolute inset-0 dot-grid z-[1] opacity-10" />
       {/* Center scrim — soft radial dark glow behind the text only */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(5,8,22,0.55)_0%,rgba(5,8,22,0.3)_45%,transparent_75%)] z-[1]" aria-hidden="true" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(5,8,22,0.7)_0%,rgba(5,8,22,0.45)_45%,transparent_75%)] z-[1]" aria-hidden="true" />
       {/* Top scrim — keeps nav readable without a visible bar */}
       <div className="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-[#050816]/45 via-[#050816]/10 to-transparent z-[2]" />
 
@@ -137,9 +183,15 @@ export default function HeroMarquee({
           <div className="grid">
             {slides.map((slide, i) => (
               <div key={i} aria-hidden={i !== currentSlide} className={`col-start-1 row-start-1 transition-opacity duration-500 ease-out ${i === currentSlide ? 'opacity-100' : 'opacity-0'}`}>
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold leading-[1.05] mb-3 cursor-default [text-shadow:0_2px_4px_rgba(5,8,22,0.95),0_4px_16px_rgba(5,8,22,0.9),0_8px_32px_rgba(5,8,22,0.7)]">
-                  <span className="text-white glow-text hover-green-blue">{slide.title || s('heroTitle', '')}</span>
-                </h1>
+                {i === 0 ? (
+                  <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold leading-[1.05] mb-3 cursor-default [text-shadow:0_2px_4px_rgba(5,8,22,0.95),0_4px_16px_rgba(5,8,22,0.9),0_8px_32px_rgba(5,8,22,0.7)]">
+                    <span className="text-white glow-text hover-green-blue">{slide.title || s('heroTitle', '')}</span>
+                  </h1>
+                ) : (
+                  <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold leading-[1.05] mb-3 cursor-default [text-shadow:0_2px_4px_rgba(5,8,22,0.95),0_4px_16px_rgba(5,8,22,0.9),0_8px_32px_rgba(5,8,22,0.7)]">
+                    <span className="text-white glow-text hover-green-blue">{slide.title || s('heroTitle', '')}</span>
+                  </h2>
+                )}
                 <p className="text-sm sm:text-base mb-6 leading-relaxed max-w-xl cursor-default [text-shadow:0_1px_3px_rgba(5,8,22,0.95),0_3px_12px_rgba(5,8,22,0.95),0_6px_24px_rgba(5,8,22,0.75)]">
                   <span className="text-slide glow-text hover-green-blue" style={{ animationDuration: '7s' }}>{slide.subtitle || s('heroSubtitle', '')}</span>
                 </p>
