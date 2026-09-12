@@ -1,6 +1,12 @@
 import type { MetadataRoute } from 'next';
+import { getPublishedPosts } from '@/lib/blog';
 
 const BASE = 'https://nexusweblab.com';
+
+// Blog URLs live in the database, so refresh the sitemap hourly instead of
+// freezing it at build time (the previous file hard-coded `new Date()`, which is
+// why every lastmod stayed at the deployment date).
+export const revalidate = 3600;
 
 const SERVICE_SLUGS = [
   'web-development',
@@ -18,32 +24,43 @@ const SERVICE_SLUGS = [
   'business-email-setup',
 ];
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const now = new Date();
   const urls = [
-    { url: `${BASE}/`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 1.0 },
-    { url: `${BASE}/about`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.8 },
-    { url: `${BASE}/services`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.9 },
-    { url: `${BASE}/portfolio`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.9 },
-    { url: `${BASE}/blog`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.8 },
-    { url: `${BASE}/contact`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.7 },
-    { url: `${BASE}/get-quote`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.8 },
-    { url: `${BASE}/demo`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.6 },
-    { url: `${BASE}/course`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.7 },
-    { url: `${BASE}/privacy`, lastModified: new Date(), changeFrequency: 'yearly' as const, priority: 0.3 },
-    { url: `${BASE}/terms`, lastModified: new Date(), changeFrequency: 'yearly' as const, priority: 0.3 },
-    { url: `${BASE}/accessibility`, lastModified: new Date(), changeFrequency: 'yearly' as const, priority: 0.3 },
+    { url: `${BASE}/`, lastModified: now, changeFrequency: 'weekly' as const, priority: 1.0 },
+    { url: `${BASE}/about`, lastModified: now, changeFrequency: 'monthly' as const, priority: 0.8 },
+    { url: `${BASE}/services`, lastModified: now, changeFrequency: 'monthly' as const, priority: 0.9 },
+    { url: `${BASE}/portfolio`, lastModified: now, changeFrequency: 'weekly' as const, priority: 0.9 },
+    { url: `${BASE}/blog`, lastModified: now, changeFrequency: 'weekly' as const, priority: 0.8 },
+    { url: `${BASE}/contact`, lastModified: now, changeFrequency: 'monthly' as const, priority: 0.7 },
+    { url: `${BASE}/get-quote`, lastModified: now, changeFrequency: 'monthly' as const, priority: 0.8 },
+    { url: `${BASE}/demo`, lastModified: now, changeFrequency: 'monthly' as const, priority: 0.6 },
+    { url: `${BASE}/course`, lastModified: now, changeFrequency: 'monthly' as const, priority: 0.7 },
+    { url: `${BASE}/privacy`, lastModified: now, changeFrequency: 'yearly' as const, priority: 0.3 },
+    { url: `${BASE}/terms`, lastModified: now, changeFrequency: 'yearly' as const, priority: 0.3 },
+    { url: `${BASE}/accessibility`, lastModified: now, changeFrequency: 'yearly' as const, priority: 0.3 },
     ...SERVICE_SLUGS.map((slug) => ({
       url: `${BASE}/services/${slug}`,
-      lastModified: new Date(),
+      lastModified: now,
       changeFrequency: 'monthly' as const,
       priority: 0.8,
     })),
   ];
 
-  return urls.map(({ url, lastModified, changeFrequency, priority }) => ({
-    url,
-    lastModified,
-    changeFrequency,
-    priority,
-  }));
+  // Posts are optional: if the database is unreachable the static routes above
+  // are still published rather than failing the whole sitemap.
+  let posts: { url: string; lastModified: Date; changeFrequency: 'monthly'; priority: number }[] = [];
+  try {
+    const published = await getPublishedPosts();
+    posts = published.map((post) => ({
+      url: `${BASE}/blog/${post.slug}`,
+      lastModified: post.created_at ? new Date(post.created_at) : now,
+      changeFrequency: 'monthly' as const,
+      priority: 0.6,
+    }));
+  } catch {
+    /* keep the static URL list */
+  }
+
+  return [...urls, ...posts];
 }

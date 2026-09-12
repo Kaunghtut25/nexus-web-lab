@@ -1,34 +1,26 @@
 import type { Metadata } from "next";
-import { cache } from "react";
-import { dbGet } from "@/lib/db";
-import { remapImage } from "@/lib/image-remap";
-
-// Fetch the post once per request; shared between generateMetadata + Layout body.
-const getPost = cache(async (slug: string) => {
-  return await dbGet(
-    "SELECT * FROM blog_posts WHERE slug = ? AND published = 1",
-    [slug]
-  );
-});
+import { getPostBySlug } from "@/lib/blog";
 
 type Props = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const post = await getPost(slug);
+  const post = await getPostBySlug(slug);
   if (!post) {
-    return { title: "Blog — Nexus Web Lab" };
+    // Unknown slug: the page calls notFound(), which streams the 404 UI with a
+    // 200 status (Next.js cannot change the status once streaming has started),
+    // so opt out of indexing explicitly instead of relying on the injected meta.
+    return { title: "Blog — Nexus Web Lab", robots: { index: false, follow: true } };
   }
-  const image = remapImage(post.image as string) || "";
   return {
     title: `${post.title} — Nexus Web Lab`,
-    description: (post.excerpt as string) || undefined,
+    description: post.excerpt || undefined,
     alternates: { canonical: `/blog/${slug}` },
     openGraph: {
       title: `${post.title} — Nexus Web Lab`,
-      description: (post.excerpt as string) || undefined,
+      description: post.excerpt || undefined,
       type: "article",
-      images: image ? [{ url: image.startsWith("http") ? image : image }] : undefined,
+      images: post.image ? [{ url: post.image }] : undefined,
     },
   };
 }
@@ -41,14 +33,13 @@ export default async function BlogPostLayout({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const post = await getPost(slug);
+  const post = await getPostBySlug(slug);
   if (!post) return <>{children}</>;
 
-  const image = remapImage(post.image as string) || "";
-  const absImage = image
-    ? image.startsWith("http")
-      ? image
-      : `https://nexusweblab.com${image}`
+  const absImage = post.image
+    ? post.image.startsWith("http")
+      ? post.image
+      : `https://nexusweblab.com${post.image}`
     : undefined;
 
   const jsonLd = {
