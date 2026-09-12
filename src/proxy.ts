@@ -39,6 +39,27 @@ export default function proxy(request: NextRequest) {
   });
   response.headers.set("Content-Security-Policy", csp);
 
+  // Keep dynamic HTML out of shared/CDN caches (the nonce above is minted per
+  // request, so a cached body would not match a later response's CSP header and
+  // scripts would be blocked), but do NOT mark it `no-store`: that header makes
+  // pages ineligible for the browser back/forward cache, so every Back button
+  // press re-downloads and re-renders the page. `no-cache` still forces
+  // revalidation before reuse, so the nonce pairing stays correct.
+  //
+  // Only documents and RSC payloads are touched — static files served through
+  // this matcher (public images, logos, fonts) must keep their long-lived
+  // immutable caching from vercel.json.
+  const pathname = request.nextUrl.pathname;
+  const isStaticAsset =
+    /\.(?:png|jpe?g|webp|avif|gif|svg|ico|css|js|mjs|map|txt|xml|json|woff2?|ttf|eot|mp3|mp4|webm|pdf)$/i.test(pathname) ||
+    /^\/(?:opengraph-image|twitter-image|icon|apple-icon)/.test(pathname);
+  if (!isStaticAsset) {
+    response.headers.set(
+      "Cache-Control",
+      "private, no-cache, max-age=0, must-revalidate"
+    );
+  }
+
   return response;
 }
 
