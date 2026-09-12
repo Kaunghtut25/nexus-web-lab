@@ -585,7 +585,7 @@ export const COURSE_LESSONS: Record<string, Lesson> = {
       {
         title: "ဆက်လက် သင်ယူပါ",
         body: "ဒီသင်တန်းက အစပဲရှိပါသေးတယ် — AI tools တွေ နေ့စဉ် အသစ်ထွက်နေလို့ newsletter တွေ ဖတ်ပါ၊ community တွေမှာ ပါဝင်ပါ၊ ကိုယ့်အလုပ်တွေကို မျှဝေပါ။ သင်လေ့လာသလောက် ဝင်ငွေ တိုးပါတယ်။",
-        tip: "💡 သင်တန်းဆရာကို မေးခွန်းရှိရင် Viber 09945598825 မှာ ဆက်သွယ်နိုင်ပါတယ်။",
+        tip: "💡 သင်တန်းဆရာကို မေးခွန်းရှိရင် contact form (https://nexusweblab.com/contact) မှာ ဆက်သွယ်နိုင်ပါတယ်။",
       },
     ],
     summary: [

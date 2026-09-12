@@ -58,7 +58,7 @@ export default async function CourseModulePage({ params }: { params: Promise<{ i
   const next = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
 
   return (
-    <main className="mesh-bg min-h-screen">
+    <main id="main-content" className="mesh-bg min-h-screen">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-10">
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 text-sm text-slate-500 mb-6 flex-wrap">

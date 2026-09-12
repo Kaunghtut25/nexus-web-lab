@@ -3,6 +3,9 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 
 export const metadata: Metadata = {
+  alternates: {
+    canonical: "/privacy",
+  },
   title: "Privacy Policy — Nexus Web Lab",
   description: "How Nexus Web Lab collects, uses, and protects your personal information. Read our privacy policy.",
 };
@@ -34,11 +37,11 @@ const sections = [
   },
   {
     title: "7. Your Rights",
-    body: "You have the right to access, correct, or delete the personal information we hold about you. You may also object to or restrict certain processing of your data. To exercise any of these rights, contact us at info@nexusweblab.com and we will respond within a reasonable timeframe.",
+    body: "You have the right to access, correct, or delete the personal information we hold about you. You may also object to or restrict certain processing of your data. To exercise any of these rights, contact us through our contact form at https://nexusweblab.com/contact and we will respond within a reasonable timeframe.",
   },
   {
     title: "8. Data Protection Contact (DPA)",
-    body: "Nexus Web Lab acts as a data controller for the personal data you submit through our website. For all data protection inquiries, GDPR requests, or privacy concerns, please contact our Data Protection contact: Nexus Web Lab, Yangon, Myanmar — email info@nexusweblab.com, phone +95 9 886 264 582.",
+    body: "Nexus Web Lab acts as a data controller for the personal data you submit through our website. For all data protection inquiries, GDPR requests, or privacy concerns, please contact our Data Protection contact: Nexus Web Lab, Yangon, Myanmar — our contact form at https://nexusweblab.com/contact.",
   },
   {
     title: "9. Third-Party Links",
@@ -50,7 +53,7 @@ const sections = [
   },
   {
     title: "11. Contact Us",
-    body: "If you have any questions about this Privacy Policy or how we handle your data, please contact us at info@nexusweblab.com, call +95 9 886 264 582, or visit us at Yangon, Myanmar.",
+    body: "If you have any questions about this Privacy Policy or how we handle your data, please contact us at our contact form at https://nexusweblab.com/contact.",
   },
 ];
 
@@ -58,7 +61,7 @@ export default function PrivacyPage() {
   return (
     <>
       <Header />
-      <main className="mesh-bg min-h-screen">
+      <main id="main-content" className="mesh-bg min-h-screen">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 py-16">
           <h1 className="text-4xl font-black text-navy mb-2">Privacy Policy</h1>
           <p className="text-slate-500 text-sm mb-10">Last updated: August 8, 2026</p>

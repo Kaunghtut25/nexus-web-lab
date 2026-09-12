@@ -3,9 +3,13 @@ import { unstable_cache } from "next/cache";
 import { headers } from "next/headers";
 import HomeClient from "@/components/home/HomeClient";
 import { dbAllRead } from "@/lib/db";
+import { remapImage } from "@/lib/image-remap";
 import { FAQS } from "@/lib/faq";
 
 export const metadata: Metadata = {
+  alternates: {
+    canonical: "/",
+  },
   title: "Nexus Web Lab — AI Automation & AI-Powered Web Development",
   description: "AI automation, AI chatbots & AI-powered web development in Yangon, Myanmar. Custom AI agents, business automation & SaaS apps — get a free consultation.",
 };
@@ -50,26 +54,29 @@ const getHomeData = unstable_cache(
     const settings: Record<string, string> = {};
     for (const s of settingsRows) settings[s.key as string] = s.value as string;
     // Contact details are intentionally excluded from the public RSC payload —
-    // all leads must flow through the contact form/chatbot.
-    delete settings['phone'];
-    delete settings['email'];
+    // all leads must flow through the contact form/chatbot. This includes the
+    // contact* setting variants and the address, which would otherwise leak
+    // into the HTML and be indexed by Google.
+    for (const k of ['phone','email','contactPhone','contactPhoneDisplay','contactEmail','address']) {
+      delete settings[k];
+    }
 
     return {
       settings,
-      services: servicesRows.map((r: any) => ({ ...r, features: parseJson(r.features) })),
+      services: servicesRows.map((r: any) => ({ ...r, features: parseJson(r.features), image: remapImage(r.image) })),
       // Home grid only needs these fields — excludes large case-study text
       // (problem/solution/result/tech) that would bloat the RSC payload.
       projects: projectsRows.map((r: any) => ({
         id: r.id, title: r.title, url: r.url, client: r.client,
-        description: r.description, tags: parseJson(r.tags), image: r.image, featured: r.featured,
+        description: r.description, tags: parseJson(r.tags), image: remapImage(r.image), featured: r.featured,
       })),
-      testimonials: testimonialsRows,
+      testimonials: testimonialsRows.map((r: any) => ({ ...r, logo: remapImage(r.logo), avatar: remapImage(r.avatar) })),
       slides: slidesRows,
       features: featuresRows,
       premiumFeatures: premiumRows,
     };
   },
-  ['home-data'],
+  ['home-data-v3'],
   { revalidate: 300, tags: ['home-data'] }
 );
 

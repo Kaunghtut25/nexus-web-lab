@@ -3,6 +3,9 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 
 export const metadata: Metadata = {
+  alternates: {
+    canonical: "/accessibility",
+  },
   title: "Accessibility Statement — Nexus Web Lab",
   description: "Nexus Web Lab's commitment to web accessibility and WCAG compliance.",
 };
@@ -11,7 +14,7 @@ export default function AccessibilityPage() {
   return (
     <>
       <Header />
-      <main className="mesh-bg min-h-screen">
+      <main id="main-content" className="mesh-bg min-h-screen">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 py-16">
           <h1 className="text-4xl font-black text-navy mb-2">Accessibility Statement</h1>
           <p className="text-slate-500 text-sm mb-10">Last updated: August 8, 2026</p>
@@ -47,7 +50,7 @@ export default function AccessibilityPage() {
             <section>
               <h2 className="text-xl font-bold text-navy mb-2">Feedback</h2>
               <p className="text-slate-600 leading-relaxed">
-                We welcome your feedback on the accessibility of our website. If you encounter an accessibility barrier, please contact us at info@nexusweblab.com or call +95 9 886 264 582, and we will do our best to resolve the issue promptly.
+                We welcome your feedback on the accessibility of our website. If you encounter an accessibility barrier, please contact us at our contact form at https://nexusweblab.com/contact, and we will do our best to resolve the issue promptly.
               </p>
             </section>
           </div>

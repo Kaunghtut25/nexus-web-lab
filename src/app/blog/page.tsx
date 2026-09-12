@@ -1,5 +1,13 @@
-"use client";
-import { useState, useEffect } from "react";
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: "/blog",
+  },
+  title: 'Blog — Nexus Web Lab',
+  description: 'Insights, guides, and updates from Nexus Web Lab — web development tips, design trends, and digital marketing advice.',
+};
+
 import Link from "next/link";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
@@ -16,23 +24,19 @@ interface Post {
   created_at: string;
 }
 
-export default function BlogPage() {
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetch('/api/blog').then(r => r.json()).then(d => {
-      setPosts((d.posts || []).map((p: any) => ({ ...p, tags: typeof p.tags === 'string' ? JSON.parse(p.tags || '[]') : (p.tags || []) })));
-      setLoading(false);
-    }).catch(() => setLoading(false));
-  }, []);
+export default async function BlogPage() {
+  let posts: Post[] = [];
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://nexusweblab.com';
+    const res = await fetch(`${baseUrl}/api/blog`, { next: { revalidate: 300 } });
+    const d = await res.json();
+    posts = (d.posts || []).map((p: any) => ({ ...p, tags: typeof p.tags === 'string' ? JSON.parse(p.tags || '[]') : (p.tags || []) }));
+  } catch { /* fallback: show empty */ }
 
   return (
     <>
-      <title>Blog — Nexus Web Lab</title>
-      <meta name="description" content="Insights, guides, and updates from Nexus Web Lab — web development tips, design trends, and digital marketing advice." />
       <Header />
-      <main className="mesh-bg">
+      <main id="main-content" className="mesh-bg">
         {/* Hero */}
         <section className="relative -mt-20 h-[50vh] min-h-[400px] sm:min-h-[500px] lg:min-h-[560px] flex items-center overflow-hidden">
           <Image src="/images/hero/blog-hero.jpg" alt="Writing and publishing blog articles" fill priority sizes="100vw" className="object-cover hero-kenburns" />
@@ -53,11 +57,7 @@ export default function BlogPage() {
             <h2 className="text-3xl sm:text-4xl font-extrabold text-navy mb-3 card-hover-title">Latest Articles &amp; Insights</h2>
             <p className="text-slate-500 text-lg max-w-2xl mx-auto">Fresh guides and practical tips to help your business grow online.</p>
           </div>
-          {loading ? (
-            <div className="flex items-center justify-center py-20">
-              <div className="flex gap-2"><span className="w-3 h-3 rounded-full bg-blue animate-pulse" /><span className="w-3 h-3 rounded-full bg-blue animate-pulse" style={{ animationDelay: '0.2s' }} /><span className="w-3 h-3 rounded-full bg-blue animate-pulse" style={{ animationDelay: '0.4s' }} /></div>
-            </div>
-          ) : posts.length === 0 ? (
+          {posts.length === 0 ? (
             <div className="bg-white rounded-2xl border border-slate-200 p-16 text-center">
               <div className="text-5xl mb-4">📝</div>
               <h3 className="text-xl font-bold text-navy mb-2">No posts yet</h3>
@@ -75,7 +75,7 @@ export default function BlogPage() {
                     )}
                   </div>
                   <div className="p-5">
-                    <p className="text-xs text-slate-400 mb-2">{new Date(post.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</p>
+                    <p className="text-xs text-slate-500 mb-2">{new Date(post.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</p>
                     <h2 className="font-bold text-navy text-lg mb-2 group-hover:text-blue transition-colors line-clamp-2">{post.title}</h2>
                     <p className="text-sm text-slate-500 line-clamp-3 mb-3">{post.excerpt}</p>
                     {post.tags && post.tags.length > 0 && (

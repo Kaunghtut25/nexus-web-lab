@@ -17,6 +17,4 @@ Nexus Web Lab is a professional web design and development agency based in Yango
 - Web Development, E-Commerce, UI/UX Design, SEO Package, Hosting & Deploy, Maintenance, Error Fixing, AI Chatbot, Website Redesign
 
 ## Contact
-- Email: nexusweblabmm@gmail.com
-- Phone: +95 9 886 264 582
-- Address: Yangon, Myanmar
+- Contact form: https://nexusweblab.com/contact

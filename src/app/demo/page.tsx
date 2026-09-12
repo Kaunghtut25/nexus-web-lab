@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { prefillHref } from "@/lib/lead-prefill";
 import {
   Sparkles, Globe, Palette, TrendingUp, ShoppingCart, Cloud, Wrench,
@@ -246,9 +247,18 @@ export default function DemoPage() {
   return (
     <>
       <MinimalHeader />
-      <main>
+      <main id="main-content">
         {/* HERO */}
         <section className="relative bg-[#050816] overflow-hidden py-20 sm:py-28">
+          <Image
+            src="/images/hero/home-hero-01-web-development.jpg"
+            alt="Web development and AI solutions built by Nexus Web Lab"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover hero-kenburns"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-navy/95 via-navy/80 to-navy/40" aria-hidden="true" />
           <div className="orb w-[500px] h-[500px] bg-blue-500/20 top-[-200px] right-[-150px]" />
           <div className="orb w-[400px] h-[400px] bg-emerald-500/15 bottom-[-150px] left-[-100px]" />
           <div className="relative max-w-7xl mx-auto px-4 sm:px-6">

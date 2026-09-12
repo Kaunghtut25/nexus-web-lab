@@ -56,10 +56,8 @@ export default function GetQuote() {
 
   return (
     <>
-      <title>Get a Free Quote — Nexus Web Lab</title>
-      <meta name="description" content="Get a free, no-obligation quote from Nexus Web Lab. Tell us about your project and we'll reply within 24 hours with a fixed quote." />
       <Header />
-      <main>
+      <main id="main-content">
         {/* Hero */}
         <section className="relative -mt-20 h-[45vh] min-h-[350px] sm:min-h-[500px] lg:min-h-[560px] flex items-center overflow-hidden">
           <Image src="/images/hero/get-quote-hero.jpg" alt="Get a Quote" fill priority sizes="(max-width: 640px) 100vw, 1376px" quality={75} className="object-cover hero-kenburns" />
@@ -166,7 +164,7 @@ export default function GetQuote() {
                 ))}
 
                 <div className="rounded-2xl overflow-hidden shadow-sm border border-slate-100">
-                  <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&h=800&fit=crop&q=100" alt="Team planning a project" width={1200} height={800} loading="lazy" decoding="async" className="w-full h-48 object-cover" />
+                  <img src="/images/remote/remote-1552664730-d307ca884978-1200w.webp" alt="Team planning a project" width={1200} height={800} loading="lazy" decoding="async" className="w-full h-48 object-cover" />
                 </div>
 
                 <div className="bg-gradient-to-br from-navy to-navy-light rounded-2xl p-6 text-white">

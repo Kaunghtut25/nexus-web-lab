@@ -20,24 +20,24 @@ const FALLBACK_SERVICES = [
   { id: 'seo-1', title: 'SEO Package', price: 'From $200', description: 'Technical SEO audit, on-page optimization, and performance improvements.', features: ['SEO Audit','Meta Tags','Schema Markup','Speed Optimization','Monthly Reports','Keyword Research'], icon: '📈', image: '' },
   { id: 'host-1', title: 'Hosting & Deploy', price: 'From $50/mo', description: 'Reliable cloud hosting with SSL, CDN, automatic backups, and one-click deployment.', features: ['SSL Certificate','CDN Included','Auto Backups','99.9% Uptime','One-Click Deploy','Domain Setup'], icon: '☁️', image: '' },
   { id: 'maint-1', title: 'Maintenance', price: 'From $30/mo', description: 'Ongoing updates, security patches, content changes, and priority support.', features: ['Content Updates','Security Patches','Uptime Monitoring','Monthly Backups','Priority Support','Performance Tuning'], icon: '🔧', image: '' },
-  { id: 'errfix-1', title: 'Website Errors Fixing', price: 'From $50', description: 'Is your website broken, showing errors, or not working as it should? We diagnose and fix any issue — layout breaks, 404 pages, white screens, console errors, broken forms, slow loading and more — fast, with a clear report.', features: ['Broken layout & design fixes','404 / white screen / error pages','Console & JavaScript errors','Forms, buttons & links not working','Slow loading & performance issues','Mobile / responsive breakage','SSL & security warnings','Free diagnosis & fixed-price quote'], icon: '🛠️', image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1920&h=750&fit=crop&q=100' },
-  { id: 'chatbot-1', title: 'AI Agent & Automation', price: 'From $299', description: 'AI Employees that understand your customers, capture leads, generate quotes and automate your business — 24/7 on website, Messenger, WhatsApp and Telegram.', features: ['Knowledge Base AI (RAG) — trained on your documents','NEXUS Master Agent + Multi-Agent system','AI Sales Agent with quote generation','Lead capture → CRM / Telegram','Multi-language: English, Burmese, Thai, Chinese','Analytics dashboard','Human handoff with support ticket','Messenger / WhatsApp / Telegram integration'], icon: '🤖', image: 'https://images.unsplash.com/photo-1535378917042-10a22c95931a?w=1920&h=750&fit=crop&q=100' },
-  { id: 'redesign-1', title: 'Website Redesign', price: 'From $250', description: 'A modern, high-converting redesign of your existing website — fresh look, mobile-first, faster — without losing your content or Google rankings.', features: ['Full visual redesign (modern UI)','Mobile-first responsive layout','SEO preserved with redirects','Faster loading performance','Updated content & imagery','Brand refresh (colors, fonts)','Upgraded lead capture forms','Tested across all devices'], icon: '✨', image: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=1920&h=750&fit=crop&q=100' },
-  { id: 'smm-1', title: 'Social Media Management', price: 'From $150/mo', description: 'Content calendars, posting, engagement and monthly reports across Facebook, Instagram and TikTok.', features: ['Content strategy & calendar','Scheduled posting','Engagement & replies','Monthly performance report'], icon: '📱', image: 'https://images.unsplash.com/photo-1611926653458-09294b3142bf?w=1920&h=960&fit=crop&q=100' },
-  { id: 'content-1', title: 'Content Writing & Copywriting', price: 'From $100', description: 'Website copy, blog posts, product descriptions and SEO articles that sell your business.', features: ['Website copywriting','SEO blog articles','Product descriptions','Proofreading & editing'], icon: '✍️', image: 'https://images.unsplash.com/photo-1455390582262-044cdead277a?w=1920&h=960&fit=crop&q=100' },
-  { id: 'brand-1', title: 'Logo & Brand Identity', price: 'From $150', description: 'Professional logo design, color palette, typography and brand guidelines for a consistent look.', features: ['Logo design (3 concepts)','Color palette & typography','Brand guidelines PDF','All source files'], icon: '🎯', image: 'https://images.unsplash.com/photo-1626785774573-4b799315345d?w=1920&h=960&fit=crop&q=100' },
-  { id: 'email-1', title: 'Business Email Setup', price: 'From $30', description: 'Professional email addresses at your own domain (name@yourbusiness.com) with proper DNS & SPF setup.', features: ['Domain email setup','DNS & SPF configuration','Mail client setup','Spam-free delivery'], icon: '📧', image: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?w=1920&h=960&fit=crop&q=100' },
+  { id: 'errfix-1', title: 'Website Errors Fixing', price: 'From $50', description: 'Is your website broken, showing errors, or not working as it should? We diagnose and fix any issue — layout breaks, 404 pages, white screens, console errors, broken forms, slow loading and more — fast, with a clear report.', features: ['Broken layout & design fixes','404 / white screen / error pages','Console & JavaScript errors','Forms, buttons & links not working','Slow loading & performance issues','Mobile / responsive breakage','SSL & security warnings','Free diagnosis & fixed-price quote'], icon: '🛠️', image: '/images/remote/remote-1555066931-4365d14bab8c-1920w.webp' },
+  { id: 'chatbot-1', title: 'AI Agent & Automation', price: 'From $299', description: 'AI Employees that understand your customers, capture leads, generate quotes and automate your business — 24/7 on website, Messenger, WhatsApp and Telegram.', features: ['Knowledge Base AI (RAG) — trained on your documents','NEXUS Master Agent + Multi-Agent system','AI Sales Agent with quote generation','Lead capture → CRM / Telegram','Multi-language: English, Burmese, Thai, Chinese','Analytics dashboard','Human handoff with support ticket','Messenger / WhatsApp / Telegram integration'], icon: '🤖', image: '/images/remote/remote-1535378917042-10a22c95931a-1920w.webp' },
+  { id: 'redesign-1', title: 'Website Redesign', price: 'From $250', description: 'A modern, high-converting redesign of your existing website — fresh look, mobile-first, faster — without losing your content or Google rankings.', features: ['Full visual redesign (modern UI)','Mobile-first responsive layout','SEO preserved with redirects','Faster loading performance','Updated content & imagery','Brand refresh (colors, fonts)','Upgraded lead capture forms','Tested across all devices'], icon: '✨', image: '/images/remote/remote-1561070791-2526d30994b5-1920w.webp' },
+  { id: 'smm-1', title: 'Social Media Management', price: 'From $150/mo', description: 'Content calendars, posting, engagement and monthly reports across Facebook, Instagram and TikTok.', features: ['Content strategy & calendar','Scheduled posting','Engagement & replies','Monthly performance report'], icon: '📱', image: '/images/remote/remote-1611926653458-09294b3142bf-1920w.webp' },
+  { id: 'content-1', title: 'Content Writing & Copywriting', price: 'From $100', description: 'Website copy, blog posts, product descriptions and SEO articles that sell your business.', features: ['Website copywriting','SEO blog articles','Product descriptions','Proofreading & editing'], icon: '✍️', image: '/images/remote/remote-1455390582262-044cdead277a-1920w.webp' },
+  { id: 'brand-1', title: 'Logo & Brand Identity', price: 'From $150', description: 'Professional logo design, color palette, typography and brand guidelines for a consistent look.', features: ['Logo design (3 concepts)','Color palette & typography','Brand guidelines PDF','All source files'], icon: '🎯', image: '/images/remote/remote-1626785774573-4b799315345d-1920w.webp' },
+  { id: 'email-1', title: 'Business Email Setup', price: 'From $30', description: 'Professional email addresses at your own domain (name@yourbusiness.com) with proper DNS & SPF setup.', features: ['Domain email setup','DNS & SPF configuration','Mail client setup','Spam-free delivery'], icon: '📧', image: '/images/remote/remote-1563986768609-322da13575f3-1920w.webp' },
 ];
 const IMAGES = [
-  'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1920&h=960&fit=crop&q=100',
-  'https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=1920&h=960&fit=crop&q=100',
-  'https://images.unsplash.com/photo-1559028012-481c04fa702d?w=1920&h=960&fit=crop&q=100',
-  'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1920&h=960&fit=crop&q=100',
-  'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1920&h=960&fit=crop&q=100',
-  'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=1920&h=960&fit=crop&q=100',
-  'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1920&h=960&fit=crop&q=100',
-  'https://images.unsplash.com/photo-1535378917042-10a22c95931a?w=1920&h=960&fit=crop&q=100',
-  'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=1920&h=960&fit=crop&q=100',
+  '/images/remote/remote-1460925895917-afdab827c52f-1920w.webp',
+  '/images/remote/remote-1563013544-824ae1b704d3-1920w.webp',
+  '/images/remote/remote-1559028012-481c04fa702d-1920w.webp',
+  '/images/remote/remote-1551288049-bebda4e38f71-1920w.webp',
+  '/images/remote/remote-1451187580459-43490279c0fa-1920w.webp',
+  '/images/remote/remote-1560472354-b33ff0c44a43-1920w.webp',
+  '/images/remote/remote-1555066931-4365d14bab8c-1920w.webp',
+  '/images/remote/remote-1535378917042-10a22c95931a-1920w.webp',
+  '/images/remote/remote-1561070791-2526d30994b5-1920w.webp',
 ];
 
 export default function Services() {
@@ -56,10 +56,8 @@ export default function Services() {
 
   return (
     <>
-      <title>Services — Nexus Web Lab</title>
-      <meta name="description" content="Explore Nexus Web Lab services: web development, e-commerce, UI/UX design, SEO packages, hosting & deployment, and maintenance." />
       <Header />
-      <main>
+      <main id="main-content">
         <section className="relative -mt-20 h-[50vh] min-h-[400px] sm:min-h-[500px] lg:min-h-[560px] flex items-center overflow-hidden">
           <Image src="/images/hero/services-hero.jpg" alt="Services" fill priority sizes="(max-width: 640px) 100vw, 1376px" quality={75} className="object-cover hero-kenburns" />
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(5,8,22,0.55)_0%,rgba(5,8,22,0.3)_42%,transparent_75%)]" aria-hidden="true" />
@@ -83,7 +81,7 @@ export default function Services() {
               </div>
             </div>
             {services.length === 0 ? (
-              <div className="text-center py-20 text-slate-400">
+              <div className="text-center py-20 text-slate-500">
                 <Globe size={48} className="mx-auto mb-4 opacity-30" />
                 <p>No services added yet. Add services in the admin panel.</p>
               </div>
@@ -180,7 +178,7 @@ export default function Services() {
               <div className="bg-white border border-slate-200 rounded-2xl p-8 hover:shadow-xl hover:shadow-blue/5 hover:-translate-y-1 transition-all duration-300 relative">
                 <div className="text-4xl mb-3">🥉</div>
                 <h3 className="text-xl font-extrabold text-navy mb-1">Starter / Basic</h3>
-                <p className="text-sm text-slate-400 mb-4">Single Landing Page</p>
+                <p className="text-sm text-slate-500 mb-4">Single Landing Page</p>
                 <div className="mb-2">
                   <span className="text-3xl font-extrabold text-navy">{formatPrice('$350')}</span>
                 </div>
@@ -203,7 +201,7 @@ export default function Services() {
                 <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-blue to-cyan text-white text-xs font-bold rounded-full shadow-lg whitespace-nowrap">Most Popular</span>
                 <div className="text-4xl mb-3">🥈</div>
                 <h3 className="text-xl font-extrabold text-navy mb-1">Standard</h3>
-                <p className="text-sm text-slate-400 mb-4">Full Business Website</p>
+                <p className="text-sm text-slate-500 mb-4">Full Business Website</p>
                 <div className="mb-2">
                   <span className="text-3xl font-extrabold text-navy">{formatPrice('$600')}</span>
                 </div>
@@ -225,7 +223,7 @@ export default function Services() {
               <div className="bg-white border border-slate-200 rounded-2xl p-8 hover:shadow-xl hover:shadow-blue/5 hover:-translate-y-1 transition-all duration-300 relative">
                 <div className="text-4xl mb-3">🥇</div>
                 <h3 className="text-xl font-extrabold text-navy mb-1">Premium</h3>
-                <p className="text-sm text-slate-400 mb-4">Custom E-Commerce / AI Web App</p>
+                <p className="text-sm text-slate-500 mb-4">Custom E-Commerce / AI Web App</p>
                 <div className="mb-2">
                   <span className="text-3xl font-extrabold text-navy">{formatPrice('$1,200–$2,500+')}</span>
                 </div>
@@ -290,7 +288,7 @@ export default function Services() {
 
         {/* CTA */}
         <section className="py-20 bg-gradient-to-r from-navy via-navy-light to-navy text-center relative overflow-hidden">
-          <Image src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1920&h=960&fit=crop&q=80" alt="" aria-hidden fill sizes="100vw" className="object-cover opacity-50" />
+          <Image src="/images/remote/remote-1551288049-bebda4e38f71-1920w.webp" alt="" aria-hidden fill sizes="100vw" className="object-cover opacity-50" />
           <div className="absolute inset-0 bg-navy/70" />
           <div className="relative z-10 max-w-3xl mx-auto px-4">
             <h2 className="text-3xl font-extrabold text-white mb-4 [text-shadow:0_2px_8px_rgba(5,8,22,0.9),0_4px_16px_rgba(5,8,22,0.8),0_0_32px_rgba(5,8,22,0.6)]">Not sure what you need?</h2>

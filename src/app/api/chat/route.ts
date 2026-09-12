@@ -176,9 +176,10 @@ You become a friendly FEMALE course tutor. Teach one small topic at a time — n
 - Always use clickable markdown links — [ဒီမှာ စာရင်းသွင်းပါ](https://nexusweblab.com/course/register), [Login ဝင်ရန်](https://nexusweblab.com/course/login), [သင်တန်းအကြောင်း](https://nexusweblab.com/course). Never show raw URLs.
 - If a student is having account/login problems, tell them to use the [contact form](https://nexusweblab.com/contact).`;
 
-const API_URL = "https://api.deepseek.com/v1";
-const API_KEY = process.env.DEEPSEEK_API_KEY || "";
-const MODEL = process.env.DEEPSEEK_MODEL || "deepseek-chat";
+const API_URL = "https://openrouter.ai/api/v1";
+const API_KEY = process.env.OPENROUTER_API_KEY || process.env.ZEN_API_KEY || process.env.DEEPSEEK_API_KEY || "";
+const MODEL = process.env.OPENROUTER_MODEL || "nvidia/nemotron-3.5-lightning:free";
+const FALLBACK_MODEL = process.env.OPENROUTER_FALLBACK_MODEL || "nvidia/nemotron-3-ultra-550b-a55b:free";
 
 const MAX_MEMORY = 60; // keep at most 60 stored messages per visitor per context
 
@@ -551,50 +552,63 @@ export async function POST(req: NextRequest) {
             const greetingHint = isFirst
               ? ""
               : "\n\nIMPORTANT: This is a FOLLOW-UP message — the customer has already been greeted. Do NOT greet again, do NOT say welcome/မင်္ဂလာပါ, do NOT re-list everything. Just answer their question directly.";
-            const response = await fetch(`${API_URL}/chat/completions`, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${API_KEY}`,
-              },
-              body: JSON.stringify({
-                model: MODEL,
-                stream: true,
-                max_tokens: 800,
-                messages: [
-                  { role: "system", content: guideline + knowledge + greetingHint },
-                  ...memory.slice(-12),
-                  ...normalized.slice(-12),
-                ],
-              }),
-              signal: AbortSignal.timeout(45000),
-            });
-            if (!response.ok || !response.body) throw new Error(`DeepSeek ${response.status}`);
-            const reader = response.body.getReader();
-            const decoder = new TextDecoder();
-            let reply = "";
-            while (true) {
-              const { done, value } = await reader.read();
-              if (done) break;
-              const chunk = decoder.decode(value, { stream: true });
-              for (const line of chunk.split("\n")) {
-                const t = line.trim();
-                if (!t.startsWith("data:")) continue;
-                const payload = t.slice(5).trim();
-                if (!payload || payload === "[DONE]") continue;
-                try {
-                  const obj = JSON.parse(payload);
-                  const deltaRaw = obj.choices?.[0]?.delta?.content || "";
-                  if (deltaRaw) {
-                    const delta = feminize(deltaRaw);
-                    reply += delta;
-                    controller.enqueue(encoder.encode(`data: ${JSON.stringify({ delta })}\n\n`));
-                  }
-                } catch {}
+            async function streamModel(modelToUse: string, timeoutMs: number): Promise<string> {
+              const response = await fetch(`${API_URL}/chat/completions`, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${API_KEY}`,
+                  "HTTP-Referer": "https://nexusweblab.com",
+                  "X-Title": "Nexus Web Lab",
+                },
+                body: JSON.stringify({
+                  model: modelToUse,
+                  stream: true,
+                  max_tokens: 800,
+                  reasoning: { effort: "none" },
+                  messages: [
+                    { role: "system", content: (guideline + knowledge + greetingHint).slice(0, 3500) },
+                    ...memory.slice(-12),
+                    ...normalized.slice(-12),
+                  ],
+                }),
+                signal: AbortSignal.timeout(timeoutMs),
+              });
+              if (!response.ok || !response.body) throw new Error(`LLM ${response.status}`);
+              const reader = response.body.getReader();
+              const decoder = new TextDecoder();
+              let acc = "";
+              while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+                const chunk = decoder.decode(value, { stream: true });
+                for (const line of chunk.split("\n")) {
+                  const t = line.trim();
+                  if (!t.startsWith("data:")) continue;
+                  const payload = t.slice(5).trim();
+                  if (!payload || payload === "[DONE]") continue;
+                  try {
+                    const obj = JSON.parse(payload);
+                    const deltaRaw = obj.choices?.[0]?.delta?.content || "";
+                    if (deltaRaw) {
+                      const delta = feminize(deltaRaw);
+                      acc += delta;
+                      controller.enqueue(encoder.encode(`data: ${JSON.stringify({ delta })}\n\n`));
+                    }
+                  } catch {}
+                }
               }
+              acc = feminize(acc.trim());
+              if (!acc) throw new Error("empty reply");
+              return acc;
             }
-            reply = feminize(reply.trim());
-            if (!reply) throw new Error("empty reply");
+            // Primary model first, fallback model second, local reply last.
+            let reply = "";
+            try {
+              reply = await streamModel(MODEL, 9000);
+            } catch {
+              reply = await streamModel(FALLBACK_MODEL, 4000);
+            }
             if (visitorId) await saveExchange(visitorId, ctx, normalized, reply);
             controller.enqueue(encoder.encode(`data: ${JSON.stringify({ done: true, reply, ...extraFields })}\n\n`));
             controller.close();
@@ -619,10 +633,11 @@ export async function POST(req: NextRequest) {
     // ── DeepSeek call with timeout + retry ──
     let reply = "";
     let lastErr: any = null;
-    for (let attempt = 1; attempt <= 3; attempt++) {
+    for (let attempt = 1; attempt <= 2; attempt++) {
+      const attemptModel = attempt === 1 ? MODEL : FALLBACK_MODEL;
       try {
         const controller = new AbortController();
-        const timer = setTimeout(() => controller.abort(), 45000); // 45s hard timeout
+        const timer = setTimeout(() => controller.abort(), attempt === 1 ? 9000 : 5000); // 7s/4s hard timeout
 
         const isFirst = normalized.length <= 1 && memory.length === 0;
         const greetingHint = isFirst
@@ -634,13 +649,16 @@ export async function POST(req: NextRequest) {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${API_KEY}`,
+            "HTTP-Referer": "https://nexusweblab.com",
+            "X-Title": "Nexus Web Lab",
           },
           body: JSON.stringify({
-            model: MODEL,
+            model: attemptModel,
             stream: false,
             max_tokens: 800,
+            reasoning: { effort: "none" },
             messages: [
-              { role: "system", content: guideline + knowledge + greetingHint },
+              { role: "system", content: (guideline + knowledge + greetingHint).slice(0, 3500) },
               // Remembered history first (oldest → newest), then current session
               ...memory.slice(-12),
               ...normalized.slice(-12),
@@ -652,7 +670,7 @@ export async function POST(req: NextRequest) {
 
         if (!response.ok) {
           const err = await response.text();
-          throw new Error(`DeepSeek ${response.status}: ${err.slice(0, 200)}`);
+          throw new Error(`LLM ${response.status}: ${err.slice(0, 200)}`);
         }
 
         const data = await response.json();
@@ -660,13 +678,13 @@ export async function POST(req: NextRequest) {
         if (reply) break;
       } catch (err: any) {
         lastErr = err;
-        console.error(`[chat] DeepSeek attempt ${attempt} failed:`, String(err?.message || err).slice(0, 200));
-        if (attempt < 3) await new Promise((r) => setTimeout(r, 1200 * attempt));
+        console.error(`[chat] LLM attempt ${attempt} failed:`, String(err?.message || err).slice(0, 200));
+        if (attempt < 2) await new Promise((r) => setTimeout(r, 500));
       }
     }
 
     if (!reply) {
-      console.error(`[chat] All ${3} retries failed; using local fallback. Last error:`, String(lastErr?.message || lastErr || 'unknown').slice(0, 300));
+      console.error(`[chat] All retries failed; using local fallback. Last error:`, String(lastErr?.message || lastErr || 'unknown').slice(0, 300));
       const fallback = ctx === "course"
         ? (courseFallbackReply(text) || websiteFallbackReply(text, normalized.length <= 1))
         : websiteFallbackReply(text, normalized.length <= 1);

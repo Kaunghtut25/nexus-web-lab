@@ -102,7 +102,7 @@ export default function CourseExamPage() {
   // ---- Loading / Error states ----
   if (loading) {
     return (
-      <main className="mesh-bg min-h-screen flex items-center justify-center">
+      <main id="main-content" className="mesh-bg min-h-screen flex items-center justify-center">
         <div className="text-navy font-bold text-lg">Exam ဖွင့်နေပါသည်…</div>
       </main>
     );
@@ -110,7 +110,7 @@ export default function CourseExamPage() {
 
   if (error || !exam) {
     return (
-      <main className="mesh-bg min-h-screen flex items-center justify-center p-6">
+      <main id="main-content" className="mesh-bg min-h-screen flex items-center justify-center p-6">
         <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-8 max-w-md w-full text-center">
           <div className="text-5xl mb-3">{lockedBy ? "🔒" : "⚠️"}</div>
           <h1 className="text-xl font-black text-navy">{lockedBy ? "Module မဖွင့်ရသေးပါ" : "Exam မတွေ့ပါ"}</h1>
@@ -138,7 +138,7 @@ export default function CourseExamPage() {
   // ---- Result screen ----
   if (result) {
     return (
-      <main className="mesh-bg min-h-screen py-10 px-4">
+      <main id="main-content" className="mesh-bg min-h-screen py-10 px-4">
         <div className="max-w-2xl mx-auto">
           <div className={`rounded-3xl shadow-lg p-8 text-center text-white ${result.passed ? "bg-gradient-to-br from-emerald-500 to-green-600" : "bg-gradient-to-br from-rose-500 to-red-600"}`}>
             <div className="text-6xl mb-2">{result.passed ? "🎉" : "😅"}</div>
@@ -200,7 +200,7 @@ export default function CourseExamPage() {
   // ---- Quiz screen ----
   const q = exam.questions[current];
   return (
-    <main className="mesh-bg min-h-screen py-10 px-4">
+    <main id="main-content" className="mesh-bg min-h-screen py-10 px-4">
       <div className="max-w-2xl mx-auto">
         {/* Progress */}
         <div className="flex items-center justify-between text-sm font-bold text-navy mb-2">

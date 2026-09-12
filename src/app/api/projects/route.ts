@@ -3,6 +3,7 @@ import { dbAll, dbRun } from '@/lib/db';
 import { v4 as uuid } from 'uuid';
 import { requireAuth } from '../admin/auth-guard';
 import { CACHE_HEADERS } from '@/lib/cache';
+import { remapImage } from '@/lib/image-remap';
 
 export async function GET(): Promise<NextResponse> {
   const rows = await dbAll('SELECT * FROM projects ORDER BY sort_order');
@@ -10,6 +11,7 @@ export async function GET(): Promise<NextResponse> {
     ...r,
     tags: parseJson(r.tags),
     tech: parseJson(r.tech),
+    image: remapImage(r.image),
     featured: !!r.featured,
   })) }, { headers: CACHE_HEADERS });
 }

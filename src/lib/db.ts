@@ -82,8 +82,8 @@ async function seedSettings() {
     ['heroBadge','Available for new projects'],
     ['address','Yangon, Myanmar'],
     ['contactEmail','info@nexusweblab.com'],
-    ['contactPhone','+959886264582'],
-    ['contactPhoneDisplay','09 886 264 582'],
+    ['contactPhone','09945598825'],
+    ['contactPhoneDisplay','09945598825'],
     ['businessHours','Mon–Sat: 9:00 AM – 6:00 PM'],
     ['stat1Value','134+'],
     ['stat1Label','Projects Delivered'],
@@ -122,6 +122,16 @@ async function seedSettings() {
     await client.execute('INSERT OR IGNORE INTO settings (key,value) VALUES (?,?)', [k,v]);
   }
 
+  // Self-heal: force-correct contact values and purge legacy contact data.
+  // Runs each cold start so stale/incorrect rows (e.g. old emails, old phone
+  // formats, street addresses added manually) can never survive.
+  try {
+    await client.execute("UPDATE settings SET value='info@nexusweblab.com' WHERE key='contactEmail'");
+    await client.execute("UPDATE settings SET value='09945598825' WHERE key IN ('contactPhone','contactPhoneDisplay')");
+    await client.execute("DELETE FROM settings WHERE key IN ('email','phone')");
+    await client.execute("UPDATE settings SET value='' WHERE key='address'");
+  } catch {}
+
   // Seed initial testimonials with client logos
   const testimonialCount = await client.execute('SELECT COUNT(*) as cnt FROM testimonials');
   if ((testimonialCount.rows[0]?.cnt as number) === 0) {
@@ -131,11 +141,11 @@ async function seedSettings() {
     );
     await client.execute(
       'INSERT OR REPLACE INTO testimonials (id, name, role, company, content, rating, avatar, logo, sort_order) VALUES (?,?,?,?,?,?,?,?,?)',
-      ['t2', 'J Recruit Co., Ltd.', 'Recruitment Platform', 'J Recruit', 'Professional recruitment platform with job board and referral system. Clean code, fast delivery, excellent support.', 5, 'https://i.pravatar.cc/150?img=2', 'https://jrecruit-site.vercel.app/logo.svg', 2]
+      ['t2', 'J Recruit Co., Ltd.', 'Recruitment Platform', 'J Recruit', 'Professional recruitment platform with job board and referral system. Clean code, fast delivery, excellent support.', 5, 'https://i.pravatar.cc/150?img=2', '/images/jrecruit-logo.svg', 2]
     );
     await client.execute(
       'INSERT OR REPLACE INTO testimonials (id, name, role, company, content, rating, avatar, logo, sort_order) VALUES (?,?,?,?,?,?,?,?,?)',
-      ['t3', 'Stardust.co', 'E-Commerce', 'Stardust', 'Our e-commerce store with AI live chat exceeded expectations. Sales increased within the first month.', 5, 'https://i.pravatar.cc/150?img=3', 'https://stardust-co-eight.vercel.app/logo.svg', 3]
+      ['t3', 'Stardust.co', 'E-Commerce', 'Stardust', 'Our e-commerce store with AI live chat exceeded expectations. Sales increased within the first month.', 5, 'https://i.pravatar.cc/150?img=3', '/images/stardust-logo.webp', 3]
     );
   }
 

@@ -24,19 +24,19 @@ const FALLBACK_SLIDES = [
 ];
 
 const SERVICE_IMAGES = [
-  'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1920&h=1080&fit=crop&q=100', // Web Development - laptop code
-  'https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=1920&h=1080&fit=crop&q=100', // E-Commerce - online shopping bags
-  'https://images.unsplash.com/photo-1559028012-481c04fa702d?w=1920&h=1080&fit=crop&q=100', // UI/UX Design - designer workspace
-  'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1920&h=1080&fit=crop&q=100', // SEO - analytics
-  'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1920&h=1080&fit=crop&q=100', // Hosting - server
-  'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=1920&h=1080&fit=crop&q=100', // Maintenance - tools
-  'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1920&h=1080&fit=crop&q=100', // Errors Fixing - code debug
-  'https://images.unsplash.com/photo-1535378917042-10a22c95931a?w=1920&h=1080&fit=crop&q=100', // AI Chatbot - AI robot
-  'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=1920&h=1080&fit=crop&q=100', // Redesign - design workspace
-  'https://images.unsplash.com/photo-1611162616305-c69b3fa7fbe0?w=1920&h=1080&fit=crop&q=100', // Social Media - phone apps
-  'https://images.unsplash.com/photo-1455390582262-044cdead277a?w=1920&h=1080&fit=crop&q=100', // Content Writing - pen notebook
-  'https://images.unsplash.com/photo-1626785774573-4b799315345d?w=1920&h=1080&fit=crop&q=100', // Brand Identity - branding
-  'https://images.unsplash.com/photo-1563986768609-322da13575f3?w=1920&h=1080&fit=crop&q=100', // Business Email - email laptop
+  '/images/remote/remote-1460925895917-afdab827c52f-1920w.webp', // Web Development - laptop code
+  '/images/remote/remote-1563013544-824ae1b704d3-1920w.webp', // E-Commerce - online shopping bags
+  '/images/remote/remote-1559028012-481c04fa702d-1920w.webp', // UI/UX Design - designer workspace
+  '/images/remote/remote-1551288049-bebda4e38f71-1920w.webp', // SEO - analytics
+  '/images/remote/remote-1451187580459-43490279c0fa-1920w.webp', // Hosting - server
+  '/images/remote/remote-1560472354-b33ff0c44a43-1920w.webp', // Maintenance - tools
+  '/images/remote/remote-1555066931-4365d14bab8c-1920w.webp', // Errors Fixing - code debug
+  '/images/remote/remote-1535378917042-10a22c95931a-1920w.webp', // AI Chatbot - AI robot
+  '/images/remote/remote-1561070791-2526d30994b5-1920w.webp', // Redesign - design workspace
+  '/images/remote/remote-1611162616305-c69b3fa7fbe0-1200w.webp', // Social Media - phone apps
+  '/images/remote/remote-1455390582262-044cdead277a-1920w.webp', // Content Writing - pen notebook
+  '/images/remote/remote-1626785774573-4b799315345d-1920w.webp', // Brand Identity - branding
+  '/images/remote/remote-1563986768609-322da13575f3-1920w.webp', // Business Email - email laptop
 ];
 
 const DEFAULT_FEATURES = [
@@ -104,7 +104,7 @@ export default function HomeClient({ initialData }: { initialData: HomeData }) {
   return (
     <>
       <Header />
-      <main className="noise">
+      <main id="main-content" className="noise">
         {/* ═══ HERO MARQUEE — isolated component: its slide state lives inside
             HeroMarquee, so a slide change re-renders only the hero layer,
             never the services/projects/testimonials sections below. */}
@@ -220,12 +220,12 @@ export default function HomeClient({ initialData }: { initialData: HomeData }) {
                 {projects.slice(0, 6).map((p, pi) => {
                   const tags = Array.isArray(p.tags) ? p.tags : (typeof p.tags === 'string' ? (() => { try { return JSON.parse(p.tags); } catch { return []; } })() : []);
                   const PI = [
-                    'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1600&h=1066&fit=crop&q=100',
-                    'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1600&h=1066&fit=crop&q=100',
-                    'https://images.unsplash.com/photo-1553877522-43269d4ea984?w=1600&h=1066&fit=crop&q=100',
-                    'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1600&h=1066&fit=crop&q=100',
-                    'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1600&h=1066&fit=crop&q=100',
-                    'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=1600&h=1066&fit=crop&q=100',
+                    '/images/remote/remote-1469854523086-cc02fe5d8800-1920w.webp',
+                    '/images/remote/remote-1486406146926-c627a92ad1ab-1920w.webp',
+                    '/images/remote/remote-1553877522-43269d4ea984-1920w.webp',
+                    '/images/remote/remote-1522071820081-009f0129c71c-1600w.webp',
+                    '/images/remote/remote-1460925895917-afdab827c52f-1920w.webp',
+                    '/images/remote/remote-1504384308090-c894fdcc538d-1920w.webp',
                   ];
                   return (
                     <a key={p.id} href={p.url || '#'} target="_blank" rel="noopener noreferrer" className="bento bg-white border border-slate-100 rounded-2xl group glow-pulse block">
@@ -312,14 +312,14 @@ export default function HomeClient({ initialData }: { initialData: HomeData }) {
                         )}
                         <div>
                           <div className="font-semibold text-navy text-sm">{t.name}</div>
-                          {t.role && <div className="text-xs text-slate-400">{t.role}{t.company && ` @ ${t.company}`}</div>}
+                          {t.role && <div className="text-xs text-slate-500">{t.role}{t.company && ` @ ${t.company}`}</div>}
                         </div>
                       </div>
                     </SpotlightCard>
                   ))}
                 </div>
                 <div className="border-t border-slate-200 pt-10">
-                  <p className="text-center text-xs uppercase tracking-wider text-slate-400 font-semibold mb-6">Trusted by leading brands</p>
+                  <p className="text-center text-xs uppercase tracking-wider text-slate-500 font-semibold mb-6">Trusted by leading brands</p>
                   <div className="flex flex-wrap items-center justify-center gap-8 sm:gap-12">
                     {testimonials.map((t, i) => (
                       <div key={`logo-${t.id || i}`} className="flex items-center gap-2 opacity-50 hover:opacity-100 transition-all hover:scale-110">
@@ -347,7 +347,7 @@ export default function HomeClient({ initialData }: { initialData: HomeData }) {
                     <p className="text-slate-600 leading-relaxed mb-5 italic">&ldquo;{t.content}&rdquo;</p>
                     <div className="flex items-center gap-3 pt-4 border-t border-slate-200">
                       <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue to-cyan flex items-center justify-center text-white font-bold text-sm">{t.name.charAt(0)}</div>
-                      <div><div className="font-semibold text-navy text-sm">{t.name}</div><div className="text-xs text-slate-400">{t.role}</div></div>
+                      <div><div className="font-semibold text-navy text-sm">{t.name}</div><div className="text-xs text-slate-500">{t.role}</div></div>
                     </div>
                   </div>
                 ))}
@@ -411,7 +411,7 @@ export default function HomeClient({ initialData }: { initialData: HomeData }) {
         {/* ═══ CTA — AURORA FINALE ═══ */}
         <section className="py-32 bg-[#050816] text-white text-center relative overflow-hidden">
           <Image
-            src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1920&h=1080&fit=crop&q=100"
+            src="/images/remote/remote-1522071820081-009f0129c71c-1600w.webp"
             alt="Web development team collaborating"
             width={1920}
             height={1080}

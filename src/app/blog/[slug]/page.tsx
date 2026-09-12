@@ -68,14 +68,8 @@ export default function BlogPostPage() {
 
   return (
     <>
-      <title>{post.title} — Nexus Web Lab</title>
-      <meta name="description" content={post.excerpt} />
-      <meta property="og:title" content={`${post.title} — Nexus Web Lab`} />
-      <meta property="og:description" content={post.excerpt} />
-      <meta property="og:image" content={post.image} />
-      <meta property="og:type" content="article" />
       <Header />
-      <main className="mesh-bg">
+      <main id="main-content" className="mesh-bg">
         {/* Hero */}
         <section className="relative bg-[#050816] overflow-hidden py-16">
           <div className="orb w-[450px] h-[450px] bg-blue-500/20 top-[-180px] right-[-120px]" />

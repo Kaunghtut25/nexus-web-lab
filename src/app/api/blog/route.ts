@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { dbAll, dbGet, dbRun } from '@/lib/db';
 import { v4 as uuid } from 'uuid';
 import { requireAuth } from '../admin/auth-guard';
+import { remapImage } from '@/lib/image-remap';
 
 export async function GET(req: NextRequest): Promise<NextResponse> {
   const { searchParams } = new URL(req.url);
@@ -10,15 +11,15 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   if (slug) {
     const post = await dbGet('SELECT * FROM blog_posts WHERE slug = ? AND published = 1', [slug]);
     if (!post) return NextResponse.json({ error: 'Not found' }, { status: 404 });
-    return NextResponse.json({ post });
+    return NextResponse.json({ post: { ...post, image: remapImage(post.image) } });
   }
   if (id) {
     const post = await dbGet('SELECT * FROM blog_posts WHERE id = ?', [id]);
     if (!post) return NextResponse.json({ error: 'Not found' }, { status: 404 });
-    return NextResponse.json({ post });
+    return NextResponse.json({ post: { ...post, image: remapImage(post.image) } });
   }
   const posts = await dbAll('SELECT * FROM blog_posts WHERE published = 1 ORDER BY created_at DESC');
-  return NextResponse.json({ posts });
+  return NextResponse.json({ posts: posts.map((p: any) => ({ ...p, image: remapImage(p.image) })) });
 }
 
 export async function POST(req: NextRequest): Promise<NextResponse> {

@@ -1,5 +1,13 @@
-"use client";
-import { useState, useEffect } from "react";
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: "/portfolio",
+  },
+  title: 'Portfolio — Nexus Web Lab',
+  description: 'See recent work by Nexus Web Lab: modern websites, e-commerce stores, dashboards, and AI integrations built with Next.js and React.',
+};
+
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import Link from "next/link";
@@ -37,23 +45,19 @@ const CASE_STUDY_FALLBACKS = [
   },
 ];
 
-export default function PortfolioPage() {
-  const [projects, setProjects] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+export default async function PortfolioPage() {
+  let projects: any[] = [];
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://nexusweblab.com';
+    const res = await fetch(`${baseUrl}/api/projects`, { next: { revalidate: 300 } });
+    const d = await res.json();
+    projects = (d.projects || []).map((p: any) => ({
+      ...p,
+      tags: Array.isArray(p.tags) ? p.tags : (typeof p.tags === 'string' ? (() => { try { return JSON.parse(p.tags); } catch { return []; } })() : []),
+      tech: Array.isArray(p.tech) ? p.tech : (typeof p.tech === 'string' ? (() => { try { return JSON.parse(p.tech); } catch { return []; } })() : []),
+    }));
+  } catch { /* fallback: show empty */ }
 
-  useEffect(() => {
-    fetch('/api/projects').then(r=>r.json()).then(d => {
-      setProjects((d.projects || []).map((p: any) => ({
-        ...p,
-        tags: Array.isArray(p.tags) ? p.tags : (typeof p.tags === 'string' ? (() => { try { return JSON.parse(p.tags); } catch { return []; } })() : []),
-        tech: Array.isArray(p.tech) ? p.tech : (typeof p.tech === 'string' ? (() => { try { return JSON.parse(p.tech); } catch { return []; } })() : []),
-      })));
-      setLoading(false);
-    }).catch(() => setLoading(false));
-  }, []);
-
-  // Case studies from DB (projects that have problem/solution/result fields),
-  // falling back to the curated constant only when no project has them.
   const caseStudies = projects
     .filter((p: any) => p.problem && p.solution && p.result)
     .map((p: any) => ({
@@ -68,10 +72,9 @@ export default function PortfolioPage() {
 
   return (
     <>
-      <title>Portfolio — Nexus Web Lab</title>
-      <meta name="description" content="See recent work by Nexus Web Lab: modern websites, e-commerce stores, dashboards, and AI integrations built with Next.js and React." />
+      <link rel="preconnect" href="/api/projects" />
       <Header />
-      <main>
+      <main id="main-content">
         <section className="relative -mt-20 h-[50vh] min-h-[400px] sm:min-h-[500px] lg:min-h-[560px] flex items-center overflow-hidden">
           <Image src="/images/hero/portfolio-hero.jpg" alt="Portfolio" fill priority sizes="100vw" className="object-cover hero-kenburns" />
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(5,8,22,0.55)_0%,rgba(5,8,22,0.3)_42%,transparent_75%)]" aria-hidden="true" />
@@ -91,16 +94,8 @@ export default function PortfolioPage() {
               <h2 className="text-3xl sm:text-4xl font-extrabold text-navy mb-2 card-hover-title">Projects We&apos;re Proud Of</h2>
               <p className="text-slate-500 text-lg max-w-2xl mx-auto">Real websites we have designed, built and launched for businesses across Myanmar and beyond.</p>
             </div>
-            {loading ? (
-              <div className="flex items-center justify-center py-20">
-                <div className="flex gap-2">
-                  <span className="w-3 h-3 rounded-full bg-blue animate-pulse" />
-                  <span className="w-3 h-3 rounded-full bg-blue animate-pulse" style={{ animationDelay: '0.2s' }} />
-                  <span className="w-3 h-3 rounded-full bg-blue animate-pulse" style={{ animationDelay: '0.4s' }} />
-                </div>
-              </div>
-            ) : projects.length === 0 ? (
-              <div className="text-center py-20 text-slate-400">
+            {projects.length === 0 ? (
+              <div className="text-center py-20 text-slate-500">
                 <FolderOpen size={48} className="mx-auto mb-4 opacity-30" />
                 <p>No projects yet. Add projects in the admin panel.</p>
               </div>
@@ -108,13 +103,13 @@ export default function PortfolioPage() {
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
                 {projects.map((p, pi) => {
                   const PF = [
-                    'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1920&h=1200&fit=crop&q=100',
-                    'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1920&h=1200&fit=crop&q=100',
-                    'https://images.unsplash.com/photo-1553877522-43269d4ea984?w=1920&h=1200&fit=crop&q=100',
-                    'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1920&h=1200&fit=crop&q=100',
-                    'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1920&h=1200&fit=crop&q=100',
-                    'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=1920&h=1200&fit=crop&q=100',
-                    'https://images.unsplash.com/photo-1497366216548-37526070297c?w=1920&h=1200&fit=crop&q=100',
+                    '/images/remote/remote-1469854523086-cc02fe5d8800-1920w.webp',
+                    '/images/remote/remote-1486406146926-c627a92ad1ab-1920w.webp',
+                    '/images/remote/remote-1553877522-43269d4ea984-1920w.webp',
+                    '/images/remote/remote-1522071820081-009f0129c71c-1600w.webp',
+                    '/images/remote/remote-1460925895917-afdab827c52f-1920w.webp',
+                    '/images/remote/remote-1504384308090-c894fdcc538d-1920w.webp',
+                    '/images/remote/remote-1497366216548-37526070297c-1920w.webp',
                   ];
                   return (
                   <a key={p.id} href={p.url || '#'} target="_blank" rel="noopener noreferrer" className="group bg-white rounded-2xl border border-slate-100 overflow-hidden hover:shadow-xl hover:shadow-blue/5 transition-all duration-300 block">
@@ -127,7 +122,7 @@ export default function PortfolioPage() {
                       )}
                     </div>
                     <div className="p-6">
-                      <p className="text-xs text-slate-400 mb-1">{p.client || 'Client'}</p>
+                      <p className="text-xs text-slate-500 mb-1">{p.client || 'Client'}</p>
                       <div className="flex items-center gap-2 mb-3">
                         <h3 className="text-lg font-bold text-navy group-hover:text-blue transition">{p.title}</h3>
                         <ExternalLink size={14} className="text-slate-300 group-hover:text-blue transition" />
@@ -177,7 +172,7 @@ export default function PortfolioPage() {
                     </div>
                   </div>
                   <div className="mt-6 pt-5 border-t border-slate-200 flex flex-wrap items-center gap-2">
-                    <span className="flex items-center gap-1.5 text-xs font-semibold text-slate-400 uppercase tracking-wide mr-1"><Cpu size={13} /> Technology</span>
+                    <span className="flex items-center gap-1.5 text-xs font-semibold text-slate-500 uppercase tracking-wide mr-1"><Cpu size={13} /> Technology</span>
                     {cs.tech.map((t: string) => (
                       <span key={t} className="px-3 py-1 bg-white border border-slate-200 rounded-full text-xs font-semibold text-slate-600">{t}</span>
                     ))}
@@ -189,7 +184,7 @@ export default function PortfolioPage() {
         </section>
 
         <section className="py-20 mesh-bg text-center relative overflow-hidden">
-          <Image src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1920&h=960&fit=crop&q=100" alt="" aria-hidden fill loading="lazy" sizes="100vw" className="object-cover opacity-40" />
+          <Image src="/images/remote/remote-1451187580459-43490279c0fa-1920w.webp" alt="" aria-hidden fill loading="lazy" sizes="100vw" className="object-cover opacity-40" />
           <div className="absolute inset-0 bg-white/50" />
           <div className="relative z-10 max-w-3xl mx-auto px-4">
             <h2 className="text-3xl font-extrabold text-navy mb-4">Want to be our next project?</h2>

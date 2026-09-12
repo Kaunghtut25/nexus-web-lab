@@ -525,7 +525,7 @@ export default function CourseLandingPage() {
     },
   ];
   return (
-    <main className="mesh-bg min-h-screen">
+    <main id="main-content" className="mesh-bg min-h-screen">
       {/* HERO */}
       <section className="relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-20 sm:py-28 text-center">

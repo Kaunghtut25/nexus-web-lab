@@ -2,6 +2,9 @@ import Link from "next/link";
 import CourseLangSetter from "./lang-setter";
 
 export const metadata = {
+  alternates: {
+    canonical: "/course",
+  },
   title: "Nexus AI Freelance Mastery — AI Freelancer ဖြစ်ဖို့ မြန်မာလို သင်တန်း",
   description:
     "Module ၁၃ ခု — Beginner ကနေ Freelancer ဖြစ်တဲ့အထိ။ Website + Chatbot + Fiverr + Upwork — အကုန် သင်ရမယ်။",

@@ -3,6 +3,9 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 
 export const metadata: Metadata = {
+  alternates: {
+    canonical: "/terms",
+  },
   title: "Terms of Service — Nexus Web Lab",
   description: "Terms and conditions governing the use of Nexus Web Lab's website and services.",
 };
@@ -50,7 +53,7 @@ const sections = [
   },
   {
     title: "11. Contact",
-    body: "Questions about these Terms of Service can be directed to info@nexusweblab.com, +95 9 886 264 582, or Yangon, Myanmar.",
+    body: "Questions about these Terms of Service can be directed to our contact form at https://nexusweblab.com/contact.",
   },
 ];
 
@@ -58,7 +61,7 @@ export default function TermsPage() {
   return (
     <>
       <Header />
-      <main className="mesh-bg min-h-screen">
+      <main id="main-content" className="mesh-bg min-h-screen">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 py-16">
           <h1 className="text-4xl font-black text-navy mb-2">Terms of Service</h1>
           <p className="text-slate-500 text-sm mb-10">Last updated: August 8, 2026</p>

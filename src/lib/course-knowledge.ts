@@ -68,13 +68,13 @@ export const COURSE_INFO = {
 
   payment: {
     methods: "KBZPay · AYA Pay · Wave Pay · ဘဏ်ငွေလွှဲ (KBZ / AYA)",
-    note: "ငွေပေးချေပြီးပါက ငွေလွှဲအထောက်အထား (screenshot) ကို info@nexusweblab.com သို့မဟုတ် Viber 09945598825 ကို ပို့ပေးပါ — အကောင့် ချက်ချင်း ဖွင့်ပေးပါမည်။",
+    note: "ငွေပေးချေပြီးပါက ငွေလွှဲအထောက်အထား (screenshot) ကို contact form (https://nexusweblab.com/contact) ကို ပို့ပေးပါ — အကောင့် ချက်ချင်း ဖွင့်ပေးပါမည်။",
   },
 
   support: {
-    email: "info@nexusweblab.com",
-    phone: "09945598825",
-    viber: "viber://chat?number=%2B959945598825",
+    email: "",
+    phone: "",
+    viber: "https://nexusweblab.com/contact",
   },
 
   faq: [
@@ -140,10 +140,8 @@ ${COURSE_INFO.howToJoin.join("\n")}
 ${COURSE_INFO.faq.map((f) => `- Q: ${f.q} → A: ${f.a}`).join("\n")}
 
 ### SUPPORT
-- Email: ${COURSE_INFO.support.email}
-- Phone/Viber: ${COURSE_INFO.support.phone}
-- Viber link: ${COURSE_INFO.support.viber}
-- When a student says they have paid, confirm the payment screenshot must be sent to ${COURSE_INFO.support.email} or Viber ${COURSE_INFO.support.phone}, then the teacher activates their account and they can log in at ${COURSE_INFO.loginUrl}.`;
+- Contact form: ${COURSE_INFO.support.viber}
+- When a student says they have paid, direct them to send the payment screenshot via the contact form (${COURSE_INFO.support.viber}), then the teacher activates their account and they can log in at ${COURSE_INFO.loginUrl}.`;
 }
 
 // Burmese + English keyword router for the offline fallback (no API key / API down)
@@ -167,7 +165,7 @@ export function courseFallbackReply(text: string): string | null {
 🛡️ ၇ ရက် Money-Back Guarantee
 💳 ပေးချေနည်း — KBZPay · AYA Pay · Wave Pay · ဘဏ်ငွေလွှဲ
 
-ငွေပေးချေပြီးပါက screenshot ကို info@nexusweblab.com (သို့) Viber 09945598825 ကို ပို့ပေးပါ — အကောင့် ချက်ချင်း ဖွင့်ပေးပါမယ်။`;
+ငွေပေးချေပြီးပါက screenshot ကို contact form (https://nexusweblab.com/contact) ကို ပို့ပေးပါ — အကောင့် ချက်ချင်း ဖွင့်ပေးပါမယ်။`;
   }
 
   // How to join / register
@@ -235,12 +233,12 @@ Bonus ၅ ခု:
   ) {
     return `💳 ပေးချေနည်းများ
 
-• KBZPay — 09945598825
-• AYA Pay — 09945598825
-• Wave Pay — 09945598825
+• KBZPay — အကောင့်နံပါတ် အတွက် contact form မှ မေးမြန်းပါ
+• AYA Pay — အကောင့်နံပါတ် အတွက် contact form မှ မေးမြန်းပါ
+• Wave Pay — အကောင့်နံပါတ် အတွက် contact form မှ မေးမြန်းပါ
 • ဘဏ်ငွေလွှဲ (KBZ / AYA)
 
-ငွေပေးချေပြီးပါက လွှဲပြေစာ (screenshot) ကို info@nexusweblab.com (သို့) Viber 09945598825 ကို ပို့ပေးပါ — အကောင့် ချက်ချင်း ဖွင့်ပေးပါမယ် ✅`;
+ငွေပေးချေပြီးပါက လွှဲပြေစာ (screenshot) ကို contact form (https://nexusweblab.com/contact) ကို ပို့ပေးပါ — အကောင့် ချက်ချင်း ဖွင့်ပေးပါမယ် ✅`;
   }
 
   // Teacher name (hard-coded — the LLM must never guess from the email)
@@ -262,9 +260,7 @@ Bonus ၅ ခု:
   ) {
     return `📞 ဆက်သွယ်ရန်
 
-• Email — info@nexusweblab.com
-• Phone / Viber — 09945598825
-• [Viber ဖွင့်ရန်](viber://chat?number=%2B959945598825)
+• Contact form — https://nexusweblab.com/contact
 
 သင်တန်းနဲ့ ပတ်သက်တဲ့ မေးခွန်းတွေ ရှိရင် ၂၄ နာရီအတွင်း ပြန်ကြားပေးပါတယ် 😊`;
   }

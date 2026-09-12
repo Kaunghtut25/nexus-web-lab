@@ -39,7 +39,7 @@ export default function CourseRegisterPage() {
   };
 
   return (
-    <main className="mesh-bg min-h-screen flex items-center justify-center px-4 py-16">
+    <main id="main-content" className="mesh-bg min-h-screen flex items-center justify-center px-4 py-16">
       <div className="w-full max-w-md">
         <div className="bg-white rounded-3xl border border-slate-200 shadow-xl p-8">
           <div className="text-center mb-6">

@@ -56,9 +56,7 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
-  alternates: {
-    canonical: "https://nexusweblab.com",
-  },
+
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
@@ -69,57 +67,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     "@context": "https://schema.org",
     "@graph": [
       {
-        "@type": "LocalBusiness",
-        "@id": "https://nexusweblab.com/#business",
-        name: "Nexus Web Lab",
-        description: "AI automation & AI-powered web development agency in Yangon, Myanmar. We build intelligent digital systems — AI websites, business automation systems, custom AI agents and SaaS applications.",
-        url: "https://nexusweblab.com",
-        telephone: "+95 9 886 264 582",
-        email: "info@nexusweblab.com",
-        address: {
-          "@type": "PostalAddress",
-          streetAddress: "Yangon",
-          addressLocality: "Yangon",
-          addressRegion: "Yangon Region",
-          addressCountry: "MM",
-        },
-        contactPoint: {
-          "@type": "ContactPoint",
-          telephone: "+95 9 886 264 582",
-          email: "info@nexusweblab.com",
-          contactType: "customer service",
-          availableLanguage: ["English", "Burmese"],
-          areaServed: "Yangon, Myanmar",
-        },
-        geo: {
-          "@type": "GeoCoordinates",
-          latitude: 16.8955,
-          longitude: 96.1085,
-        },
-        openingHoursSpecification: [
-          {
-            "@type": "OpeningHoursSpecification",
-            dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-            opens: "09:00",
-            closes: "18:00",
-          },
-        ],
-        areaServed: "Yangon, Myanmar",
-        priceRange: "$999 - $10,000+",
-        image: "https://nexusweblab.com/logo.png",
-        logo: "https://nexusweblab.com/logo.png",
-        sameAs: [
-          "https://www.facebook.com/people/Nexus-Web-Lab/61593132628840",
-          "https://github.com/Kaunghtut25",
-        ],
-      },
-      {
         "@type": "WebSite",
         "@id": "https://nexusweblab.com/#website",
         url: "https://nexusweblab.com",
         name: "Nexus Web Lab",
         description: "AI Automation & AI-Powered Web Development in Yangon, Myanmar.",
-        publisher: { "@id": "https://nexusweblab.com/#business" },
         inLanguage: "en",
       },
       {
@@ -127,8 +79,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         "@id": "https://nexusweblab.com/#service-web-design",
         serviceType: "Web Design",
         name: "Web Design Services",
-        provider: { "@id": "https://nexusweblab.com/#business" },
-        areaServed: "Yangon, Myanmar",
         description: "Modern, conversion-focused website design for businesses in Myanmar and worldwide.",
       },
       {
@@ -136,8 +86,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         "@id": "https://nexusweblab.com/#service-web-development",
         serviceType: "Web Development",
         name: "Web Development Services",
-        provider: { "@id": "https://nexusweblab.com/#business" },
-        areaServed: "Yangon, Myanmar",
         description: "Fast, scalable websites and web apps built with Next.js, React, and TypeScript.",
       },
       {
@@ -145,8 +93,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         "@id": "https://nexusweblab.com/#service-ecommerce",
         serviceType: "E-Commerce Development",
         name: "E-Commerce Development",
-        provider: { "@id": "https://nexusweblab.com/#business" },
-        areaServed: "Yangon, Myanmar",
         description: "Online stores with payment gateway integration including KBZPay, AYA Pay, and Wave.",
       },
       {
@@ -154,8 +100,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         "@id": "https://nexusweblab.com/#service-ai-automation",
         serviceType: "AI Automation",
         name: "Business Automation Systems",
-        provider: { "@id": "https://nexusweblab.com/#business" },
-        areaServed: "Yangon, Myanmar",
         description: "AI-powered business automation — workflow automation, lead routing, invoicing, reporting and AI chatbots that work 24/7.",
       },
       {
@@ -163,19 +107,20 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         "@id": "https://nexusweblab.com/#service-ai-agents",
         serviceType: "AI Agent Development",
         name: "Custom AI Agent Solutions",
-        provider: { "@id": "https://nexusweblab.com/#business" },
-        areaServed: "Yangon, Myanmar",
         description: "Custom AI agents trained on your business data — customer support, sales, scheduling and operations, integrated with your tools.",
       },
     ],
   };
   return (
     <html lang="en">
-      <head>
-        <link rel="preconnect" href="https://images.unsplash.com" crossOrigin="anonymous" />
-        <link rel="dns-prefetch" href="https://images.unsplash.com" />
-      </head>
+      <head></head>
       <body className="min-h-screen flex flex-col">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[10000] focus:bg-white focus:text-navy focus:px-4 focus:py-2 focus:rounded-lg focus:shadow-lg focus:text-sm focus:font-semibold"
+        >
+          Skip to main content
+        </a>
         <script type="application/ld+json" nonce={nonce} dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
         <CurrencyProvider>
           <ScrollToTop />

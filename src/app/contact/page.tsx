@@ -74,10 +74,8 @@ export default function Contact() {
 
   return (
     <>
-      <title>Contact — Nexus Web Lab</title>
-      <meta name="description" content="Contact Nexus Web Lab for web development, design, and digital solutions. We reply within 24 hours. Based in Yangon, Myanmar." />
       <Header />
-      <main>
+      <main id="main-content">
         {/* Hero */}
         <section className="relative -mt-20 h-[50vh] min-h-[420px] sm:min-h-[500px] lg:min-h-[560px] flex items-center overflow-hidden">
           <Image src="/images/hero/contact-hero.jpg" alt="Contact" fill priority sizes="100vw" className="object-cover hero-kenburns" />
@@ -159,7 +157,7 @@ export default function Contact() {
                       <button type="submit" disabled={loading} className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-blue to-cyan text-white font-semibold py-3.5 rounded-xl hover:shadow-lg hover:shadow-blue/25 transition-all disabled:opacity-70">
                         {loading ? "Sending..." : <>{'Send Message'} <ArrowRight size={18} /></>}
                       </button>
-                      <p className="text-center text-xs text-slate-400 flex items-center justify-center gap-1.5 pt-1">
+                      <p className="text-center text-xs text-slate-500 flex items-center justify-center gap-1.5 pt-1">
                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
                         We reply within 24 hours — no spam, ever.
                       </p>
@@ -198,15 +196,6 @@ export default function Contact() {
 
               {/* Info Cards — Dynamic from Settings */}
               <div className="lg:col-span-2 space-y-4">
-                {[
-                  { icon: <MapPin size={22} />, title: 'Visit Us', content: s('address','Yangon, Myanmar') },
-                ].map(b => (
-                  <div key={b.title} className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm hover:shadow-md transition-all">
-                    <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-blue/10 to-cyan/10 flex items-center justify-center text-blue mb-4">{b.icon}</div>
-                    <h3 className="text-sm font-bold text-navy uppercase tracking-wider mb-2">{b.title}</h3>
-                    <p className="text-slate-500 text-sm leading-relaxed whitespace-pre-line">{b.content}</p>
-                  </div>
-                ))}
 
                 {/* Quick Actions */}
                 <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
@@ -224,7 +213,7 @@ export default function Contact() {
 
                 {/* Office Image */}
                 <div className="rounded-2xl overflow-hidden shadow-sm border border-slate-100">
-                  <Image src="https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=1200&h=800&fit=crop&q=100" alt="Our office" width={1200} height={800} loading="lazy" className="w-full h-52 object-cover" />
+                  <Image src="/images/remote/remote-1497366811353-6870744d04b2-1200w.webp" alt="Our office" width={1200} height={800} loading="lazy" className="w-full h-52 object-cover" />
                 </div>
 
                 {/* Payment Methods */}
@@ -233,7 +222,7 @@ export default function Contact() {
                     <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue/10 to-cyan/10 flex items-center justify-center text-blue"><CreditCard size={20} /></div>
                     <div>
                       <h3 className="font-bold text-navy">Payment Methods</h3>
-                      <p className="text-xs text-slate-400">We accept the following banks & payment apps</p>
+                      <p className="text-xs text-slate-500">We accept the following banks & payment apps</p>
                     </div>
                   </div>
                   <PaymentLogos methods={s('paymentMethods','KBZ Bank|AYA Bank|CB Bank|AYA Pay|KBZPay|CB Pay|Wave Pay|Bank transfer|PayPal')} />

@@ -31,7 +31,7 @@ export default async function CourseDashboardPage() {
   const done = COURSE_MODULES.length + COURSE_EXTRAS.length;
 
   return (
-    <main className="mesh-bg min-h-screen">
+    <main id="main-content" className="mesh-bg min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10">
         {/* Welcome bar */}
         <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 sm:p-8 flex flex-wrap items-center justify-between gap-4">

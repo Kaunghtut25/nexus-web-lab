@@ -290,15 +290,15 @@ export default function ServiceDetail() {
   const features = Array.isArray(service?.features) ? service.features : [];
   const IconComp = service ? (ICON_MAP[service.icon] || Globe) : Globe;
   const images: Record<string, string> = {
-    'web-development': 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1920&h=960&fit=crop&q=100',
-    'e-commerce': 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=1920&h=960&fit=crop&q=100',
-    'ui-ux-design': 'https://images.unsplash.com/photo-1559028012-481c04fa702d?w=1920&h=960&fit=crop&q=100',
-    'seo-package': 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1920&h=960&fit=crop&q=100',
-    'hosting-deploy': 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1920&h=960&fit=crop&q=100',
-    'maintenance': 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=1920&h=960&fit=crop&q=100',
-    'error-fixing': 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1920&h=960&fit=crop&q=100',
-    'ai-chatbot': 'https://images.unsplash.com/photo-1535378917042-10a22c95931a?w=1920&h=960&fit=crop&q=100',
-    'website-redesign': 'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=1920&h=960&fit=crop&q=100',
+    'web-development': '/images/remote/remote-1460925895917-afdab827c52f-1920w.webp',
+    'e-commerce': '/images/remote/remote-1563013544-824ae1b704d3-1920w.webp',
+    'ui-ux-design': '/images/remote/remote-1559028012-481c04fa702d-1920w.webp',
+    'seo-package': '/images/remote/remote-1551288049-bebda4e38f71-1920w.webp',
+    'hosting-deploy': '/images/remote/remote-1451187580459-43490279c0fa-1920w.webp',
+    'maintenance': '/images/remote/remote-1560472354-b33ff0c44a43-1920w.webp',
+    'error-fixing': '/images/remote/remote-1555066931-4365d14bab8c-1920w.webp',
+    'ai-chatbot': '/images/remote/remote-1535378917042-10a22c95931a-1920w.webp',
+    'website-redesign': '/images/remote/remote-1561070791-2526d30994b5-1920w.webp',
   };
   const heroImg = images[slug] || images['web-development'];
   const title = service?.title || slug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
@@ -321,14 +321,10 @@ export default function ServiceDetail() {
 
   return (
     <>
-      <title>{title} — Nexus Web Lab</title>
-      <meta name="description" content={`${title} services by Nexus Web Lab — ${detail.tagline} Get a free quote within 24 hours.`} />
-      <meta property="og:title" content={`${title} — Nexus Web Lab`} />
-      <meta property="og:description" content={`${title} services by Nexus Web Lab — ${detail.tagline}`} />
       <meta property="og:image" content={heroImg} />
       <meta property="og:type" content="website" />
       <Header />
-      <main>
+      <main id="main-content">
         {/* HERO */}
         <section className="relative -mt-20 min-h-[55vh] flex items-center overflow-hidden">
           <img src={heroImg} alt={title} className="absolute inset-0 w-full h-full object-cover" />

@@ -51,7 +51,6 @@ export default function Footer() {
         </div>
         <div>
           <h3 className="font-semibold mb-4 text-sm uppercase tracking-wider text-slide card-hover-title">Contact</h3>
-          <p className="text-sm">📍 {s('address','Yangon, Myanmar')}</p>
           <Link href="/contact" className="mt-2 inline-flex items-center gap-1.5 text-sm text-blue hover:text-cyan transition">
             <Mail size={15} /> Send us a message →
           </Link>
@@ -65,11 +64,14 @@ export default function Footer() {
             <a href={settings.telegram || "https://t.me"} target="_blank" rel="noopener noreferrer" aria-label="Telegram" className="w-12 h-12 rounded-full bg-[#229ED9] shadow-md shadow-sky-500/25 flex items-center justify-center text-white hover:scale-110 hover:shadow-lg transition-all duration-200">
               <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current"><path d="M21.9 4.6c.3-1.1-.7-1.9-1.7-1.5L3.6 9.7c-1.1.4-1 2 .1 2.3l4.3 1.3 1.7 5.3c.3 1 1.6 1.2 2.2.3l2.3-3.2 4.5 3.3c.9.6 2.1.2 2.4-.9l2.8-13.5zM9.4 12.8l8-5.4c.3-.2.7.2.4.5l-6.6 6.3-.3 2.7-1.5-4.1z"/></svg>
             </a>
+            <a href={settings.whatsapp || "https://wa.me/959945598825"} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" className="w-12 h-12 rounded-full bg-[#25D366] shadow-md shadow-emerald-500/25 flex items-center justify-center text-white hover:scale-110 hover:shadow-lg transition-all duration-200">
+              <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current"><path d="M17.5 14.4c-.3-.1-1.8-.9-2-1-.3-.1-.5-.1-.7.1-.2.3-.8 1-.9 1.2-.2.2-.3.2-.6.1-.3-.1-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.5-.6c.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5-.1-.1-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.8-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.2-.6-.3zM12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18.2c-1.8 0-3.5-.6-4.9-1.6l-.5-.3-3.7 1 1-3.6-.3-.5c-1.1-1.4-1.7-3.2-1.7-5 0-5.5 4.5-10 10-10s10 4.5 10 10-4.5 10-10 10z"/></svg>
+            </a>
           </div>
         </div>
       </div>
       <div className="relative border-t border-slate-200 py-5 text-center text-xs text-slate-500">
-        <p className="mb-1.5 text-slate-400">Visiting from Fiverr or Upwork? We respect platform policies. Please communicate through your platform&rsquo;s messaging system.</p>
+        <p className="mb-1.5 text-slate-500">Visiting from Fiverr or Upwork? We respect platform policies. Please communicate through your platform&rsquo;s messaging system.</p>
         © {new Date().getFullYear()} {s('siteName','Nexus Web Lab')}. All rights reserved.
       </div>
       <div className="h-4 sm:h-0" /> {/* spacer so floating chat button never covers footer content */}

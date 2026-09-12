@@ -16,10 +16,8 @@ export default function AboutPage() {
 
   return (
     <>
-      <title>About Us — Nexus Web Lab</title>
-      <meta name="description" content="Learn about Nexus Web Lab — a professional web development & digital agency in Yangon, Myanmar. Our team, mission, and values." />
       <Header />
-      <main>
+      <main id="main-content">
         {/* Hero */}
         <section className="relative -mt-20 h-[50vh] min-h-[400px] sm:min-h-[500px] lg:min-h-[560px] flex items-center overflow-hidden">
           <Image src="/images/hero/about-hero.jpg" alt="About Nexus" fill priority sizes="100vw" className="object-cover hero-kenburns" />
@@ -55,7 +53,7 @@ export default function AboutPage() {
               </div>
               <div className="relative">
                 <div className="absolute inset-0 bg-gradient-to-br from-blue/10 to-cyan/10 rounded-2xl blur-3xl" />
-                <Image src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1600&h=1333&fit=crop&q=100" alt="Team working" width={1600} height={1333} loading="lazy" className="relative rounded-2xl shadow-xl w-full object-cover" />
+                <Image src="/images/remote/remote-1522071820081-009f0129c71c-1600w.webp" alt="Team working" width={1600} height={1333} loading="lazy" className="relative rounded-2xl shadow-xl w-full object-cover" />
               </div>
             </div>
           </div>
@@ -68,7 +66,7 @@ export default function AboutPage() {
               {[s('stat1Value','134+'), s('stat2Value','129+'), s('stat3Value','98.9%'), s('stat4Value','24/7')].map((v, i) => (
                 <div key={i}>
                   <div className="text-4xl font-extrabold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent mb-2">{v}</div>
-                  <div className="text-slate-400 text-sm font-medium">{[s('stat1Label','Projects Delivered'), s('stat2Label','Happy Clients'), s('stat3Label','Client Satisfaction'), s('stat4Label','Support')][i]}</div>
+                  <div className="text-slate-500 text-sm font-medium">{[s('stat1Label','Projects Delivered'), s('stat2Label','Happy Clients'), s('stat3Label','Client Satisfaction'), s('stat4Label','Support')][i]}</div>
                 </div>
               ))}
             </div>
@@ -90,7 +88,7 @@ export default function AboutPage() {
 
         {/* CTA */}
         <section className="py-20 bg-slate-50 text-center relative overflow-hidden">
-          <Image src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1920&h=960&fit=crop&q=100" alt="" aria-hidden fill loading="lazy" sizes="100vw" className="object-cover opacity-40" />
+          <Image src="/images/remote/remote-1522071820081-009f0129c71c-1600w.webp" alt="" aria-hidden fill loading="lazy" sizes="100vw" className="object-cover opacity-40" />
           <div className="absolute inset-0 bg-white/60" />
           <div className="relative z-10 max-w-3xl mx-auto px-4">
             <h2 className="text-3xl font-extrabold text-navy mb-4">{s('ctaTitle','Have a Project in Mind?')}</h2>
