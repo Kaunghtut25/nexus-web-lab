@@ -11,6 +11,12 @@ const nextConfig: NextConfig = {
       { protocol: 'https', hostname: 'i.pravatar.cc', pathname: '/**' },
     ],
     formats: ['image/avif', 'image/webp'],
+    // Next's default deviceSizes list ends at 3840. Full-bleed heroes declare
+    // sizes="100vw", so a 2x (Retina) 1440px desktop selected the 3840 variant —
+    // several hundred KB for an image displayed at half that width. Capping the
+    // list at 2560 keeps large displays sharp while never generating the 3840
+    // transform (also fewer variants to bill and cache on Vercel).
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 2560],
     // Next.js 16 snaps every image's quality prop to the CLOSEST value in this
     // list (findClosestQuality). The default is [75] only — so quality={70} or
     // {100} silently render as 75, which made card images look soft. Allow the
