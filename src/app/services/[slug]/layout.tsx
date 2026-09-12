@@ -1,32 +1,31 @@
 import type { Metadata } from "next";
+import { SERVICE_META } from "@/lib/services";
 
-// Static slug → display name map (mirrors SLUG_TO_ID in page.tsx).
-const SLUG_TITLE: Record<string, string> = {
-  'web-development': 'Web Development',
-  'e-commerce': 'E-Commerce',
-  'ui-ux-design': 'UI/UX Design',
-  'seo-package': 'SEO Package',
-  'hosting-deploy': 'Hosting & Deploy',
-  'maintenance': 'Maintenance',
-  'error-fixing': 'Website Errors Fixing',
-  'ai-chatbot': 'AI Agent & Automation',
-  'website-redesign': 'Website Redesign',
-  'social-media-management': 'Social Media Management',
-  'content-writing': 'Content Writing & Copywriting',
-  'logo-brand-identity': 'Logo & Brand Identity',
-  'business-email-setup': 'Business Email Setup',
-};
+// Static fallback for slugs that are not in SERVICE_META: the page calls
+// notFound() for those, so this only feeds the not-found response.
+const FALLBACK_NAME = "Services";
 
 type Props = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = await params;
-  const name = SLUG_TITLE[slug] || "Services";
+  const { slug: rawSlug } = await params;
+  const slug = (rawSlug || "").replace(/\.html$/, "");
+  const meta = SERVICE_META[slug];
+  if (!meta) {
+    return { title: `Services — Nexus Web Lab`, robots: { index: false, follow: true } };
+  }
+  const name = meta.name || FALLBACK_NAME;
   return {
     title: `${name} — Nexus Web Lab`,
     description: `${name} by Nexus Web Lab — professional web development & AI automation services in Yangon, Myanmar. Get a free quote within 24 hours.`,
     alternates: {
       canonical: `/services/${slug}`,
+    },
+    openGraph: {
+      title: `${name} — Nexus Web Lab`,
+      description: `${name} by Nexus Web Lab — professional web development & AI automation services in Yangon, Myanmar.`,
+      type: "website",
+      images: [{ url: meta.image }],
     },
   };
 }
@@ -38,8 +37,10 @@ export default async function ServiceDetailLayout({
   children: React.ReactNode;
   params: Promise<{ slug: string }>;
 }) {
-  const { slug } = await params;
-  const name = SLUG_TITLE[slug] || "Services";
+  const { slug: rawSlug } = await params;
+  const slug = (rawSlug || "").replace(/\.html$/, "");
+  const name = SERVICE_META[slug]?.name || FALLBACK_NAME;
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -61,6 +62,7 @@ export default async function ServiceDetailLayout({
       },
     ],
   };
+
   return (
     <>
       <script
