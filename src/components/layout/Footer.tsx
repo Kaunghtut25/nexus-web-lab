@@ -21,15 +21,14 @@ export default function Footer() {
           <p className="text-sm leading-relaxed">{s('footerDesc','Professional web development & digital solutions in Yangon, Myanmar.')}</p>
         </div>
         <div>
-          <h3 className="font-semibold mb-4 text-sm uppercase tracking-wider text-slide card-hover-title">Services</h3>
+          <h3 className="font-semibold mb-4 text-sm uppercase tracking-wider text-slide card-hover-title">Contact</h3>
           <ul className="space-y-1 text-sm">
-            <li><Link href="/services/web-development" className="hover-green-blue inline-flex items-center min-h-[44px] py-1.5">Web Development</Link></li>
-            <li><Link href="/services/e-commerce" className="hover-green-blue inline-flex items-center min-h-[44px] py-1.5">E-Commerce</Link></li>
-            <li><Link href="/services/ui-ux-design" className="hover-green-blue inline-flex items-center min-h-[44px] py-1.5">UI/UX Design</Link></li>
-            <li><Link href="/services/seo-package" className="hover-green-blue inline-flex items-center min-h-[44px] py-1.5">SEO Package</Link></li>
-            <li><Link href="/services/hosting-deploy" className="hover-green-blue inline-flex items-center min-h-[44px] py-1.5">Hosting & Deploy</Link></li>
-            <li><Link href="/services/maintenance" className="hover-green-blue inline-flex items-center min-h-[44px] py-1.5">Maintenance</Link></li>
-            <li><Link href="/services/error-fixing" className="hover-green-blue inline-flex items-center min-h-[44px] py-1.5">Errors Fixing</Link></li>
+            <li><Link href="/contact" className="hover-green-blue inline-flex items-center min-h-[44px] py-1.5">Contact Form</Link></li>
+            <li className="text-sm text-slate-500">{s('footerPhone','09 886 264 582')}</li>
+            <li className="text-sm text-slate-500">{s('footerEmail','kaunghtutmr@gmail.com')}</li>
+            <li className="text-sm text-slate-500">{s('footerAddress','No.189, Kha 6 Street, Insein, Yangon')}</li>
+            <li className="text-sm text-slate-500"><a href="tel:+959886264582" className="hover-green-blue underline">+95 9886 264 582</a></li>
+            <li className="text-sm text-slate-500"><a href="mailto:kaunghtutmr@gmail.com" className="hover-green-blue underline">Email</a></li>
           </ul>
         </div>
         <div>
@@ -58,10 +57,10 @@ export default function Footer() {
             <a href={settings.facebook || "https://www.facebook.com/profile.php?id=61593132628840"} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="w-12 h-12 rounded-full bg-[#1877F2] shadow-md shadow-blue-500/25 flex items-center justify-center text-white hover:scale-110 hover:shadow-lg transition-all duration-200">
               <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current"><path d="M13.5 21v-7h2.5l.5-3h-3V9.1c0-.9.3-1.6 1.6-1.6H16.6V4.8c-.3 0-1.2-.1-2.3-.1-2.3 0-3.8 1.4-3.8 3.9V11H8v3h2.5v7h3z"/></svg>
             </a>
-            <a href={settings.tiktok || "https://tiktok.com"} target="_blank" rel="noopener noreferrer" aria-label="TikTok" className="w-12 h-12 rounded-full bg-black shadow-md shadow-slate-500/25 flex items-center justify-center text-white hover:scale-110 hover:shadow-lg transition-all duration-200">
+            <a href={"https://github.com/Kaunghtut25/KOKAUNG"} target="_blank" rel="noopener noreferrer" aria-label="GitHub" className="w-12 h-12 rounded-full bg-black shadow-md shadow-slate-500/25 flex items-center justify-center text-white hover:scale-110 hover:shadow-lg transition-all duration-200">
               <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current"><path d="M16.6 3c.3 1.8 1.4 3.1 3.4 3.3v2.6c-1.2 0-2.4-.4-3.4-1v5.6c0 3.4-2.6 5.5-5.6 5.5-3 0-5.5-2.3-5.5-5.4 0-3 2.4-5.4 5.6-5.4.3 0 .6 0 .9.1v2.7c-.3-.1-.6-.2-.9-.2-1.6 0-2.8 1.2-2.8 2.8 0 1.6 1.2 2.8 2.8 2.8 1.6 0 2.9-1.1 2.9-3V3h2.6z"/></svg>
             </a>
-            <a href={settings.telegram || "https://t.me"} target="_blank" rel="noopener noreferrer" aria-label="Telegram" className="w-12 h-12 rounded-full bg-[#229ED9] shadow-md shadow-sky-500/25 flex items-center justify-center text-white hover:scale-110 hover:shadow-lg transition-all duration-200">
+            <a href={"https://github.com/Kaunghtut25/KOKAUNG"} target="_blank" rel="noopener noreferrer" aria-label="GitHub" className="w-12 h-12 rounded-full bg-[#229ED9] shadow-md shadow-sky-500/25 flex items-center justify-center text-white hover:scale-110 hover:shadow-lg transition-all duration-200">
               <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current"><path d="M21.9 4.6c.3-1.1-.7-1.9-1.7-1.5L3.6 9.7c-1.1.4-1 2 .1 2.3l4.3 1.3 1.7 5.3c.3 1 1.6 1.2 2.2.3l2.3-3.2 4.5 3.3c.9.6 2.1.2 2.4-.9l2.8-13.5zM9.4 12.8l8-5.4c.3-.2.7.2.4.5l-6.6 6.3-.3 2.7-1.5-4.1z"/></svg>
             </a>
             <a href={settings.whatsapp || "https://wa.me/959945598825"} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" className="w-12 h-12 rounded-full bg-[#25D366] shadow-md shadow-emerald-500/25 flex items-center justify-center text-white hover:scale-110 hover:shadow-lg transition-all duration-200">
