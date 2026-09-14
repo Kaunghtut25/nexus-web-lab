@@ -10,6 +10,7 @@ import HeroMarquee from "@/components/home/HeroMarquee";
 import { useCurrency } from "@/lib/currency";
 import { prefillHref } from "@/lib/lead-prefill";
 import CurrencySwitcher from "@/components/CurrencySwitcher";
+import Magnetic from "@/components/Magnetic";
 import { FAQS } from "@/lib/faq";
 
 const ICON_MAP: Record<string, LucideIcon> = {
@@ -424,9 +425,11 @@ export default function HomeClient({ initialData }: { initialData: HomeData }) {
             <h2 className="text-4xl sm:text-5xl font-extrabold mb-4 text-white glow-text">{s('ctaTitle','Ready to Build Something Great?')}</h2>
             <p className="text-white/85 mb-10 text-lg">{s('ctaSubtitle',"Let's discuss your project. Free consultation, no obligation.")}</p>
             <div className="flex flex-wrap justify-center gap-4">
-              <Link href={prefillHref('/contact', { source: 'Home page CTA — nexusweblab.com' })} className="neon-btn glow-pulse">
-                {s('ctaButton','Get Free Consultation')} <ArrowRight size={20} />
-              </Link>
+              <Magnetic>
+                <Link href={prefillHref('/contact', { source: 'Home page CTA — nexusweblab.com' })} className="neon-btn glow-pulse">
+                  {s('ctaButton','Get Free Consultation')} <ArrowRight size={20} />
+                </Link>
+              </Magnetic>
               <Link href="/services" className="inline-flex items-center gap-2 glass text-white font-semibold px-10 py-4 rounded-xl hover:bg-white/10 transition-all">
                 {s('ctaSecondary','Explore Services')}
               </Link>
