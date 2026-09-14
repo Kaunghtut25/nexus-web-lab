@@ -481,6 +481,15 @@ body {
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* View Transitions — smooth crossfade between route navigations */
+::view-transition-old(root) { animation: vt-out 0.2s ease both; }
+::view-transition-new(root) { animation: vt-in 0.3s ease both; }
+@keyframes vt-out { to { opacity: 0; } }
+@keyframes vt-in { from { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root), ::view-transition-new(root) { animation: none; }
+}
+
 /* Green-blue auto bright text */
 .text-slide {
   background: linear-gradient(90deg, #34D399, #22D3EE, #60A5FA, #34D399);
