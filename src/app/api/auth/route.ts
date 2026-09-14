@@ -4,11 +4,32 @@ import { verifyPassword, hashPassword } from '@/lib/auth';
 import { createToken } from '@/lib/jwt';
 import crypto from 'crypto';
 
+// Brute-force protection: in-memory sliding window per IP (per process).
+// Good enough for a serverless function and far better than nothing.
+const AUTH_WINDOW_MS = 10 * 60 * 1000;
+const AUTH_MAX_ATTEMPTS = 10;
+const authHits = new Map<string, { count: number; resetAt: number }>();
+function authRateLimited(req: NextRequest): boolean {
+  const fwd = req.headers.get('x-forwarded-for');
+  const ip = (fwd ? fwd.split(',')[0].trim() : req.headers.get('x-real-ip')) || 'unknown';
+  const now = Date.now();
+  const e = authHits.get(ip);
+  if (!e || e.resetAt < now) {
+    authHits.set(ip, { count: 1, resetAt: now + AUTH_WINDOW_MS });
+    return false;
+  }
+  e.count += 1;
+  return e.count > AUTH_MAX_ATTEMPTS;
+}
+
 function sha256(pw: string): string {
   return crypto.createHash('sha256').update(pw).digest('hex');
 }
 
 export async function POST(req: NextRequest) {
+  if (authRateLimited(req)) {
+    return NextResponse.json({ error: 'Too many attempts. Please try again later.' }, { status: 429 });
+  }
   const { username, password } = await req.json();
   if (!username || !password) {
     return NextResponse.json({ error: 'Username and password required' }, { status: 400 });

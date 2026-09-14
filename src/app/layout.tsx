@@ -76,6 +76,34 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         inLanguage: "en",
       },
       {
+        "@type": "LocalBusiness",
+        "@id": "https://nexusweblab.com/#business",
+        name: "Nexus Web Lab",
+        url: "https://nexusweblab.com",
+        logo: "https://nexusweblab.com/logo.png",
+        image: "https://nexusweblab.com/logo.png",
+        description: "AI automation, AI chatbots and AI-powered web development agency based in Yangon, Myanmar.",
+        address: {
+          "@type": "PostalAddress",
+          addressLocality: "Yangon",
+          addressCountry: "MM",
+        },
+        areaServed: [
+          { "@type": "Country", name: "Myanmar" },
+          { "@type": "Place", name: "Worldwide" },
+        ],
+        openingHoursSpecification: [
+          {
+            "@type": "OpeningHoursSpecification",
+            dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+            opens: "09:00",
+            closes: "18:00",
+          },
+        ],
+        priceRange: "$$",
+        sameAs: ["https://www.facebook.com/profile.php?id=61593132628840"],
+      },
+      {
         "@type": "Service",
         "@id": "https://nexusweblab.com/#service-web-design",
         serviceType: "Web Design",
