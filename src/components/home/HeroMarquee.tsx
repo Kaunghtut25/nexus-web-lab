@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { prefillHref } from "@/lib/lead-prefill";
+import KineticText from "@/components/KineticText";
 
 // Animated counter component (SSR renders real value; count-up on view; reduced-motion safe)
 function Counter({ value, label }: { value: string; label: string }) {
@@ -185,11 +186,11 @@ export default function HeroMarquee({
               <div key={i} aria-hidden={i !== currentSlide} className={`col-start-1 row-start-1 transition-opacity duration-500 ease-out ${i === currentSlide ? 'opacity-100' : 'opacity-0'}`}>
                 {i === 0 ? (
                   <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold leading-[1.05] mb-3 cursor-default [text-shadow:0_2px_4px_rgba(5,8,22,0.95),0_4px_16px_rgba(5,8,22,0.9),0_8px_32px_rgba(5,8,22,0.7)]">
-                    <span className="text-white glow-text hover-green-blue">{slide.title || s('heroTitle', '')}</span>
+                    <KineticText text={slide.title || s('heroTitle', '')} className="text-white glow-text" />
                   </h1>
                 ) : (
                   <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold leading-[1.05] mb-3 cursor-default [text-shadow:0_2px_4px_rgba(5,8,22,0.95),0_4px_16px_rgba(5,8,22,0.9),0_8px_32px_rgba(5,8,22,0.7)]">
-                    <span className="text-white glow-text hover-green-blue">{slide.title || s('heroTitle', '')}</span>
+                    <KineticText text={slide.title || s('heroTitle', '')} className="text-white glow-text" />
                   </h2>
                 )}
                 <p className="text-sm sm:text-base mb-6 leading-relaxed max-w-xl cursor-default [text-shadow:0_1px_3px_rgba(5,8,22,0.95),0_3px_12px_rgba(5,8,22,0.95),0_6px_24px_rgba(5,8,22,0.75)]">
