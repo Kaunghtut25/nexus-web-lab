@@ -79,7 +79,7 @@ export default function Header() {
       open ? 'z-[130]' : 'z-50'
     } ${
       solid
-        ? 'bg-[#3B82F6]/90 backdrop-blur-md shadow-lg shadow-black/20 border-b border-white/10'
+        ? 'bg-[#1D4ED8]/90 backdrop-blur-md shadow-lg shadow-black/20 border-b border-white/10'
         : 'bg-transparent border-b border-transparent'
     }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between h-16">
@@ -150,7 +150,7 @@ export default function Header() {
 
       {/* Mobile Menu — absolute overlay so it floats over the hero instead of pushing content down */}
       {open && (
-        <div className="lg:hidden absolute left-0 right-0 top-full bg-[#3B82F6]/95 border-t border-white/10 px-4 pb-5 shadow-2xl shadow-black/30 max-h-[85vh] overflow-y-auto">
+        <div className="lg:hidden absolute left-0 right-0 top-full bg-[#1D4ED8]/95 border-t border-white/10 px-4 pb-5 shadow-2xl shadow-black/30 max-h-[85vh] overflow-y-auto">
           {nav.map((n) => {
             const active = isActive(n.href);
             const Icon = n.icon;
