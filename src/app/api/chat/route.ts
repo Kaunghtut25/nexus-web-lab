@@ -323,17 +323,26 @@ async function logUnanswered(visitorId: string, question: string, reply: string)
   }
 }
 
-function websiteFallbackReply(text: string, isFirst: boolean): string {
+function websiteFallbackReply(text: string, isFirst: boolean, lang: string = "en"): string {
+  const mm = lang === "mm";
   if (text.includes("price") || text.includes("cost") || text.includes("how much") || text.includes("budget") || text.includes("ဈေး")) {
-    return "Our international pricing (USD):\n• Web Development — from $500\n• E-Commerce — from $800\n• UI/UX Design — from $300\n• SEO — from $200\n• Hosting — from $50/mo\n• Maintenance — from $30/mo\n\nWe also accept MMK (1 USD ≈ 4,500 MMK). Want a custom quote? [Send us a message](https://nexusweblab.com/contact) 😊";
+    return mm
+      ? "ကျွန်မတို့ရဲ့ ဝန်ဆောင်မှုစျေးနှုန်းများ (USD):\n• Website Development — $500 မှစ၍\n• E-Commerce — $800 မှစ၍\n• UI/UX Design — $300 မှစ၍\n• SEO — $200 မှစ၍\n• Hosting — $50/လ မှစ၍\n• Maintenance — $30/လ မှစ၍\n\nMMK လည်း လက်ခံပါတယ် (1 USD ≈ 4,500 MMK)။ အသေးစိတ်အတွက် [ဆက်သွယ်ပါ](https://nexusweblab.com/contact) 😊"
+      : "Our international pricing (USD):\n• Web Development — from $500\n• E-Commerce — from $800\n• UI/UX Design — from $300\n• SEO — from $200\n• Hosting — from $50/mo\n• Maintenance — from $30/mo\n\nWe also accept MMK (1 USD ≈ 4,500 MMK). Want a custom quote? [Send us a message](https://nexusweblab.com/contact) 😊";
   }
   if (text.includes("contact") || text.includes("email") || text.includes("phone") || text.includes("viber")) {
-    return "You can reach us through the [contact form](https://nexusweblab.com/contact) — we reply within 24 hours! 📩";
+    return mm
+      ? "ကျွန်မတို့ကို [ဆက်သွယ်ရန်စာမျက်နှာ](https://nexusweblab.com/contact) မှ ဆက်သွယ်နိုင်ပါတယ် — ၂၄ နာရီအတွင်း ပြန်လည်ဖြေကြားပါမယ်။ 📩"
+      : "You can reach us through the [contact form](https://nexusweblab.com/contact) — we reply within 24 hours! 📩";
   }
   if (isFirst) {
-    return "Hello! 👋 Welcome to Nexus Web Lab! We offer the following services:\n\n1. Web Development\n2. E-Commerce\n3. UI/UX Design\n4. SEO\n5. Hosting & Deploy\n6. Maintenance\n7. AI Chatbot Integration\n\nHow can I help you today?";
+    return mm
+      ? "မင်္ဂလာပါ 👋 Nexus Web Lab မှ ကြိုဆိုပါတယ်။ ကျွန်မတို့ ဝန်ဆောင်မှုများ:\n\n1. Website Development\n2. E-Commerce\n3. UI/UX Design\n4. SEO\n5. Hosting & Deploy\n6. Maintenance\n7. AI Chatbot Integration\n\nဘယ်လို ကူညီပေးရမလဲ? 😊"
+      : "Hello! 👋 Welcome to Nexus Web Lab! We offer the following services:\n\n1. Web Development\n2. E-Commerce\n3. UI/UX Design\n4. SEO\n5. Hosting & Deploy\n6. Maintenance\n7. AI Chatbot Integration\n\nHow can I help you today?";
   }
-  return "Sure — how can I help you today? I can answer questions about our services, pricing, timeline, or contact details.";
+  return mm
+    ? "ရပါတယ် — ဘယ်လို ကူညီပေးရမလဲ? ဝန်ဆောင်မှု၊ စျေးနှုန်း၊ အချိန်ယူချက် သို့မဟုတ် ဆက်သွယ်ရန် မေးနိုင်ပါတယ်။ 😊"
+    : "Sure — how can I help you today? I can answer questions about our services, pricing, timeline, or contact details.";
 }
 
 
@@ -540,9 +549,9 @@ export async function POST(req: NextRequest) {
     if (!API_KEY) {
       let reply: string;
       if (ctx === "course") {
-        reply = courseFallbackReply(text) || websiteFallbackReply(text, normalized.length <= 1);
+        reply = courseFallbackReply(text) || websiteFallbackReply(text, normalized.length <= 1, lang);
       } else {
-        reply = websiteFallbackReply(text, normalized.length <= 1);
+        reply = websiteFallbackReply(text, normalized.length <= 1, lang);
       }
       void logUnanswered(visitorId, lastUserContent, reply);
       if (visitorId) await saveExchange(visitorId, ctx, normalized, feminize(reply));
@@ -621,7 +630,7 @@ export async function POST(req: NextRequest) {
             controller.close();
           } catch (err: any) {
             console.error("[chat] stream failed:", String(err?.message || err).slice(0, 200));
-            const fb = ctx === "course" ? (courseFallbackReply(text) || websiteFallbackReply(text, normalized.length <= 1)) : websiteFallbackReply(text, normalized.length <= 1);
+            const fb = ctx === "course" ? (courseFallbackReply(text) || websiteFallbackReply(text, normalized.length <= 1, lang)) : websiteFallbackReply(text, normalized.length <= 1, lang);
             void logUnanswered(visitorId, lastUserContent, fb);
             if (visitorId) await saveExchange(visitorId, ctx, normalized, fb);
             try {
@@ -693,8 +702,8 @@ export async function POST(req: NextRequest) {
     if (!reply) {
       console.error(`[chat] All retries failed; using local fallback. Last error:`, String(lastErr?.message || lastErr || 'unknown').slice(0, 300));
       const fallback = ctx === "course"
-        ? (courseFallbackReply(text) || websiteFallbackReply(text, normalized.length <= 1))
-        : websiteFallbackReply(text, normalized.length <= 1);
+        ? (courseFallbackReply(text) || websiteFallbackReply(text, normalized.length <= 1, lang))
+        : websiteFallbackReply(text, normalized.length <= 1, lang);
       void logUnanswered(visitorId, lastUserContent, fallback);
       if (visitorId) await saveExchange(visitorId, ctx, normalized, fallback);
       return sendReply(feminize(fallback));
