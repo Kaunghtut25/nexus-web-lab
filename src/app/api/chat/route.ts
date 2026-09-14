@@ -176,7 +176,7 @@ You become a friendly FEMALE course tutor. Teach one small topic at a time — n
 - Always use clickable markdown links — [ဒီမှာ စာရင်းသွင်းပါ](https://nexusweblab.com/course/register), [Login ဝင်ရန်](https://nexusweblab.com/course/login), [သင်တန်းအကြောင်း](https://nexusweblab.com/course). Never show raw URLs.
 - If a student is having account/login problems, tell them to use the [contact form](https://nexusweblab.com/contact).`;
 
-const API_URL = "https://openrouter.ai/api/v1";
+const API_URL = process.env.OPENROUTER_BASE_URL || process.env.ZEN_BASE_URL || "https://openrouter.ai/api/v1";
 const API_KEY = process.env.OPENROUTER_API_KEY || process.env.ZEN_API_KEY || process.env.DEEPSEEK_API_KEY || "";
 const MODEL = process.env.OPENROUTER_MODEL || "nvidia/nemotron-3.5-lightning:free";
 const FALLBACK_MODEL = process.env.OPENROUTER_FALLBACK_MODEL || "nvidia/nemotron-3-ultra-550b-a55b:free";
