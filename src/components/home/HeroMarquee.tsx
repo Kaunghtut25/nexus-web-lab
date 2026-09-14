@@ -114,7 +114,7 @@ export default function HeroMarquee({
     // Auto-advance only while the tab is visible.
     const timer = setInterval(() => {
       if (document.visibilityState === 'visible') nextSlide();
-    }, 5000);
+    }, 6000);
     return () => clearInterval(timer);
   }, [nextSlide]);
 
@@ -124,7 +124,7 @@ export default function HeroMarquee({
     if (currentSlide === displayed) return;
     setLeaving(displayed);
     setDisplayed(currentSlide);
-    const t = setTimeout(() => setLeaving(null), 260);
+    const t = setTimeout(() => setLeaving(null), 1000);
     return () => clearTimeout(t);
   }, [currentSlide, displayed]);
 
@@ -142,7 +142,7 @@ export default function HeroMarquee({
       })}
       {/* Outgoing layer — fades out while the new image fades in on top (no black gap) */}
       {imagesMounted && leaving !== null && leaving !== displayed && (
-        <div key={`out-${leaving}`} className="hero-img-layer absolute inset-0 transition-opacity duration-150 ease-out opacity-0" aria-hidden="true">
+        <div key={`out-${leaving}`} className="hero-img-layer absolute inset-0" aria-hidden="true">
           <Image src={slides[leaving]?.img || slides[leaving]?.image} alt="" width={1024} height={576} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 1024px" quality={70} placeholder="blur" blurDataURL={heroBlur(slides[leaving]?.img || slides[leaving]?.image)} className="absolute inset-0 w-full h-full object-cover" />
         </div>
       )}
