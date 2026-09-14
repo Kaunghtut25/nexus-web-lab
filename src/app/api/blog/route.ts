@@ -3,6 +3,7 @@ import { dbAll, dbGet, dbRun } from '@/lib/db';
 import { v4 as uuid } from 'uuid';
 import { requireAuth } from '../admin/auth-guard';
 import { remapImage } from '@/lib/image-remap';
+import { STATIC_POSTS } from '@/content/static-posts';
 
 export async function GET(req: NextRequest): Promise<NextResponse> {
   const { searchParams } = new URL(req.url);
@@ -19,7 +20,10 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ post: { ...post, image: remapImage(post.image) } });
   }
   const posts = await dbAll('SELECT * FROM blog_posts WHERE published = 1 ORDER BY created_at DESC');
-  return NextResponse.json({ posts: posts.map((p: any) => ({ ...p, image: remapImage(p.image) })) });
+  const seen = new Set(posts.map((p: any) => p.slug));
+  const extra = STATIC_POSTS.filter((s) => !seen.has(s.slug)).map((s) => ({ ...s, tags: JSON.stringify(s.tags), published: 1 }));
+  const merged = [...posts, ...extra].sort((a: any, b: any) => String(b.created_at || '').localeCompare(String(a.created_at || '')));
+  return NextResponse.json({ posts: merged.map((p: any) => ({ ...p, image: remapImage(p.image) })) });
 }
 
 export async function POST(req: NextRequest): Promise<NextResponse> {

@@ -13,6 +13,7 @@
 import { cache } from 'react';
 import { dbAll, dbAllRead, dbGet, dbGetRead } from '@/lib/db';
 import { remapImage } from '@/lib/image-remap';
+import { STATIC_POSTS } from '@/content/static-posts';
 
 export interface BlogPost {
   id: string;
@@ -86,11 +87,16 @@ async function readRow(sql: string, args?: unknown[]): Promise<unknown> {
 export const getPostBySlug = cache(async (slug: string): Promise<BlogPost | null> => {
   if (!slug) return null;
   const row = await readRow('SELECT * FROM blog_posts WHERE slug = ? AND published = 1', [slug]);
-  return toPost(row);
+  const post = toPost(row);
+  if (post) return post;
+  return STATIC_POSTS.find((p) => p.slug === slug) ?? null;
 });
 
 /** All published posts, newest first. */
 export const getPublishedPosts = cache(async (): Promise<BlogPost[]> => {
   const rows = await readRows(`SELECT * FROM blog_posts WHERE published = 1 ${PUBLISHED_ORDER}`);
-  return rows.map(toPost).filter((p): p is BlogPost => p !== null);
+  const dbPosts = rows.map(toPost).filter((p): p is BlogPost => p !== null);
+  const seen = new Set(dbPosts.map((p) => p.slug));
+  const extra = STATIC_POSTS.filter((p) => !seen.has(p.slug));
+  return [...dbPosts, ...extra].sort((a, b) => (b.created_at || '').localeCompare(a.created_at || ''));
 });
