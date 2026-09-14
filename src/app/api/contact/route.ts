@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse, after } from 'next/server';
 import { dbAll, dbRun } from '@/lib/db';
 import { v4 as uuid } from 'uuid';
 import { requireAuth } from '../admin/auth-guard';
@@ -15,14 +15,18 @@ export async function POST(req: NextRequest) {
       'INSERT INTO contacts (id, name, email, phone, service, message) VALUES (?,?,?,?,?,?)',
       [uuid(), c.name || 'Anonymous', c.email || '', c.phone || '', c.service || '', c.message || '']
     );
-    // Deliver direct contact-form submissions to the owner on Telegram.
-    notifyLead({
-      name: c.name || 'Anonymous',
-      email: c.email || '',
-      phone: c.phone || '',
-      website_type: c.service || '',
-      details: (c.message || '').slice(0, 400),
-      source: 'contact-form',
+    // Deliver the notification AFTER the response is sent. A bare fire-and-forget
+    // call is killed when the serverless function returns, so the email/Telegram
+    // never actually went out. after() keeps the function alive until it finishes.
+    after(async () => {
+      await notifyLead({
+        name: c.name || 'Anonymous',
+        email: c.email || '',
+        phone: c.phone || '',
+        website_type: c.service || '',
+        details: (c.message || '').slice(0, 400),
+        source: 'contact-form',
+      });
     });
     return NextResponse.json({ success: true });
   } catch {

@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse, after } from 'next/server';
 import { dbAll, dbRun } from '@/lib/db';
 import { v4 as uuid } from 'uuid';
 import { requireAuth } from '../admin/auth-guard';
@@ -17,14 +17,17 @@ export async function POST(req: NextRequest) {
       'INSERT INTO quotes (id, name, email, phone, service, budget, timeline, message) VALUES (?,?,?,?,?,?,?,?)',
       [id, c.name || 'Anonymous', c.email || '', c.phone || '', c.service || '', c.budget || '', c.timeline || '', c.message || '']
     );
-    // Notify via Telegram
-    notifyLead({
-      name: c.name || 'Anonymous',
-      email: c.email || '',
-      phone: c.phone || '',
-      website_type: c.service || '',
-      details: `Budget: ${c.budget || 'N/A'} | Timeline: ${c.timeline || 'N/A'} | ${c.message || ''}`.slice(0, 400),
-      source: 'quote-form',
+    // Run the notification AFTER the response (see contact route): a bare
+    // fire-and-forget call is terminated when the serverless function returns.
+    after(async () => {
+      await notifyLead({
+        name: c.name || 'Anonymous',
+        email: c.email || '',
+        phone: c.phone || '',
+        website_type: c.service || '',
+        details: `Budget: ${c.budget || 'N/A'} | Timeline: ${c.timeline || 'N/A'} | ${c.message || ''}`.slice(0, 400),
+        source: 'quote-form',
+      });
     });
     return NextResponse.json({ success: true });
   } catch {
