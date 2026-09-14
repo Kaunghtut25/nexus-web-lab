@@ -401,6 +401,13 @@ export async function POST(req: NextRequest) {
 
     // ── AUTOMATION (v1): language detect + nurture capture + quote intent ──
     const lang = detectLang(lastUserContent);
+
+    // Enforce the reply language (the guideline asks for it, but weaker models
+    // ignore it). Burmese visitors get an explicit, forceful instruction.
+    const langHint: string =
+      lang === "mm"
+        ? "\n\n⚠️ LANGUAGE REQUIREMENT: The visitor wrote in BURMESE. You MUST write your ENTIRE reply in Burmese (မြန်မာလိုသာ ပြန်ပါ). Do NOT answer in English unless they explicitly ask for English."
+        : "";
     // Scan the FULL conversation (loaded history + current messages) so a
     // customer who gives name → phone → email in separate messages still gets
     // captured as ONE lead. (Messenger sends only the current message here.)
@@ -567,7 +574,7 @@ export async function POST(req: NextRequest) {
                   max_tokens: 800,
                   reasoning: { effort: "none" },
                   messages: [
-                    { role: "system", content: (guideline + knowledge + greetingHint).slice(0, 3500) },
+                    { role: "system", content: (guideline + knowledge + greetingHint + langHint).slice(0, 3500) },
                     ...memory.slice(-12),
                     ...normalized.slice(-12),
                   ],
@@ -658,7 +665,7 @@ export async function POST(req: NextRequest) {
             max_tokens: 800,
             reasoning: { effort: "none" },
             messages: [
-              { role: "system", content: (guideline + knowledge + greetingHint).slice(0, 3500) },
+              { role: "system", content: (guideline + knowledge + greetingHint + langHint).slice(0, 3500) },
               // Remembered history first (oldest → newest), then current session
               ...memory.slice(-12),
               ...normalized.slice(-12),
