@@ -444,17 +444,11 @@ body {
   transform: translateZ(30px);
 }
 
-/* Glowing orb */
-@keyframes orb-float {
-  0%, 100% { transform: translate(0,0) scale(1); }
-  33% { transform: translate(40px,-30px) scale(1.1); }
-  66% { transform: translate(-30px,20px) scale(0.9); }
-}
+/* Glowing orb (static — animation removed so the background no longer drifts) */
 .orb {
   position: absolute;
   border-radius: 50%;
   filter: blur(60px);
-  animation: orb-float 15s ease-in-out infinite;
   pointer-events: none;
 }
 
@@ -526,18 +520,11 @@ body {
   padding: 1px;
   background: linear-gradient(135deg, rgba(59,130,246,0.4), rgba(236,72,153,0.3), rgba(139,92,246,0.4), rgba(6,182,212,0.3));
   background-size: 200% 200%;
-  /* Animate opacity only (GPU composited) — background-position repaints the
-     main thread on every frame, which prevents Lighthouse/GTmetrix from ever
-     reaching CPU idle and makes the page janky on low-end devices. */
-  animation: holo 6s ease-in-out infinite;
+  /* Static gradient border — shimmer animation removed */
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   pointer-events: none;
-}
-@keyframes holo {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.6; }
 }
 
 /* Mobile tap: remove 300ms tap delay and double-tap zoom on interactive elements */

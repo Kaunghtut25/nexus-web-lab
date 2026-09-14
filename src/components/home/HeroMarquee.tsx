@@ -170,7 +170,7 @@ export default function HeroMarquee({
       <div className="relative z-10 flex items-center min-h-[420px] sm:min-h-[500px] lg:min-h-[560px] max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
         <div className="max-w-3xl">
           <span className="hero-item hero-d1 inline-flex items-center gap-2 glass rounded-full px-3 py-1 mb-5 text-xs sm:text-sm text-cyan-200 font-semibold glow-pulse">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="w-2 h-2 rounded-full bg-emerald-400" />
             {s('heroBadge','Available for new projects')}
             <span className="text-slate-300">•</span>
             <span className="text-cyan-300 font-bold">2026 Ready</span>
