@@ -5,6 +5,7 @@ import "./globals.css";
 import ScrollToTop from "@/components/ScrollToTop";
 import CookieConsent from "@/components/CookieConsent";
 import ChatWidgetLoader from "@/components/ChatWidgetLoader";
+import CommandPalette from "@/components/CommandPalette";
 import { CurrencyProvider } from "@/lib/currency";
 
 export const metadata: Metadata = {
@@ -133,6 +134,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             </a>
           </div>
           <ChatWidgetLoader />
+          <CommandPalette />
           <CookieConsent />
         </CurrencyProvider>
       </body>

@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Briefcase, FolderOpen, Info, Mail, FileText, GraduationCap } from "lucide-react";
+import { Home, Briefcase, FolderOpen, Info, Mail, FileText, GraduationCap, Search } from "lucide-react";
 import { prefillHref } from "@/lib/lead-prefill";
 
 type NavItem = {
@@ -115,6 +115,15 @@ export default function Header() {
           <Link href="/course" className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold border nav-hover transition-all ml-1 min-h-[48px] ${courseLink}`}>
             <GraduationCap size={16} /> Course
           </Link>
+
+          <button
+            onClick={() => window.dispatchEvent(new CustomEvent('nwl:open-search'))}
+            className={`flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium border nav-hover transition-all ml-1 min-h-[48px] ${courseLink}`}
+            aria-label="Search"
+            title="Search (⌘K)"
+          >
+            <Search size={16} /> <kbd className="hidden xl:inline opacity-60">⌘K</kbd>
+          </button>
 
           <Link href={prefillHref('/contact', { source: pathname === '/' ? 'Home page — nexusweblab.com' : `nexusweblab.com${pathname}` })} className="gradient-btn text-sm !py-2.5 !px-5 ml-2 min-h-[48px] inline-flex items-center">
             Contact Us
