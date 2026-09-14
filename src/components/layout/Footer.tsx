@@ -21,14 +21,15 @@ export default function Footer() {
           <p className="text-sm leading-relaxed">{s('footerDesc','Professional web development & digital solutions in Yangon, Myanmar.')}</p>
         </div>
         <div>
-          <h3 className="font-semibold mb-4 text-sm uppercase tracking-wider text-slide card-hover-title">Contact</h3>
+          <h3 className="font-semibold mb-4 text-sm uppercase tracking-wider text-slide card-hover-title">Services</h3>
           <ul className="space-y-1 text-sm">
-            <li><Link href="/contact" className="hover-green-blue inline-flex items-center min-h-[44px] py-1.5">Contact Form</Link></li>
-            <li className="text-sm text-slate-500">{s('footerPhone','09 886 264 582')}</li>
-            <li className="text-sm text-slate-500">{s('footerEmail','kaunghtutmr@gmail.com')}</li>
-            <li className="text-sm text-slate-500">{s('footerAddress','No.189, Kha 6 Street, Insein, Yangon')}</li>
-            <li className="text-sm text-slate-500"><a href="tel:+959886264582" className="hover-green-blue underline">+95 9886 264 582</a></li>
-            <li className="text-sm text-slate-500"><a href="mailto:kaunghtutmr@gmail.com" className="hover-green-blue underline">Email</a></li>
+            <li><Link href="/services/web-development" className="hover-green-blue inline-flex items-center min-h-[44px] py-1.5">Web Development</Link></li>
+            <li><Link href="/services/e-commerce" className="hover-green-blue inline-flex items-center min-h-[44px] py-1.5">E-Commerce</Link></li>
+            <li><Link href="/services/ui-ux-design" className="hover-green-blue inline-flex items-center min-h-[44px] py-1.5">UI/UX Design</Link></li>
+            <li><Link href="/services/seo-package" className="hover-green-blue inline-flex items-center min-h-[44px] py-1.5">SEO Package</Link></li>
+            <li><Link href="/services/hosting-deploy" className="hover-green-blue inline-flex items-center min-h-[44px] py-1.5">Hosting & Deploy</Link></li>
+            <li><Link href="/services/maintenance" className="hover-green-blue inline-flex items-center min-h-[44px] py-1.5">Maintenance</Link></li>
+            <li><Link href="/services/error-fixing" className="hover-green-blue inline-flex items-center min-h-[44px] py-1.5">Errors Fixing</Link></li>
           </ul>
         </div>
         <div>
