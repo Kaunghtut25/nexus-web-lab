@@ -469,14 +469,11 @@ body {
   transform: translateY(0);
 }
 
-/* Glow pulse — opacity-based (GPU composited, no main-thread repaint) */
-@keyframes glow-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.75; }
-}
+/* Glow — static shadow only. The old 3s opacity pulse (opacity 1 -> 0.75 -> 1)
+   made every card + badge "breathe" on the same rhythm, which read as a
+   heartbeat across the page. Removed the animation; the glow is now steady. */
 .glow-pulse {
   box-shadow: 0 0 30px rgba(59,130,246,0.4), 0 0 80px rgba(59,130,246,0.1);
-  animation: glow-pulse 3s ease-in-out infinite;
 }
 
 /* Green-blue auto bright text */
