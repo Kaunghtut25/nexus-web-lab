@@ -180,6 +180,8 @@ const API_URL = process.env.OPENROUTER_BASE_URL || process.env.ZEN_BASE_URL || "
 const API_KEY = process.env.OPENROUTER_API_KEY || process.env.ZEN_API_KEY || process.env.DEEPSEEK_API_KEY || "";
 const MODEL = process.env.OPENROUTER_MODEL || "nvidia/nemotron-3.5-lightning:free";
 const FALLBACK_MODEL = process.env.OPENROUTER_FALLBACK_MODEL || "nvidia/nemotron-3-ultra-550b-a55b:free";
+// Ordered attempts: env-configured first, then built-in currently-free models as backup.
+const MODELS: string[] = ["google/gemma-4-31b-it:free", "nvidia/nemotron-3.5-lightning:free", "nex-agi/nex-n2.5-pro:free", "inclusionai/ling-3.0-flash-sante:free", MODEL, FALLBACK_MODEL].filter((m, i, a) => !!m && a.indexOf(m) === i);
 
 const MAX_MEMORY = 60; // keep at most 60 stored messages per visitor per context
 
@@ -620,10 +622,9 @@ export async function POST(req: NextRequest) {
             }
             // Primary model first, fallback model second, local reply last.
             let reply = "";
-            try {
-              reply = await streamModel(MODEL, 9000);
-            } catch {
-              reply = await streamModel(FALLBACK_MODEL, 4000);
+            for (let mi = 0; mi < MODELS.length; mi++) {
+              try { reply = await streamModel(MODELS[mi], mi === 0 ? 9000 : 4000); } catch { reply = ""; }
+              if (reply) break;
             }
             if (visitorId) await saveExchange(visitorId, ctx, normalized, reply);
             controller.enqueue(encoder.encode(`data: ${JSON.stringify({ done: true, reply, ...extraFields })}\n\n`));
@@ -649,8 +650,8 @@ export async function POST(req: NextRequest) {
     // ── DeepSeek call with timeout + retry ──
     let reply = "";
     let lastErr: any = null;
-    for (let attempt = 1; attempt <= 2; attempt++) {
-      const attemptModel = attempt === 1 ? MODEL : FALLBACK_MODEL;
+    for (let attempt = 1; attempt <= MODELS.length; attempt++) {
+      const attemptModel = MODELS[attempt - 1];
       try {
         const controller = new AbortController();
         const timer = setTimeout(() => controller.abort(), attempt === 1 ? 9000 : 5000); // 7s/4s hard timeout
@@ -695,7 +696,7 @@ export async function POST(req: NextRequest) {
       } catch (err: any) {
         lastErr = err;
         console.error(`[chat] LLM attempt ${attempt} failed:`, String(err?.message || err).slice(0, 200));
-        if (attempt < 2) await new Promise((r) => setTimeout(r, 500));
+        if (attempt < MODELS.length) await new Promise((r) => setTimeout(r, 500));
       }
     }
 
