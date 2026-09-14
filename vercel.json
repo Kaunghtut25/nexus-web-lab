@@ -42,5 +42,18 @@
     "app/api/chat/route.ts": {
       "maxDuration": 60
     }
-  }
+  },
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.nexusweblab.com"
+        }
+      ],
+      "destination": "https://nexusweblab.com/:path*",
+      "permanent": true
+    }
+  ]
 }

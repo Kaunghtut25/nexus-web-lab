@@ -112,7 +112,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     ],
   };
   return (
-    <html lang="en my">
+    <html lang="en">
       <head></head>
       <body className="min-h-screen flex flex-col">
         <a
