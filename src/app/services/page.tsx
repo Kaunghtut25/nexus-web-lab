@@ -4,10 +4,12 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import Link from "next/link";
 import Image from "next/image";
-import { Globe, Palette, TrendingUp, ShoppingCart, Cloud, Wrench, ArrowRight, Check, Layers } from "lucide-react";
+import { Globe, Palette, TrendingUp, ShoppingCart, Cloud, Wrench, ArrowRight, Check, Layers, Calculator } from "lucide-react";
 import { useCurrency } from "@/lib/currency";
 import { prefillHref } from "@/lib/lead-prefill";
 import CurrencySwitcher from "@/components/CurrencySwitcher";
+import Hero3D from "@/components/home/Hero3D";
+import QuoteEstimator from "@/components/home/QuoteEstimator";
 
 const ICON_MAP: Record<string, any> = { '🌐': Globe, '🛒': ShoppingCart, '🎨': Palette, '📈': TrendingUp, '☁️': Cloud, '🔧': Wrench };
 /* Live services are fetched from the DB, but the cards must paint IMMEDIATELY.
@@ -61,6 +63,8 @@ export default function Services() {
         <section className="relative -mt-20 h-[50vh] min-h-[400px] sm:min-h-[500px] lg:min-h-[560px] flex items-center overflow-hidden">
           <Image src="/images/hero/services-hero.jpg" alt="Services" fill priority sizes="(max-width: 640px) 100vw, 1376px" quality={75} className="object-cover hero-kenburns" />
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(5,8,22,0.55)_0%,rgba(5,8,22,0.3)_42%,transparent_75%)]" aria-hidden="true" />
+          {/* 3D particle field — same canvas layer as the homepage hero */}
+          <Hero3D className="z-[1] opacity-60" />
           <div className="relative z-10 max-w-3xl mx-auto text-center px-4">
             <div className="hero-item hero-d1 w-14 h-1 bg-gradient-to-r from-blue to-cyan rounded mx-auto mb-5" />
             <h1 className="hero-item hero-d2 text-4xl sm:text-5xl font-extrabold text-white mb-4 [text-shadow:0_0_4px_rgba(5,8,22,0.95),0_2px_10px_rgba(5,8,22,0.95),0_5px_20px_rgba(5,8,22,0.85),0_0_48px_rgba(5,8,22,0.6)]">Our Services</h1>
@@ -86,21 +90,27 @@ export default function Services() {
                 <p>No services added yet. Add services in the admin panel.</p>
               </div>
             ) : (
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 lg:grid-flow-dense gap-6 lg:gap-8">
                 {services.map((sv, i) => {
                   const isSelected = selected === sv.id;
                   const IconComp = ICON_MAP[sv.icon] || Globe;
                   const features = Array.isArray(sv.features) ? sv.features : (typeof sv.features === 'string' ? (() => { try { return JSON.parse(sv.features); } catch { return []; } })() : []);
                   const isFirst = i === 0;
+                  // Bento rhythm: flagship services take 2 columns on desktop.
+                  const wide = i === 0 || i === 7;
                   return (
                     <div
                       key={sv.id}
+                      style={{ transitionDelay: `${(i % 3) * 80}ms` }}
+                      className={`scroll-reveal ${wide ? 'lg:col-span-2' : ''}`}
+                    >
+                    <div
                       onClick={() => setSelected(isSelected ? null : sv.id)}
                       onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSelected(isSelected ? null : sv.id); } }}
                       role="button"
                       tabIndex={0}
                       aria-expanded={isSelected}
-                      className={`group relative bg-white rounded-2xl overflow-hidden transition-all duration-300 cursor-pointer hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue ${
+                      className={`group relative h-full bg-white rounded-2xl overflow-hidden transition-all duration-300 cursor-pointer hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue ${
                         isSelected
                           ? 'border-2 border-blue shadow-lg shadow-blue/10'
                           : selected ? 'border border-slate-100 hover:shadow-xl'
@@ -112,9 +122,9 @@ export default function Services() {
                       {isFirst && (
                         <span className="absolute top-3 left-4 z-20 px-4 py-1 bg-gradient-to-r from-blue to-cyan text-white text-xs font-bold rounded-full shadow-lg">Most Popular</span>
                       )}
-                      <div className="relative h-64 overflow-hidden bg-slate-100">
-                        <Image src={sv.image || IMAGES[i] || IMAGES[0]} alt={sv.title} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover group-hover:scale-105 transition-transform duration-500" quality={100} />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/25 to-transparent" />
+                      <div className={`relative overflow-hidden bg-slate-100 ${wide ? 'h-64 sm:h-72' : 'h-56'}`}>
+                        <Image src={sv.image || IMAGES[i] || IMAGES[0]} alt={sv.title} fill sizes={wide ? "(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 66vw" : "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"} className="object-cover group-hover:scale-105 transition-transform duration-500" quality={100} />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
                         <div className="absolute bottom-3 left-4 flex items-center gap-2">
                           <div className="w-9 h-9 rounded-lg bg-white/90 flex items-center justify-center text-blue"><IconComp size={20} /></div>
                           <span className="text-xs font-bold text-white bg-blue/80 px-2.5 py-0.5 rounded-full">{formatPrice(sv.price) || 'Contact us'}</span>
@@ -129,7 +139,7 @@ export default function Services() {
                         <h3 className={`text-lg font-bold mb-2 transition ${isSelected ? 'text-blue' : 'text-navy group-hover:text-blue'}`}>{sv.title}</h3>
                         <p className="text-sm text-slate-500 leading-relaxed mb-4">{sv.description || ''}</p>
                         {features.length > 0 && (
-                          <ul className="space-y-2 mb-6">
+                          <ul className={`space-y-2 mb-6 ${wide ? 'sm:grid sm:grid-cols-2 sm:gap-x-6 sm:space-y-0 sm:gap-y-2' : ''}`}>
                             {features.map((f: string) => (
                               <li key={f} className="flex items-start gap-2 text-sm text-slate-600">
                                 <Check size={15} className={`mt-0.5 flex-shrink-0 ${isSelected ? 'text-blue' : 'text-cyan'}`} />
@@ -158,10 +168,28 @@ export default function Services() {
                         </Link>
                       </div>
                     </div>
+                    </div>
                   );
                 })}
               </div>
             )}
+          </div>
+        </section>
+
+        {/* AI QUOTE ESTIMATOR */}
+        <section id="estimator" className="py-20 sm:py-28 bg-white relative overflow-hidden">
+          <div className="orb w-[450px] h-[450px] bg-blue-400/12 top-[10%] left-[-120px]" />
+          <div className="relative max-w-5xl mx-auto px-4 sm:px-6">
+            <div className="text-center mb-10">
+              <div className="inline-flex items-center gap-2 glass-light rounded-full px-4 py-1.5 mb-4 text-sm text-blue-600 font-semibold">
+                <Calculator size={14} /> Instant Pricing
+              </div>
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-navy mb-3 card-hover-title">Estimate Your Project in 30 Seconds</h2>
+              <p className="text-slate-500 text-lg max-w-2xl mx-auto">Choose a service, pages and features — see a transparent price range right away, then request an exact quote.</p>
+            </div>
+            <div className="scroll-reveal">
+              <QuoteEstimator compact />
+            </div>
           </div>
         </section>
 
@@ -175,7 +203,7 @@ export default function Services() {
             </div>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
               {/* Starter */}
-              <div className="bg-white border border-slate-200 rounded-2xl p-8 hover:shadow-xl hover:shadow-blue/5 hover:-translate-y-1 transition-all duration-300 relative">
+              <div className="scroll-reveal bg-white border border-slate-200 rounded-2xl p-8 hover:shadow-xl hover:shadow-blue/5 hover:-translate-y-1 transition-all duration-300 relative">
                 <div className="text-4xl mb-3">🥉</div>
                 <h3 className="text-xl font-extrabold text-navy mb-1">Starter / Basic</h3>
                 <p className="text-sm text-slate-500 mb-4">Single Landing Page</p>
@@ -197,7 +225,7 @@ export default function Services() {
               </div>
 
               {/* Standard */}
-              <div className="bg-white border-2 border-blue rounded-2xl p-8 hover:shadow-xl hover:shadow-blue/10 hover:-translate-y-1 transition-all duration-300 relative ring-2 ring-blue/10">
+              <div style={{ transitionDelay: "80ms" }} className="scroll-reveal bg-white border-2 border-blue rounded-2xl p-8 hover:shadow-xl hover:shadow-blue/10 hover:-translate-y-1 transition-all duration-300 relative ring-2 ring-blue/10">
                 <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-blue to-cyan text-white text-xs font-bold rounded-full shadow-lg whitespace-nowrap">Most Popular</span>
                 <div className="text-4xl mb-3">🥈</div>
                 <h3 className="text-xl font-extrabold text-navy mb-1">Standard</h3>
@@ -220,7 +248,7 @@ export default function Services() {
               </div>
 
               {/* Premium */}
-              <div className="bg-white border border-slate-200 rounded-2xl p-8 hover:shadow-xl hover:shadow-blue/5 hover:-translate-y-1 transition-all duration-300 relative">
+              <div style={{ transitionDelay: "160ms" }} className="scroll-reveal bg-white border border-slate-200 rounded-2xl p-8 hover:shadow-xl hover:shadow-blue/5 hover:-translate-y-1 transition-all duration-300 relative">
                 <div className="text-4xl mb-3">🥇</div>
                 <h3 className="text-xl font-extrabold text-navy mb-1">Premium</h3>
                 <p className="text-sm text-slate-500 mb-4">Custom E-Commerce / AI Web App</p>
@@ -270,7 +298,7 @@ export default function Services() {
                 { icon: '🤝', title: '3 · Free Consultation', desc: 'We review your requirement and reach out with a tailored plan.' },
                 { icon: '🚀', title: '4 · Become a Client', desc: 'Approve the plan — we build, launch and support your project.' },
               ].map((s, i) => (
-                <div key={i} className="relative bg-white border border-slate-100 rounded-2xl p-7 hover:shadow-xl hover:shadow-blue/10 hover:-translate-y-1 transition-all duration-300">
+                <div key={i} style={{ transitionDelay: `${i * 80}ms` }} className="scroll-reveal relative bg-white border border-slate-100 rounded-2xl p-7 hover:shadow-xl hover:shadow-blue/10 hover:-translate-y-1 transition-all duration-300">
                   {i < 3 && <div className="hidden lg:block absolute top-1/2 -right-3 z-10 text-slate-300">→</div>}
                   <div className="text-4xl mb-4">{s.icon}</div>
                   <h3 className="font-bold text-navy mb-2 card-hover-title">{s.title}</h3>
