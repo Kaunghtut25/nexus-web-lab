@@ -446,7 +446,7 @@ export default function ChatWidget() {
         {/* Header */}
         <div className="bg-gradient-to-r from-blue to-cyan px-5 py-4 flex items-center gap-3">
           <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center overflow-hidden">
-            <img src="/logo-transparent.png" alt="Nexus Web Lab" width={512} height={512} className="w-full h-full object-cover" />
+            <img src="/logo-transparent.webp" alt="Nexus Web Lab" width={128} height={128} className="w-full h-full object-cover" />
           </div>
           <div>
             <h3 className="text-white font-bold text-sm">Nexus AI Assistant</h3>
@@ -508,7 +508,7 @@ export default function ChatWidget() {
             <div key={i} className={`flex gap-2 ${m.role === "user" ? "justify-end" : "justify-start"}`}>
               {m.role === "bot" && (
                 <div className="w-7 h-7 rounded-full bg-white border border-slate-200 flex items-center justify-center overflow-hidden flex-shrink-0 mt-1">
-                  <img src="/logo-transparent.png" alt="Nexus AI" width={512} height={512} className="w-full h-full object-cover" />
+                  <img src="/logo-transparent.webp" alt="Nexus AI" width={128} height={128} className="w-full h-full object-cover" />
                 </div>
               )}
               <div

@@ -88,7 +88,7 @@ function MinimalHeader() {
     <header className="sticky top-0 z-50 bg-navy/95 backdrop-blur border-b border-white/5">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between h-16">
         <Link href="/" className="flex items-center gap-3 shrink-0 group">
-          <img src="/logo.png" alt="Nexus Web Lab" width={512} height={512} className="h-9 w-auto transition-transform group-hover:scale-105" />
+          <img src="/logo.webp" alt="Nexus Web Lab" width={128} height={128} className="h-9 w-auto transition-transform group-hover:scale-105" />
           <span className="hidden sm:block text-white font-black text-lg tracking-tight">Nexus Web Lab</span>
         </Link>
         <nav className="hidden md:flex items-center gap-0.5">
@@ -113,7 +113,7 @@ function MinimalFooter() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
         <div>
           <div className="flex items-center gap-3 mb-4">
-            <img src="/logo.png" alt="Nexus Web Lab" width={512} height={512} className="h-9 w-auto" />
+            <img src="/logo.webp" alt="Nexus Web Lab" width={128} height={128} className="h-9 w-auto" />
             <span className="text-white font-black text-lg">Nexus Web Lab</span>
           </div>
           <p className="text-sm leading-relaxed">Professional web development & digital solutions.</p>

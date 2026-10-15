@@ -15,7 +15,7 @@ export default function Footer() {
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-10">
         <div>
           <div className="flex items-center gap-3 mb-4">
-            <img src="/logo.png" alt="Nexus Web Lab" width={512} height={512} className="h-9 w-auto" />
+            <img src="/logo.webp" alt="Nexus Web Lab" width={128} height={128} className="h-9 w-auto" />
             <span className="text-navy font-black text-lg">{s('siteName','Nexus Web Lab')}</span>
           </div>
           <p className="text-sm leading-relaxed">{s('footerDesc','Professional web development & digital solutions in Yangon, Myanmar.')}</p>
@@ -61,7 +61,7 @@ export default function Footer() {
             <a href={"https://github.com/Kaunghtut25/KOKAUNG"} target="_blank" rel="noopener noreferrer" aria-label="GitHub" className="w-12 h-12 rounded-full bg-black shadow-md shadow-slate-500/25 flex items-center justify-center text-white hover:scale-110 hover:shadow-lg transition-all duration-200">
               <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current"><path d="M16.6 3c.3 1.8 1.4 3.1 3.4 3.3v2.6c-1.2 0-2.4-.4-3.4-1v5.6c0 3.4-2.6 5.5-5.6 5.5-3 0-5.5-2.3-5.5-5.4 0-3 2.4-5.4 5.6-5.4.3 0 .6 0 .9.1v2.7c-.3-.1-.6-.2-.9-.2-1.6 0-2.8 1.2-2.8 2.8 0 1.6 1.2 2.8 2.8 2.8 1.6 0 2.9-1.1 2.9-3V3h2.6z"/></svg>
             </a>
-            <a href={"https://github.com/Kaunghtut25/KOKAUNG"} target="_blank" rel="noopener noreferrer" aria-label="GitHub" className="w-12 h-12 rounded-full bg-[#229ED9] shadow-md shadow-sky-500/25 flex items-center justify-center text-white hover:scale-110 hover:shadow-lg transition-all duration-200">
+            <a href={settings.telegram || "https://t.me"} target="_blank" rel="noopener noreferrer" aria-label="Telegram" className="w-12 h-12 rounded-full bg-[#229ED9] shadow-md shadow-sky-500/25 flex items-center justify-center text-white hover:scale-110 hover:shadow-lg transition-all duration-200">
               <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current"><path d="M21.9 4.6c.3-1.1-.7-1.9-1.7-1.5L3.6 9.7c-1.1.4-1 2 .1 2.3l4.3 1.3 1.7 5.3c.3 1 1.6 1.2 2.2.3l2.3-3.2 4.5 3.3c.9.6 2.1.2 2.4-.9l2.8-13.5zM9.4 12.8l8-5.4c.3-.2.7.2.4.5l-6.6 6.3-.3 2.7-1.5-4.1z"/></svg>
             </a>
             <a href={settings.whatsapp || "https://wa.me/959945598825"} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" className="w-12 h-12 rounded-full bg-[#25D366] shadow-md shadow-emerald-500/25 flex items-center justify-center text-white hover:scale-110 hover:shadow-lg transition-all duration-200">
