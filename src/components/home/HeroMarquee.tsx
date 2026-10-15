@@ -6,6 +6,7 @@ import Link from "next/link";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { prefillHref } from "@/lib/lead-prefill";
 import KineticText from "@/components/KineticText";
+import Hero3D from "@/components/home/Hero3D";
 
 // Animated counter component (SSR renders real value; count-up on view; reduced-motion safe)
 function Counter({ value, label }: { value: string; label: string }) {
@@ -163,6 +164,8 @@ export default function HeroMarquee({
       </div>
       {/* Dot grid — very subtle */}
       <div className="absolute inset-0 dot-grid z-[1] opacity-10" />
+      {/* 3D particle field — perspective drift + link lines, pure canvas */}
+      <Hero3D className="z-[1] opacity-70" />
       {/* Center scrim — soft radial dark glow behind the text only */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(5,8,22,0.7)_0%,rgba(5,8,22,0.45)_45%,transparent_75%)] z-[1]" aria-hidden="true" />
       {/* Top scrim — keeps nav readable without a visible bar */}

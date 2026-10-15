@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Offline — Nexus Web Lab</title>
+<meta name="theme-color" content="#0a1628" />
+<style>
+  :root { color-scheme: dark; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    background: radial-gradient(ellipse at 20% 20%, #12204a 0%, #050816 60%);
+    color: #e2e8f0; font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    text-align: center; padding: 24px;
+  }
+  .card { max-width: 420px; }
+  .dot {
+    width: 64px; height: 64px; margin: 0 auto 24px; border-radius: 20px;
+    background: linear-gradient(135deg, #3B82F6, #06B6D4);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 30px; box-shadow: 0 0 40px rgba(59,130,246,.45);
+  }
+  h1 { font-size: 24px; font-weight: 800; margin-bottom: 10px; }
+  p { color: #94a3b8; font-size: 15px; line-height: 1.6; margin-bottom: 24px; }
+  a {
+    display: inline-block; padding: 13px 32px; border-radius: 12px;
+    background: linear-gradient(135deg, #3B82F6, #06B6D4); color: #fff;
+    font-weight: 700; text-decoration: none; font-size: 15px;
+  }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="dot">📡</div>
+    <h1>You're offline</h1>
+    <p>Nexus Web Lab needs a connection for this page.<br />Check your internet and try again — your saved pages still work.</p>
+    <a href="/">Try again</a>
+  </div>
+</body>
+</html>

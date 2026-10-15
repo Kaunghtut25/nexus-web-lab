@@ -3,41 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Search, ArrowRight, X } from "lucide-react";
-
-type Item = { href: string; label: string; hint: string };
-
-const SERVICES: Item[] = [
-  { href: "/services/web-development", label: "Web Development", hint: "Service" },
-  { href: "/services/e-commerce", label: "E-Commerce", hint: "Service" },
-  { href: "/services/ui-ux-design", label: "UI/UX Design", hint: "Service" },
-  { href: "/services/seo-package", label: "SEO Package", hint: "Service" },
-  { href: "/services/hosting-deploy", label: "Hosting & Deploy", hint: "Service" },
-  { href: "/services/maintenance", label: "Maintenance", hint: "Service" },
-  { href: "/services/error-fixing", label: "Errors Fixing", hint: "Service" },
-  { href: "/services/ai-chatbot", label: "AI Chatbot", hint: "Service" },
-  { href: "/services/website-redesign", label: "Website Redesign", hint: "Service" },
-  { href: "/services/social-media-management", label: "Social Media Management", hint: "Service" },
-  { href: "/services/content-writing", label: "Content Writing", hint: "Service" },
-  { href: "/services/logo-brand-identity", label: "Logo & Brand Identity", hint: "Service" },
-  { href: "/services/business-email-setup", label: "Business Email Setup", hint: "Service" },
-];
-
-const PAGES: Item[] = [
-  { href: "/", label: "Home", hint: "Page" },
-  { href: "/services", label: "All Services", hint: "Page" },
-  { href: "/portfolio", label: "Portfolio", hint: "Page" },
-  { href: "/blog", label: "Blog", hint: "Page" },
-  { href: "/about", label: "About", hint: "Page" },
-  { href: "/contact", label: "Contact", hint: "Page" },
-  { href: "/get-quote", label: "Get a Quote", hint: "Page" },
-  { href: "/course", label: "AI Freelance Course", hint: "Page" },
-  { href: "/demo", label: "Live Demo", hint: "Page" },
-  { href: "/privacy", label: "Privacy Policy", hint: "Page" },
-  { href: "/terms", label: "Terms of Service", hint: "Page" },
-  { href: "/accessibility", label: "Accessibility", hint: "Page" },
-];
-
-const ALL: Item[] = [...SERVICES, ...PAGES];
+import { search } from "@/lib/search";
 
 export default function CommandPalette() {
   const router = useRouter();
@@ -46,13 +12,8 @@ export default function CommandPalette() {
   const [active, setActive] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const results = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return ALL;
-    return ALL.filter(
-      (it) => it.label.toLowerCase().includes(q) || it.hint.toLowerCase().includes(q)
-    );
-  }, [query]);
+  // Intent-aware local search: synonyms + Burmese terms (see @/lib/search).
+  const results = useMemo(() => search(query), [query]);
 
   const close = useCallback(() => {
     setOpen(false);
@@ -116,7 +77,7 @@ export default function CommandPalette() {
             ref={inputRef}
             value={query}
             onChange={(e) => { setQuery(e.target.value); setActive(0); }}
-            placeholder="Search services, pages…"
+            placeholder="Search — try “website”, “ဈေး”, “chatbot”…"
             className="flex-1 bg-transparent py-4 text-white placeholder:text-slate-400 outline-none"
             aria-label="Search"
           />

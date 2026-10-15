@@ -7,6 +7,7 @@ import CookieConsent from "@/components/CookieConsent";
 import ChatWidgetLoader from "@/components/ChatWidgetLoader";
 import CommandPalette from "@/components/CommandPalette";
 import ScrollReveal from "@/components/ScrollReveal";
+import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 import { CurrencyProvider } from "@/lib/currency";
 
 export const metadata: Metadata = {
@@ -180,6 +181,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <ChatWidgetLoader />
           <CommandPalette />
           <CookieConsent />
+          <ServiceWorkerRegister />
         </CurrencyProvider>
       </body>
     </html>

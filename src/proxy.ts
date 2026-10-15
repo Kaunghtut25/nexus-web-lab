@@ -21,6 +21,9 @@ export default function proxy(request: NextRequest) {
     // (Next.js chunk loading). Nonce support is universal in modern browsers,
     // so dropping 'unsafe-inline' is safe and satisfies security scanners.
     `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'`,
+    // Service worker (PWA) is a same-origin script; worker-src doesn't inherit
+    // 'strict-dynamic' handling, so allow it explicitly.
+    "worker-src 'self'",
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: blob: https://images.unsplash.com https://i.pravatar.cc https://*.vercel.app",
     "font-src 'self' data:",
