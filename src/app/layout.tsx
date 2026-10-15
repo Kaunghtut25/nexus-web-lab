@@ -6,6 +6,7 @@ import ScrollToTop from "@/components/ScrollToTop";
 import CookieConsent from "@/components/CookieConsent";
 import ChatWidgetLoader from "@/components/ChatWidgetLoader";
 import CommandPalette from "@/components/CommandPalette";
+import ScrollReveal from "@/components/ScrollReveal";
 import { CurrencyProvider } from "@/lib/currency";
 
 export const metadata: Metadata = {
@@ -141,9 +142,23 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     ],
   };
   return (
-    <html lang="en">
-      <head></head>
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        {/* Theme no-flash: runs before first paint — restores the user's saved
+            theme choice. Default stays LIGHT regardless of the OS setting: the
+            brand's light design is the shop window visitors should land on.
+            nonce required: this site serves a strict CSP via proxy.ts. */}
+        <script
+          nonce={nonce}
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{if(localStorage.getItem('nwl-theme')==='dark')document.documentElement.classList.add('dark')}catch(e){}})()`,
+          }}
+        />
+      </head>
       <body className="min-h-screen flex flex-col">
+        <noscript>
+          <style>{`.scroll-reveal{opacity:1!important;transform:none!important}`}</style>
+        </noscript>
         <a
           href="#main-content"
           className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[10000] focus:bg-white focus:text-navy focus:px-4 focus:py-2 focus:rounded-lg focus:shadow-lg focus:text-sm focus:font-semibold"
@@ -153,6 +168,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <script type="application/ld+json" nonce={nonce} dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
         <CurrencyProvider>
           <ScrollToTop />
+          <ScrollReveal />
           {children}
           {/* Mobile-only sticky CTA bar — audit fix: primary CTA must be reachable
               without scrolling (crawlers + users on small screens). Desktop hero CTA stays. */}

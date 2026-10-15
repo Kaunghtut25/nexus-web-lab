@@ -63,7 +63,7 @@ const DEFAULT_TESTIMONIALS = [
 ];
 
 // Spotlight card (mouse-following glow)
-function SpotlightCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+function SpotlightCard({ children, className = "", style }: { children: React.ReactNode; className?: string; style?: React.CSSProperties }) {
   const ref = useRef<HTMLDivElement>(null);
   const onMouseMove = (e: React.MouseEvent) => {
     const el = ref.current; if (!el) return;
@@ -72,7 +72,7 @@ function SpotlightCard({ children, className = "" }: { children: React.ReactNode
     el.style.setProperty('--my', `${e.clientY - rect.top}px`);
   };
   return (
-    <div ref={ref} onMouseMove={onMouseMove} className={`spotlight ${className}`}>
+    <div ref={ref} onMouseMove={onMouseMove} style={style} className={`spotlight ${className}`}>
       {children}
     </div>
   );
@@ -141,10 +141,13 @@ export default function HomeClient({ initialData }: { initialData: HomeData }) {
                 <CurrencySwitcher />
               </div>
             </div>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 lg:grid-flow-dense gap-6">
               {services.slice(0, 13).map((sv, i) => {
                 const iconKey = sv.icon || '🌐';
                 const IconComp = ICON_MAP[iconKey] || Globe;
+                // Bento rhythm on 3-col: indices 0/4/7/10 span 2 cols — with
+                // grid-flow-dense the rest auto-pack with no holes.
+                const wide = i === 0 || i === 4 || i === 7 || i === 10;
                 const slugMap: Record<string, string> = {
                   'web-dev-1': 'web-development', 'ecom-1': 'e-commerce', 'uiux-1': 'ui-ux-design',
                   'seo-1': 'seo-package', 'host-1': 'hosting-deploy', 'maint-1': 'maintenance',
@@ -154,7 +157,7 @@ export default function HomeClient({ initialData }: { initialData: HomeData }) {
                 };
                 const slug = slugMap[sv.id] || sv.id;
                 return (
-                  <Link key={sv.id || i} href={`/services/${slug}`} className="group block">
+                  <Link key={sv.id || i} href={`/services/${slug}`} style={{ transitionDelay: `${i * 60}ms` }} className={`scroll-reveal group block ${wide ? 'lg:col-span-2' : ''}`}>
                     <SpotlightCard className="bento bg-white border border-slate-100 rounded-2xl group glow-pulse h-full">
                       <div className="relative h-64 overflow-hidden rounded-t-2xl bg-slate-100">
                         <Image src={sv.image || SERVICE_IMAGES[i] || SERVICE_IMAGES[0]} alt={sv.title} width={1920} height={1080} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" quality={100} />
@@ -194,11 +197,13 @@ export default function HomeClient({ initialData }: { initialData: HomeData }) {
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {premiumFeatures.map((f: any, i: number) => (
-                <div key={i} className="group bg-white border border-slate-200 rounded-2xl p-7 hover:shadow-xl hover:shadow-blue/10 hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
+                <div key={i} style={{ transitionDelay: `${i * 60}ms` }} className="scroll-reveal">
+                <div className="group bg-white border border-slate-200 rounded-2xl p-7 hover:shadow-xl hover:shadow-blue/10 hover:-translate-y-1 transition-all duration-300 relative overflow-hidden h-full">
                   <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-blue/10 to-cyan/10 rounded-bl-[100%] opacity-0 group-hover:opacity-100 transition-opacity" />
                   <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue to-cyan flex items-center justify-center text-white mb-5 shadow-lg shadow-blue/20"><span className="text-xl">{f.icon}</span></div>
                   <h3 className="font-bold text-navy mb-2 card-hover-title">{f.title}</h3>
                   <p className="text-sm text-slate-500 leading-relaxed">{f.description}</p>
+                </div>
                 </div>
               ))}
             </div>
@@ -229,7 +234,8 @@ export default function HomeClient({ initialData }: { initialData: HomeData }) {
                     '/images/remote/remote-1504384308090-c894fdcc538d-1920w.webp',
                   ];
                   return (
-                    <a key={p.id} href={p.url || '#'} target="_blank" rel="noopener noreferrer" className="bento bg-white border border-slate-100 rounded-2xl group glow-pulse block">
+                    <div key={p.id} style={{ transitionDelay: `${pi * 70}ms` }} className="scroll-reveal">
+                    <a href={p.url || '#'} target="_blank" rel="noopener noreferrer" className="bento bg-white border border-slate-100 rounded-2xl group glow-pulse block h-full">
                       <div className="relative h-72 overflow-hidden rounded-t-2xl">
                         <Image src={p.image || PI[pi]} alt={p.title} width={1600} height={1066} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" quality={100} />
                         <div className="absolute inset-0 bg-gradient-to-t from-navy/40 via-transparent to-transparent" />
@@ -244,6 +250,7 @@ export default function HomeClient({ initialData }: { initialData: HomeData }) {
                         </div>
                       </div>
                     </a>
+                    </div>
                   );
                 })}
               </div>
@@ -267,7 +274,7 @@ export default function HomeClient({ initialData }: { initialData: HomeData }) {
             </div>
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {features.map((f, i) => (
-                <SpotlightCard key={i} className="glass-light p-8 text-center rounded-3xl holo-border group">
+                <SpotlightCard key={i} style={{ transitionDelay: `${i * 70}ms` }} className="scroll-reveal glass-light p-8 text-center rounded-3xl holo-border group">
                   <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue to-cyan flex items-center justify-center text-white mx-auto mb-5 shadow-lg shadow-blue/20 group-hover:scale-110 transition-transform duration-300">
                     {typeof f.icon === 'string' ? <span className="text-2xl">{f.icon}</span> : f.icon}
                   </div>
@@ -294,7 +301,7 @@ export default function HomeClient({ initialData }: { initialData: HomeData }) {
               <>
                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
                   {testimonials.map((t, i) => (
-                    <SpotlightCard key={t.id || i} className="glass-light p-7 rounded-3xl holo-border">
+                    <SpotlightCard key={t.id || i} style={{ transitionDelay: `${i * 70}ms` }} className="scroll-reveal glass-light p-7 rounded-3xl holo-border">
                       <div className="flex gap-1 mb-4">
                         {Array.from({ length: t.rating || 5 }).map((_, si) => (
                           <Star key={si} size={18} className="text-amber-400 fill-amber-400" />

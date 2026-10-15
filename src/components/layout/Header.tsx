@@ -2,8 +2,9 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Briefcase, FolderOpen, Info, Mail, FileText, GraduationCap, Search } from "lucide-react";
+import { Home, Briefcase, FolderOpen, Info, Mail, FileText, GraduationCap, Search, Sun, Moon } from "lucide-react";
 import { prefillHref } from "@/lib/lead-prefill";
+import { useTheme, toggleTheme } from "@/lib/theme";
 
 type NavItem = {
   label: string;
@@ -16,6 +17,7 @@ export default function Header() {
   const [settings, setSettings] = useState<Record<string,string>>({});
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
+  const { dark } = useTheme();
 
   useEffect(() => {
     fetch('/api/settings').then(r=>r.json()).then(d=>setSettings(d.settings||{}));
@@ -52,7 +54,8 @@ export default function Header() {
   const detailDarkTop = pathname.startsWith('/services/') && pathname !== '/services';
   const solid = !transparentTop || scrolled;
   // White text when solid (background appears) OR on dark detail heroes.
-  const whiteText = solid || detailDarkTop;
+  // In dark mode the page itself is dark, so transparent-top also needs white.
+  const whiteText = solid || detailDarkTop || dark;
 
   // Nav text color: dark (black) when header is transparent over the hero,
   // auto-switches to white once the solid header background appears (scrolled)
@@ -125,6 +128,15 @@ export default function Header() {
             <Search size={16} /> <kbd className="hidden xl:inline opacity-60">⌘K</kbd>
           </button>
 
+          <button
+            onClick={toggleTheme}
+            className={`flex items-center justify-center w-11 h-11 rounded-xl border nav-hover transition-all ${courseLink}`}
+            aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
+            title={dark ? "Light mode" : "Dark mode"}
+          >
+            {dark ? <Sun size={16} /> : <Moon size={16} />}
+          </button>
+
           <Link href={prefillHref('/contact', { source: pathname === '/' ? 'Home page — nexusweblab.com' : `nexusweblab.com${pathname}` })} className="gradient-btn text-sm !py-2.5 !px-5 ml-2 min-h-[48px] inline-flex items-center">
             Contact Us
           </Link>
@@ -170,6 +182,14 @@ export default function Header() {
               </Link>
             );
           })}
+          <button
+            onClick={() => { toggleTheme(); }}
+            className="flex items-center gap-3 py-4 px-3 rounded-xl text-sm font-medium text-white/80 hover:text-white hover:bg-white/10 transition-all w-full text-left nav-hover"
+            aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
+          >
+            {dark ? <Sun size={18} className="text-cyan-200/80" /> : <Moon size={18} className="text-cyan-200/80" />}
+            <span>{dark ? "Light Mode" : "Dark Mode"}</span>
+          </button>
           <Link
             href="/course"
             className="flex items-center justify-center gap-2 mt-3 px-4 py-3 rounded-xl border border-white/25 text-white text-sm font-semibold hover:bg-white/10 nav-hover transition-all"
