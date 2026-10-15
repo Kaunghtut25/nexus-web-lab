@@ -17,7 +17,7 @@ export default function Header() {
   const [settings, setSettings] = useState<Record<string,string>>({});
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
-  const { dark } = useTheme();
+  const { light } = useTheme();
 
   useEffect(() => {
     fetch('/api/settings').then(r=>r.json()).then(d=>setSettings(d.settings||{}));
@@ -54,8 +54,9 @@ export default function Header() {
   const detailDarkTop = pathname.startsWith('/services/') && pathname !== '/services';
   const solid = !transparentTop || scrolled;
   // White text when solid (background appears) OR on dark detail heroes.
-  // In dark mode the page itself is dark, so transparent-top also needs white.
-  const whiteText = solid || detailDarkTop || dark;
+  // The site is dark by default, so transparent-top also needs white text
+  // unless the visitor opted into the light theme.
+  const whiteText = solid || detailDarkTop || !light;
 
   // Nav text color: dark (black) when header is transparent over the hero,
   // auto-switches to white once the solid header background appears (scrolled)
@@ -131,10 +132,10 @@ export default function Header() {
           <button
             onClick={toggleTheme}
             className={`flex items-center justify-center w-11 h-11 rounded-xl border nav-hover transition-all ${courseLink}`}
-            aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
-            title={dark ? "Light mode" : "Dark mode"}
+            aria-label={light ? "Switch to dark mode" : "Switch to light mode"}
+            title={light ? "Dark mode" : "Light mode"}
           >
-            {dark ? <Sun size={16} /> : <Moon size={16} />}
+            {light ? <Moon size={16} /> : <Sun size={16} />}
           </button>
 
           <Link href={prefillHref('/contact', { source: pathname === '/' ? 'Home page — nexusweblab.com' : `nexusweblab.com${pathname}` })} className="gradient-btn text-sm !py-2.5 !px-5 ml-2 min-h-[48px] inline-flex items-center">
@@ -185,10 +186,10 @@ export default function Header() {
           <button
             onClick={() => { toggleTheme(); }}
             className="flex items-center gap-3 py-4 px-3 rounded-xl text-sm font-medium text-white/80 hover:text-white hover:bg-white/10 transition-all w-full text-left nav-hover"
-            aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
+            aria-label={light ? "Switch to dark mode" : "Switch to light mode"}
           >
-            {dark ? <Sun size={18} className="text-cyan-200/80" /> : <Moon size={18} className="text-cyan-200/80" />}
-            <span>{dark ? "Light Mode" : "Dark Mode"}</span>
+            {light ? <Moon size={18} className="text-cyan-200/80" /> : <Sun size={18} className="text-cyan-200/80" />}
+            <span>{light ? "Dark Mode" : "Light Mode"}</span>
           </button>
           <Link
             href="/course"

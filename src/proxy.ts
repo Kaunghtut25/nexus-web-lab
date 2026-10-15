@@ -36,6 +36,9 @@ export default function proxy(request: NextRequest) {
 
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set("x-nonce", nonce);
+  // Path is exposed to the root layout so /admin can lock itself to the light
+  // theme while the public site runs dark by default.
+  requestHeaders.set("x-pathname", request.nextUrl.pathname);
 
   const response = NextResponse.next({
     request: { headers: requestHeaders },

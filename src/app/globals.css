@@ -1,23 +1,40 @@
 @import "tailwindcss";
 
-/* Dark-mode variant — enables `dark:` utilities alongside the token flip below */
+/* Dark-mode variant — kept for `dark:` utilities; the site itself is now
+   dark-first (see tokens below), so this is rarely needed. */
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* Runtime theme tokens — flipped by the .dark class (set by the no-flash
-   script in layout.tsx before first paint; toggled from the Header). */
+/* ═══════════════════════════════════════════════════════════════
+   NEXUS 2030 — dark-first futuristic theme.
+   The deep-space dark look is the DEFAULT (no class needed). A user
+   who wants the old light theme gets it via `.light` on <html>
+   (set by the no-flash script in layout.tsx; toggled from the Header).
+   ═══════════════════════════════════════════════════════════════ */
 :root {
+  /* text + background tokens */
+  --navy: #E8EEF9;        /* was dark ink — now primary light text */
+  --navy-light: #AFC9F2;
+  --light: #05060E;       /* was pale blue — now deep space base */
+  --slate: #8FA0B8;
+  color-scheme: dark;
+  /* futuristic accent spectrum */
+  --nx-cyan: #22D3EE;
+  --nx-blue: #60A5FA;
+  --nx-violet: #A78BFA;
+  --nx-magenta: #F472B6;
+  --nx-panel: #0A0F1E;
+  --nx-panel-raised: #0D1424;
+  --nx-hairline: rgba(255,255,255,0.08);
+}
+.light {
   --navy: #0F172A;
   --navy-light: #1E3A5F;
   --light: #EEF5FF;
   --slate: #64748B;
   color-scheme: light;
-}
-.dark {
-  --navy: #E6EDF7;
-  --navy-light: #9FC1F5;
-  --light: #050816;
-  --slate: #94A3B8;
-  color-scheme: dark;
+  --nx-panel: #ffffff;
+  --nx-panel-raised: #f8fafc;
+  --nx-hairline: rgba(15,23,42,0.08);
 }
 
 @theme {
@@ -32,24 +49,61 @@
 
 body {
   background:
-    radial-gradient(circle at 15% 15%, rgba(59,130,246,0.2) 0%, transparent 40%),
-    radial-gradient(circle at 85% 30%, rgba(139,92,246,0.12) 0%, transparent 40%),
-    radial-gradient(circle at 50% 80%, rgba(6,182,212,0.16) 0%, transparent 40%),
+    radial-gradient(ellipse 70% 50% at 15% 0%, rgba(34,211,238,0.10) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 45% at 85% 15%, rgba(139,92,246,0.10) 0%, transparent 60%),
+    radial-gradient(ellipse 80% 60% at 50% 105%, rgba(244,114,182,0.05) 0%, transparent 60%),
     var(--light);
   color: var(--navy);
   font-family: var(--font-inter), 'Inter', system-ui, -apple-system, sans-serif;
   overflow-x: hidden;
 }
+.light body {
+  background:
+    radial-gradient(circle at 15% 15%, rgba(59,130,246,0.2) 0%, transparent 40%),
+    radial-gradient(circle at 85% 30%, rgba(139,92,246,0.12) 0%, transparent 40%),
+    radial-gradient(circle at 50% 80%, rgba(6,182,212,0.16) 0%, transparent 40%),
+    var(--light);
+}
+
+/* Tighter, more engineered headline spacing — part of the 2030 voice */
+h1, h2 { letter-spacing: -0.025em; }
+h3 { letter-spacing: -0.015em; }
+
+/* HUD corner brackets — four cyan L-marks, for hero/cards that should read
+   as "instrument panel". Pure backgrounds, no extra DOM. */
+.nx-corners {
+  position: relative;
+}
+.nx-corners::before,
+.nx-corners::after {
+  content: '';
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  pointer-events: none;
+  opacity: 0.55;
+}
+.nx-corners::before {
+  top: 8px; left: 8px;
+  border-top: 1.5px solid var(--nx-cyan);
+  border-left: 1.5px solid var(--nx-cyan);
+}
+.nx-corners::after {
+  bottom: 8px; right: 8px;
+  border-bottom: 1.5px solid var(--nx-cyan);
+  border-right: 1.5px solid var(--nx-cyan);
+}
 
 /* ===== Design System ===== */
 .gradient-text {
-  background: linear-gradient(135deg, #3B82F6, #06B6D4);
+  background: linear-gradient(135deg, #22D3EE, #60A5FA 45%, #A78BFA);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 .gradient-btn {
-  background: linear-gradient(135deg, #2E7CF6, #06B6D4);
+  /* Holographic spectrum + hairline ring — the 2030 primary action */
+  background: linear-gradient(135deg, #0891B2, #2563EB 48%, #7C3AED);
   color: white;
   font-weight: 600;
   padding: 12px 28px;
@@ -59,10 +113,10 @@ body {
   justify-content: center;
   gap: 8px;
   transition: all 0.3s ease;
-  box-shadow: 0 2px 10px rgba(59,130,246,0.25);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.12), 0 2px 14px rgba(34,211,238,0.28);
 }
 .gradient-btn:hover { 
-  box-shadow: 0 6px 25px rgba(59,130,246,0.45); 
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.2), 0 8px 30px rgba(34,211,238,0.45);
   transform: translateY(-2px);
 }
 .gradient-btn-outline {
@@ -244,14 +298,19 @@ body {
 
 /* Glassmorphism cards — no backdrop blur (images must stay sharp) */
 .glass {
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.14);
   border-radius: 20px;
 }
 .glass-light {
-  background: rgba(255,255,255,0.85);
-  border: 1px solid rgba(255,255,255,0.6);
+  /* Eyebrow pills / soft cards — dark instrument panel by default */
+  background: rgba(13,20,38,0.66);
+  border: 1px solid rgba(255,255,255,0.14);
   border-radius: 20px;
+}
+.light .glass-light {
+  background: rgba(255,255,255,0.85);
+  border-color: rgba(255,255,255,0.6);
 }
 
 /* Glow text */
@@ -284,8 +343,15 @@ body {
   box-shadow: 0 0 40px rgba(59,130,246,0.15);
 }
 
-/* Gradient mesh background */
+/* Gradient mesh background — soft aurora over deep space */
 .mesh-bg {
+  background:
+    radial-gradient(circle at 15% 15%, rgba(34,211,238,0.07) 0%, transparent 40%),
+    radial-gradient(circle at 85% 30%, rgba(139,92,246,0.07) 0%, transparent 40%),
+    radial-gradient(circle at 50% 80%, rgba(244,114,182,0.04) 0%, transparent 40%),
+    var(--light);
+}
+.light .mesh-bg {
   background:
     radial-gradient(circle at 15% 15%, rgba(59,130,246,0.18) 0%, transparent 40%),
     radial-gradient(circle at 85% 30%, rgba(139,92,246,0.12) 0%, transparent 40%),
@@ -293,8 +359,14 @@ body {
     var(--light);
 }
 
-/* Header-specific mesh with stronger blue tint */
+/* Header strip — near-black glass with an aurora undercurrent */
 .mesh-bg-header {
+  background:
+    radial-gradient(circle at 12% 30%, rgba(34,211,238,0.16) 0%, transparent 45%),
+    radial-gradient(circle at 85% 20%, rgba(139,92,246,0.18) 0%, transparent 40%),
+    linear-gradient(180deg, #0A0F1E 0%, #05060E 100%);
+}
+.light .mesh-bg-header {
   background:
     radial-gradient(circle at 12% 30%, rgba(59,130,246,0.35) 0%, transparent 45%),
     radial-gradient(circle at 85% 20%, rgba(37,99,235,0.28) 0%, transparent 40%),
@@ -345,7 +417,7 @@ body {
 /* Neon button */
 .neon-btn {
   position: relative;
-  background: linear-gradient(135deg, #3B82F6, #06B6D4);
+  background: linear-gradient(135deg, #0891B2, #2563EB 48%, #7C3AED);
   color: white;
   font-weight: 700;
   padding: 16px 36px;
@@ -354,10 +426,10 @@ body {
   align-items: center;
   gap: 8px;
   transition: all 0.3s;
-  box-shadow: 0 0 30px rgba(59,130,246,0.5), 0 0 80px rgba(6,182,212,0.2), 0 4px 20px rgba(59,130,246,0.4);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.14), 0 0 30px rgba(34,211,238,0.4), 0 0 80px rgba(139,92,246,0.18);
 }
 .neon-btn:hover {
-  box-shadow: 0 0 50px rgba(59,130,246,0.7), 0 0 120px rgba(6,182,212,0.3), 0 4px 30px rgba(59,130,246,0.5);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.22), 0 0 50px rgba(34,211,238,0.6), 0 0 120px rgba(139,92,246,0.3);
   transform: translateY(-2px);
 }
 
@@ -632,48 +704,101 @@ button, a, input, select, textarea, [role="button"] {
   }
 }
 
-/* ===== DARK THEME SURFACES =====
-   Hardcoded light utilities (bg-white, bg-slate-50, text-slate-*, border-slate-*)
-   are flipped here instead of editing every component — one source of truth.
-   Brand tokens (text-navy, text-slate, mesh-bg, body) already follow --navy/--light. */
-.dark .bg-white { background-color: #0B1324; }
-.dark .bg-slate-50 { background-color: #0A1020; }
-.dark .bg-slate-100 { background-color: #111A31; }
-.dark .text-slate-500 { color: #94A3B8; }
-.dark .text-slate-600 { color: #B6C2D4; }
-.dark .text-slate-700 { color: #CBD5E1; }
-.dark .text-slate-800 { color: #DCE5F2; }
-.dark .text-slate-900 { color: #E6EDF7; }
-.dark .text-black { color: #E6EDF7; }
-.dark .border-slate-100 { border-color: rgba(255,255,255,0.08); }
-.dark .border-slate-200 { border-color: rgba(255,255,255,0.14); }
-.dark .bg-black\/10 { background-color: rgba(255,255,255,0.1); }
-.dark .bg-black\/5:hover { background-color: rgba(255,255,255,0.08); }
-/* Links that use blue-600 for AA contrast on white would drop below AA on the
-   dark surface (#0B1324) — lift them to blue-400 there. */
-.dark .text-blue-600 { color: #60A5FA; }
-.dark .glass-light {
-  background: rgba(13,20,38,0.72);
-  border-color: rgba(255,255,255,0.12);
+/* ═══════════════════════════════════════════════════════════════
+   NEXUS 2030 — DARK-DEFAULT SURFACE FLIP
+   The whole site is dark by default. Legacy light utilities used across
+   ~40 components are re-mapped here instead of editing every file:
+   `:root:not(.light)` scopes them to the dark theme, so adding `.light`
+   to <html> restores the original light appearance untouched.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Panels + surfaces */
+:root:not(.light) .bg-white { background-color: #0B1220; }
+:root:not(.light) .bg-slate-50 { background-color: #080D18; }
+:root:not(.light) .bg-slate-100 { background-color: #101828; }
+:root:not(.light) .bg-slate-200 { background-color: #1A2438; }
+:root:not(.light) .bg-black\/5:hover { background-color: rgba(255,255,255,0.08); }
+:root:not(.light) .bg-black\/10 { background-color: rgba(255,255,255,0.1); }
+
+/* Tinted panels (status chips, soft buttons) */
+:root:not(.light) .bg-blue-50 { background-color: rgba(96,165,250,0.10); }
+:root:not(.light) .bg-emerald-50 { background-color: rgba(52,211,153,0.10); }
+:root:not(.light) .bg-emerald-100 { background-color: rgba(52,211,153,0.16); }
+:root:not(.light) .bg-red-50 { background-color: rgba(248,113,113,0.10); }
+:root:not(.light) .bg-amber-50 { background-color: rgba(251,191,36,0.10); }
+
+/* Text ramp — slate → cool light greys */
+:root:not(.light) .text-slate-500 { color: #8FA0B8; }
+:root:not(.light) .text-slate-600 { color: #A9B8CC; }
+:root:not(.light) .text-slate-700 { color: #C2CFE0; }
+:root:not(.light) .text-slate-800 { color: #D6E0EE; }
+:root:not(.light) .text-slate-900 { color: #E8EEF9; }
+:root:not(.light) .text-black { color: #E8EEF9; }
+
+/* Accent text lifted for AA contrast on deep panels */
+:root:not(.light) .text-blue-600 { color: #67B2FF; }
+:root:not(.light) .text-blue-500 { color: #7CB8FF; }
+:root:not(.light) .text-cyan-700 { color: #67E8F9; }
+:root:not(.light) .text-emerald-600 { color: #34D399; }
+:root:not(.light) .text-emerald-700 { color: #6EE7B7; }
+:root:not(.light) .text-red-700 { color: #FCA5A5; }
+:root:not(.light) .text-amber-700 { color: #FCD34D; }
+:root:not(.light) .text-purple { color: #C4B5FD; }
+
+/* Hairlines */
+:root:not(.light) .border-slate-100 { border-color: rgba(255,255,255,0.07); }
+:root:not(.light) .border-slate-200 { border-color: rgba(255,255,255,0.12); }
+:root:not(.light) .border-slate-300 { border-color: rgba(255,255,255,0.18); }
+:root:not(.light) .border-red-200 { border-color: rgba(248,113,113,0.32); }
+
+/* Hover tints used by buttons/lists */
+:root:not(.light) .hover\:bg-slate-50:hover { background-color: rgba(255,255,255,0.06); }
+:root:not(.light) .hover\:bg-slate-100:hover { background-color: rgba(255,255,255,0.08); }
+:root:not(.light) .hover\:bg-slate-200:hover { background-color: rgba(255,255,255,0.1); }
+
+/* Deep-navy panels: `bg-navy` / `from-navy` carry white text, so they must
+   STAY dark in the dark theme (the --navy token itself flips to light text). */
+:root:not(.light) .bg-navy { background-color: #0A0F1E; }
+:root:not(.light) .bg-navy\/70 { background-color: rgba(10,15,30,0.72); }
+:root:not(.light) .bg-navy\/95 { background-color: rgba(10,15,30,0.95); }
+:root:not(.light) .from-navy { --tw-gradient-from: #0A0F1E; }
+:root:not(.light) .from-navy\/95 { --tw-gradient-from: rgba(10,15,30,0.95); }
+:root:not(.light) .from-navy\/60 { --tw-gradient-from: rgba(10,15,30,0.6); }
+:root:not(.light) .from-navy\/40 { --tw-gradient-from: rgba(10,15,30,0.4); }
+:root:not(.light) .via-navy { --tw-gradient-via: #0A0F1E; }
+:root:not(.light) .via-navy\/80 { --tw-gradient-via: rgba(10,15,30,0.8); }
+:root:not(.light) .to-navy { --tw-gradient-to: #0A0F1E; }
+:root:not(.light) .to-navy\/40 { --tw-gradient-to: rgba(10,15,30,0.4); }
+:root:not(.light) .to-navy-light { --tw-gradient-to: #16233F; }
+:root:not(.light) .via-navy-light { --tw-gradient-via: #16233F; }
+
+/* Custom component classes (light defaults → dark) */
+:root:not(.light) .card {
+  background: #0B1220;
+  border-color: rgba(255,255,255,0.09);
 }
-.dark .card {
-  background: #0B1324;
-  border-color: rgba(255,255,255,0.1);
-}
-.dark .form-input {
-  background: #0B1324;
+:root:not(.light) .form-input {
+  background: #0B1220;
   border-color: rgba(255,255,255,0.14);
-  color: #E6EDF7;
+  color: #E8EEF9;
 }
-.dark .section-light { background: #0A1020; }
-.dark .section-white { background: #050816; }
-.dark .tag { background: rgba(59,130,246,0.15); }
-.dark .mesh-bg {
-  background:
-    radial-gradient(circle at 15% 15%, rgba(59,130,246,0.10) 0%, transparent 40%),
-    radial-gradient(circle at 85% 30%, rgba(139,92,246,0.07) 0%, transparent 40%),
-    radial-gradient(circle at 50% 80%, rgba(6,182,212,0.08) 0%, transparent 40%),
-    #050816;
+:root:not(.light) .section-light { background: #080D18; }
+:root:not(.light) .section-white { background: #05060E; }
+:root:not(.light) .tag { background: rgba(34,211,238,0.12); }
+:root:not(.light) .gradient-btn-outline {
+  color: #7DD3FC;
+  border-color: rgba(56,189,248,0.6);
+}
+:root:not(.light) .gradient-btn-outline:hover {
+  background: rgba(56,189,248,0.15);
+  color: #E0F2FE;
+  box-shadow: 0 4px 18px rgba(34,211,238,0.25);
+}
+:root:not(.light) .admin-sidebar-link { color: #8FA0B8; }
+:root:not(.light) .admin-sidebar-link:hover,
+:root:not(.light) .admin-sidebar-link.active {
+  background: rgba(34,211,238,0.1);
+  color: #67E8F9;
 }
 
 /* Sticky mobile CTA bar: chat launcher/panel sit above it on mobile,
