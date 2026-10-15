@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import QuoteEstimator from "@/components/home/QuoteEstimator";
 import Image from "next/image";
 import { Send, ArrowRight, CheckCircle, Clock, Shield, Sparkles } from "lucide-react";
 
@@ -29,6 +30,33 @@ export default function GetQuote() {
     });
     if (match) el.value = match.value;
   }, [svcParam]);
+
+  // AI Quote Estimator → this form: fills service + message in place and
+  // scrolls here. The estimator calls preventDefault so it does NOT navigate
+  // away; the URL-param path above remains the fallback for other pages.
+  useEffect(() => {
+    const onEstimate = (e: Event) => {
+      const detail = (e as CustomEvent<{ svc?: string; msg?: string }>).detail || {};
+      e.preventDefault();
+      const sel = document.querySelector<HTMLSelectElement>('select[name="service"]');
+      if (sel && detail.svc) {
+        const norm = (s: string) => s.toLowerCase().replace(/[&\/]/g, ' ').replace(/\s+/g, ' ').trim();
+        const nval = norm(detail.svc);
+        const match = [...sel.options].find((o) => {
+          const no = norm(o.value), nt = norm(o.text);
+          return no && (no.includes(nval) || nval.includes(no) || nt.includes(nval) || nval.includes(nt));
+        });
+        sel.value = match ? match.value : detail.svc;
+      }
+      const ta = document.querySelector<HTMLTextAreaElement>('textarea[name="message"]');
+      if (ta && detail.msg) {
+        ta.value = ta.value ? `${ta.value}\n\n${detail.msg}` : detail.msg;
+      }
+      document.getElementById("quote-form")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    };
+    window.addEventListener("nwl:quote-estimate", onEstimate);
+    return () => window.removeEventListener("nwl:quote-estimate", onEstimate);
+  }, []);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -69,11 +97,25 @@ export default function GetQuote() {
           </div>
         </section>
 
-        <section className="py-20 sm:py-28 bg-slate-50">
+        {/* AI Quote Estimator */}
+        <section id="estimator" className="pt-14 sm:pt-20 bg-slate-50">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6">
+            <div className="text-center mb-8">
+              <div className="inline-flex items-center gap-2 glass-light rounded-full px-4 py-1.5 mb-3 text-sm text-blue-600 font-semibold">
+                <Sparkles size={14} /> Instant Estimate
+              </div>
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-navy mb-2 card-hover-title">Know Your Ballpark Price Instantly</h2>
+              <p className="text-slate-500">Pick your project, pages and features — the estimator shows a price range right away.</p>
+            </div>
+            <QuoteEstimator />
+          </div>
+        </section>
+
+        <section className="py-16 sm:py-20 bg-slate-50">
           <div className="max-w-4xl mx-auto px-4 sm:px-6">
             <div className="grid lg:grid-cols-5 gap-10">
               {/* Form */}
-              <div className="lg:col-span-3">
+              <div id="quote-form" className="lg:col-span-3 scroll-mt-24">
                 <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-100">
                   {sent ? (
                     <div className="text-center py-12">

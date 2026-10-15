@@ -4,9 +4,10 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import Link from "next/link";
 import Image from "next/image";
-import { Sparkles, Globe, Palette, TrendingUp, ShoppingCart, Cloud, Wrench, ArrowRight, CheckCircle, Star, Zap, Cpu, Rocket, ArrowUpRight, CreditCard, type LucideIcon } from "lucide-react";
+import { Sparkles, Globe, Palette, TrendingUp, ShoppingCart, Cloud, Wrench, ArrowRight, CheckCircle, Star, Zap, Cpu, Rocket, ArrowUpRight, CreditCard, Calculator, type LucideIcon } from "lucide-react";
 import PaymentLogos from "@/components/home/PaymentLogos";
 import HeroMarquee from "@/components/home/HeroMarquee";
+import QuoteEstimator from "@/components/home/QuoteEstimator";
 import { useCurrency } from "@/lib/currency";
 import { prefillHref } from "@/lib/lead-prefill";
 import CurrencySwitcher from "@/components/CurrencySwitcher";
@@ -282,6 +283,23 @@ export default function HomeClient({ initialData }: { initialData: HomeData }) {
                   <p className="text-sm text-slate-500 leading-relaxed">{f.desc}</p>
                 </SpotlightCard>
               ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ═══ AI QUOTE ESTIMATOR — interactive pricing tool ═══ */}
+        <section id="estimator" className="py-24 sm:py-32 bg-white relative overflow-hidden">
+          <div className="orb w-[450px] h-[450px] bg-blue-400/12 top-[10%] left-[-120px]" />
+          <div className="relative max-w-5xl mx-auto px-4 sm:px-6">
+            <div className="text-center mb-10">
+              <div className="inline-flex items-center gap-2 glass-light rounded-full px-4 py-1.5 mb-4 text-sm text-blue-600 font-semibold">
+                <Calculator size={14} /> Instant Pricing
+              </div>
+              <h2 className="text-4xl sm:text-5xl font-extrabold text-navy mb-3 card-hover-title">Estimate Your Project in 30 Seconds</h2>
+              <p className="text-slate-500 text-lg max-w-2xl mx-auto">No waiting for a reply — pick what you need and see a transparent price range right away.</p>
+            </div>
+            <div className="scroll-reveal">
+              <QuoteEstimator compact />
             </div>
           </div>
         </section>
