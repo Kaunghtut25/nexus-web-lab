@@ -42,7 +42,9 @@ export default function CookieConsent() {
     >
       <p className="text-xs text-slate-600 leading-relaxed mb-3">
         We use essential cookies only. No tracking. See{" "}
-        <Link href="/privacy" className="text-blue hover:underline">Privacy Policy</Link>.
+        {/* Blue-600 (#2563EB) instead of brand blue (#3B82F6) — the brand tone
+            fails WCAG AA contrast on white at this text size. */}
+        <Link href="/privacy" className="text-blue-600 font-medium hover:underline">Privacy Policy</Link>.
       </p>
       <div className="flex gap-2">
         <button

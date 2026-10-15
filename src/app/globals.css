@@ -642,6 +642,9 @@ button, a, input, select, textarea, [role="button"] {
 .dark .border-slate-200 { border-color: rgba(255,255,255,0.14); }
 .dark .bg-black\/10 { background-color: rgba(255,255,255,0.1); }
 .dark .bg-black\/5:hover { background-color: rgba(255,255,255,0.08); }
+/* Links that use blue-600 for AA contrast on white would drop below AA on the
+   dark surface (#0B1324) — lift them to blue-400 there. */
+.dark .text-blue-600 { color: #60A5FA; }
 .dark .glass-light {
   background: rgba(13,20,38,0.72);
   border-color: rgba(255,255,255,0.12);
